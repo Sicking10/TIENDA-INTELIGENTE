@@ -1,0 +1,22 @@
+/**
+ * CSS Principal - Tienda Inteligente de Comida
+ */
+
+/* Base */
+@import url('./base/reset.css');
+@import url('./base/variables.css');
+@import url('./base/utilities.css');
+
+/* Layouts */
+@import url('./layouts/main-layout.css');
+
+/* Components */
+@import url('./components/buttons.css');
+@import url('./components/cards.css');
+@import url('./components/notifications.css');
+@import url('./components/navbar.css');
+
+/* Pages */
+@import url('./pages/home.css');
+@import url('./pages/auth.css');
+@import url('./pages/shop.css');

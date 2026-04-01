@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="Tienda Inteligente de Comida - Compra de manera rápida, segura e inteligente">
+    <meta name="theme-color" content="#4CAF50">
+    
+    <title>Tienda Inteligente | Comida Rápida y Saludable</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    
+    <!-- CSS Principal -->
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <!-- Preconnect para fuentes y APIs -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons (CDN opcional, también puedes usar tus propios SVG) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    
+    <!-- Root element para la SPA -->
+    <div id="app">
+        <!-- Loader inicial mientras carga la app -->
+        <div id="initial-loader" class="initial-loader">
+            <div class="loader-spinner"></div>
+            <p class="loader-text">Cargando Tienda Inteligente...</p>
+        </div>
+    </div>
+    
+    <!-- Scripts principales -->
+    <script type="module" src="/src/frontend/app.js"></script>
+</body>
+</html>
