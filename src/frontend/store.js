@@ -375,5 +375,5 @@ class Store {
     }
 }
 
-// Exportar instancia única
+// Exportar instancia unica
 export const store = new Store();
