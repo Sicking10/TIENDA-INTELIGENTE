@@ -7,14 +7,16 @@ import { store } from '../store.js';
 /**
  * Actualiza el badge del carrito en la navbar
  */
-export function updateCartBadge() {
-    const cartBadge = document.getElementById('cart-badge');
-    if (cartBadge) {
-        const itemCount = store.get('cart.itemCount') || 0;
-        cartBadge.textContent = itemCount;
-        cartBadge.style.display = itemCount > 0 ? 'flex' : 'none';
+export const updateCartBadge = () => {
+    const badge = document.getElementById('cart-badge');
+    if (!badge) return;
+    const itemCount = store.get('cart.itemCount') || 0;
+    badge.textContent = itemCount;
+    badge.style.display = itemCount > 0 ? 'flex' : 'flex'; // siempre visible pero con 0
+    if (itemCount === 0) {
+        badge.textContent = '0';
     }
-}
+};
 
 /**
  * Calcula el total del carrito

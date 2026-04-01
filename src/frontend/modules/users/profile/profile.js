@@ -1,5 +1,6 @@
 /**
  * Módulo Perfil de Usuario
+ * profile.js - Vista de perfil de usuario
  */
 
 import { store } from '../../../store.js';

@@ -1,94 +1,32 @@
 /**
- * Tienda Inteligente de Comida - SPA
+ * GINGERcaps SPA — app.js
  * Archivo principal de inicialización
- * @version 1.0.0
+ * @version 2.0.0
+ *
+ * NOTA: renderNavbar() vive exclusivamente en navbar.js
+ * Este archivo solo orquesta la inicialización global.
  */
 
-// Importación de módulos principales
-import { router } from './router.js';
-import { store } from './store.js';
-import { config } from './config.js';
+import { router }           from './router.js';
+import { store }            from './store.js';
+import { config }           from './config.js';
 import { setupEventDelegation } from './utils/domEvents.js';
-import { authGuard } from './authGuard.js';
-import { initTheme } from './utils/theme.js';
+import { authGuard }        from './authGuard.js';
 import { initNotifications } from './modules/notifications/notifications.js';
-import { updateCartBadge } from './utils/cartUtils.js';
+import { renderNavbar, updateNavbarAuth } from './modules/navbar/navbar.js';
 
-// Estado de la aplicación
-let appInitialized = false;
-
-/**
- * Elimina el loader inicial de la pantalla
- */
-function hideInitialLoader() {
-    const loader = document.getElementById('initial-loader');
-    if (loader) {
-        loader.style.opacity = '0';
-        setTimeout(() => {
-            loader.style.display = 'none';
-        }, 300);
-    }
-}
-
-/**
- * Muestra mensaje de error crítico en la app
- * @param {string} message - Mensaje de error
- */
-function showCriticalError(message) {
-    const app = document.getElementById('app');
-    if (app) {
-        app.innerHTML = `
-            <div class="critical-error">
-                <i class="fas fa-exclamation-triangle"></i>
-                <h2>Error al iniciar la aplicación</h2>
-                <p>${message}</p>
-                <button onclick="location.reload()">Reintentar</button>
-            </div>
-        `;
-    }
-}
-
-/**
- * Inicializa los servicios esenciales de la aplicación
- */
-async function initializeServices() {
-    // Verificar conectividad con el backend
-    try {
-        const response = await fetch(`${config.API_URL}/health`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        
-        if (!response.ok) {
-            throw new Error('Backend no disponible');
-        }
-        
-        const healthData = await response.json();
-        console.log('✅ Backend conectado:', healthData);
-        
-    } catch (error) {
-        console.error('❌ Error de conexión con backend:', error);
-        throw new Error('No se pudo conectar con el servidor. Verifica tu conexión a internet.');
-    }
-}
-
-/**
- * Configura el tema visual según preferencias del usuario o sistema
- */
+/* ─────────────────────────────────────────────
+   THEME SETUP
+   (runs before paint to avoid flash of wrong theme)
+───────────────────────────────────────────── */
 function setupTheme() {
-    // Cargar tema guardado o detectar sistema
-    const savedTheme = localStorage.getItem('theme');
-    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
-    if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-    } else {
-        document.documentElement.setAttribute('data-theme', 'light');
-    }
-    
-    // Escuchar cambios en el sistema
+    const saved       = localStorage.getItem('theme');
+    const systemDark  = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const theme       = saved || (systemDark ? 'dark' : 'light');
+
+    document.documentElement.setAttribute('data-theme', theme);
+
+    /* React to OS-level changes (only when user hasn't overridden) */
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
         if (!localStorage.getItem('theme')) {
             document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
@@ -96,176 +34,175 @@ function setupTheme() {
     });
 }
 
-/**
- * Renderiza la barra de navegación GINGER
- */
-function renderNavbar() {
-    if (document.querySelector('.navbar-ginger')) return;
-    
-    const navbar = document.createElement('nav');
-    navbar.className = 'navbar-ginger';
-    navbar.innerHTML = `
-        <div class="navbar-container">
-            <a href="/" class="navbar-logo" data-link>
-                <div class="logo-icon">
-                    <i class="fas fa-leaf"></i>
-                </div>
-                <div class="logo-text">GINGER<span>caps</span></div>
-            </a>
-            
-            <div class="navbar-center">
-                <div class="navbar-links" id="navbar-links">
-                    <a href="/" class="nav-link" data-link>Inicio</a>
-                    <a href="/tienda" class="nav-link" data-link>Productos</a>
-                    <a href="/beneficios" class="nav-link" data-link>Beneficios</a>
-                    <a href="/blog" class="nav-link" data-link>Blog</a>
-                </div>
-            </div>
-            
-            <div class="navbar-actions">
-                <a href="/carrito" class="cart-icon" data-link>
-                    <i class="fas fa-shopping-bag"></i>
-                    <span class="cart-badge" id="cart-badge">0</span>
-                </a>
-                
-                <div class="user-menu" style="display: none;">
-                    <div class="user-avatar" id="user-avatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="user-dropdown" id="user-dropdown">
-                        <div class="dropdown-header">
-                            <h4 id="user-name">Invitado</h4>
-                            <p id="user-email">Descubre los beneficios del jengibre</p>
-                        </div>
-                        <div class="dropdown-divider"></div>
-                        <a href="/mi-cuenta" class="dropdown-item" data-link>
-                            <i class="fas fa-user"></i> Mi perfil
-                        </a>
-                        <a href="/mis-pedidos" class="dropdown-item" data-link>
-                            <i class="fas fa-receipt"></i> Mis pedidos
-                        </a>
-                        <a href="/suscripcion" class="dropdown-item" data-link>
-                            <i class="fas fa-calendar-alt"></i> Suscripción
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <button class="dropdown-item btn-logout" id="logout-btn">
-                            <i class="fas fa-sign-out-alt"></i> Cerrar sesión
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="auth-buttons" id="auth-buttons">
-                    <a href="/login" class="btn-nav-login" data-link>Ingresar</a>
-                    <a href="/registro" class="btn-nav-register" data-link>Comenzar</a>
-                </div>
-                
-                <button class="mobile-menu-btn" id="mobile-menu-btn">
-                    <i class="fas fa-bars"></i>
+/* ─────────────────────────────────────────────
+   INITIAL LOADER
+───────────────────────────────────────────── */
+function hideInitialLoader() {
+    const loader = document.getElementById('initial-loader');
+    if (!loader) return;
+
+    loader.style.transition = 'opacity 0.35s ease';
+    loader.style.opacity    = '0';
+    setTimeout(() => {
+        loader.style.display = 'none';
+    }, 350);
+}
+
+/* ─────────────────────────────────────────────
+   CRITICAL ERROR FALLBACK
+───────────────────────────────────────────── */
+function showCriticalError(message) {
+    const app = document.getElementById('app');
+    if (app) {
+        app.innerHTML = `
+            <div style="
+                display:flex; flex-direction:column; align-items:center;
+                justify-content:center; min-height:60vh; padding:40px;
+                font-family:'Outfit',sans-serif; text-align:center;
+            ">
+                <div style="font-size:48px; margin-bottom:16px;">🌿</div>
+                <h2 style="
+                    font-family:'Cormorant Garamond',serif;
+                    font-size:26px; color:#C8651B; margin-bottom:12px;
+                ">Error al iniciar GINGERcaps</h2>
+                <p style="color:#4A2F1A; max-width:400px; line-height:1.6; margin-bottom:28px;">
+                    ${message}
+                </p>
+                <button
+                    onclick="location.reload()"
+                    style="
+                        padding:12px 28px; background:#C8651B; color:white;
+                        border:none; border-radius:100px; font-size:14px;
+                        font-weight:600; cursor:pointer; font-family:'Outfit',sans-serif;
+                    "
+                >
+                    Reintentar
                 </button>
             </div>
-        </div>
-    `;
-    
-    document.body.insertBefore(navbar, document.body.firstChild);
-    
-    // Configurar menú móvil
-    const mobileBtn = document.getElementById('mobile-menu-btn');
-    const navbarLinks = document.getElementById('navbar-links');
-    if (mobileBtn && navbarLinks) {
-        mobileBtn.addEventListener('click', () => {
-            navbarLinks.classList.toggle('mobile-open');
-        });
+        `;
     }
-    
-    // Configurar logout
-    const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
-            store.logout();
-            authGuard.logout();
-            window.location.href = '/';
-        });
-    }
-    
-    // Actualizar badge del carrito
-    updateCartBadge();
-    
-    // Actualizar estado de autenticación en navbar
-    setTimeout(() => {
-        store.updateNavbarAuth();
-    }, 100);
 }
 
-/**
- * Inicializa la aplicación principal
- */
+/* ─────────────────────────────────────────────
+   BACKEND HEALTH CHECK
+───────────────────────────────────────────── */
+async function initializeServices() {
+    try {
+        const response = await fetch(`${config.API_URL}/health`, {
+            method:  'GET',
+            headers: { 'Content-Type': 'application/json' },
+            signal:  AbortSignal.timeout(8000) // 8s timeout
+        });
+
+        if (!response.ok) {
+            throw new Error(`Backend respondió con status ${response.status}`);
+        }
+
+        const healthData = await response.json();
+        console.log('✅ Backend conectado:', healthData);
+
+    } catch (error) {
+        console.error('❌ Error de conexión con backend:', error);
+        throw new Error(
+            'No se pudo conectar con el servidor. Verifica tu conexión a internet.'
+        );
+    }
+}
+
+/* ─────────────────────────────────────────────
+   STORE AUTH → NAVBAR SYNC
+   Escucha cambios de autenticación en el store
+   y actualiza la navbar automáticamente.
+───────────────────────────────────────────── */
+function setupAuthSync() {
+    /* Si el store emite eventos personalizados, suscribirse aquí */
+    if (typeof store.subscribe === 'function') {
+        store.subscribe('auth', () => {
+            updateNavbarAuth();
+        });
+    }
+}
+
+/* ─────────────────────────────────────────────
+   MAIN INIT
+───────────────────────────────────────────── */
+let appInitialized = false;
+
 async function initApp() {
     try {
-        console.log('🚀 Inicializando GINGERcaps...');
-        
-        // 1. Configurar tema
+        console.log('🚀 Inicializando GINGERcaps v2…');
+
+        // 1. Aplicar tema antes del primer paint (evita FOUC)
         setupTheme();
-        
-        // 2. Renderizar navbar
+
+        // 2. Montar la navbar (única fuente de verdad: navbar.js)
         renderNavbar();
-        
-        // 3. Inicializar servicios esenciales
+
+        // 3. Conectar con el backend
         await initializeServices();
-        
-        // 4. Configurar el store global
+
+        // 4. Inicializar el store global
         store.init();
-        
-        // 5. Configurar el router
+
+        // 5. Sincronizar auth → navbar
+        setupAuthSync();
+
+        // 6. Inicializar el router SPA
         router.init();
-        
-        // 6. Configurar sistema de notificaciones
+
+        // 7. Sistema de notificaciones
         initNotifications();
-        
-        // 7. Configurar delegación de eventos global
+
+        // 8. Delegación global de eventos
         setupEventDelegation();
-        
-        // 8. Verificar autenticación y cargar vista inicial
+
+        // 9. Resolver ruta inicial respetando guards
         const initialPath = authGuard.getInitialPath();
         router.navigate(initialPath);
-        
-        // 9. Ocultar loader
+
+        // 10. Ocultar loader
         hideInitialLoader();
-        
+
         appInitialized = true;
-        console.log('✅ GINGERcaps inicializado correctamente');
-        
+        console.log('✅ GINGERcaps listo');
+
     } catch (error) {
         console.error('❌ Error al inicializar la aplicación:', error);
-        showCriticalError(error.message || 'Error desconocido al iniciar la aplicación');
+        showCriticalError(error.message || 'Error desconocido al iniciar la aplicación.');
+        hideInitialLoader();
     }
 }
 
-/**
- * Limpieza antes de cerrar la app
- */
+/* ─────────────────────────────────────────────
+   CLEANUP
+───────────────────────────────────────────── */
 function cleanup() {
     if (appInitialized) {
-        console.log('🔄 Limpiando recursos de la aplicación...');
+        console.log('🔄 Limpiando recursos de la aplicación…');
+        // Aquí iría la limpieza de WebSockets, timers, etc.
     }
 }
 
-// Escuchar evento de cierre/recarga
 window.addEventListener('beforeunload', cleanup);
 
-// Iniciar la aplicación cuando el DOM esté listo
+/* ─────────────────────────────────────────────
+   BOOT
+───────────────────────────────────────────── */
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initApp);
 } else {
     initApp();
 }
 
-// Exportar utilidades para debugging en consola (solo desarrollo)
+/* ─────────────────────────────────────────────
+   DEV TOOLS
+───────────────────────────────────────────── */
 if (config.DEBUG) {
     window.__APP__ = {
         store,
         router,
         config,
-        version: '1.0.0'
+        version: '2.0.0'
     };
-    console.log('🐛 Modo desarrollo: __APP__ disponible en consola');
+    console.log('🐛 Modo desarrollo: window.__APP__ disponible en consola');
 }

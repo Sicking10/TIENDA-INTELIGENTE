@@ -1,107 +1,113 @@
 /**
- * Navbar GINGER — Botanical Apothecary
- * Interactive, animated navigation
+ * GINGERcaps Navbar — Botanical Apothecary
+ * navbar.js v2.1
+ * Complete, self-contained, innovative navigation module
  */
 
 import { store } from '../../store.js';
 import { authGuard } from '../../authGuard.js';
 import { updateCartBadge } from '../../utils/cartUtils.js';
 
-/**
- * SVG para el emblema del logo (raíz de jengibre estilizada)
- */
+/* ─────────────────────────────────────────────
+   LOGO SVG — Botanical ginger root emblem
+───────────────────────────────────────────── */
 function getLogoSVG() {
     return `
-    <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="44" height="44" rx="12" fill="url(#logo-grad)"/>
-        <!-- Raíz estilizada -->
-        <path d="M22 8 C18 8 14 12 14 17 C14 22 17 25 20 27 L20 36" 
-              stroke="rgba(255,255,255,0.9)" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-        <path d="M20 20 C23 18 27 20 27 24" 
-              stroke="rgba(255,255,255,0.75)" stroke-width="2" stroke-linecap="round" fill="none"/>
-        <path d="M20 27 C17 30 15 33 18 36" 
-              stroke="rgba(255,255,255,0.65)" stroke-width="1.8" stroke-linecap="round" fill="none"/>
-        <!-- Brotes -->
-        <circle cx="22" cy="8" r="2.5" fill="rgba(255,255,255,0.9)"/>
-        <circle cx="27" cy="24" r="2" fill="rgba(255,255,255,0.75)"/>
-        <circle cx="18" cy="36" r="1.8" fill="rgba(255,255,255,0.65)"/>
+    <svg viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="46" height="46" rx="14" fill="url(#g-logo-bg)"/>
+        <path d="M23 9 C19 9 15 13 15 18 C15 23 18 26 21 28 L21 38"
+              stroke="rgba(255,255,255,0.92)" stroke-width="2.5"
+              stroke-linecap="round" fill="none"/>
+        <path d="M21 21 C24 18.5 29 21 29 26"
+              stroke="rgba(255,255,255,0.78)" stroke-width="2.2"
+              stroke-linecap="round" fill="none"/>
+        <path d="M21 28 C18 31 16 34 19 38"
+              stroke="rgba(255,255,255,0.65)" stroke-width="2"
+              stroke-linecap="round" fill="none"/>
+        <circle cx="23" cy="9"  r="2.8" fill="rgba(255,255,255,0.95)"/>
+        <circle cx="29" cy="26" r="2.2" fill="rgba(255,255,255,0.8)"/>
+        <circle cx="19" cy="38" r="1.9" fill="rgba(255,255,255,0.7)"/>
+        <path d="M23 9 C25 6 28 7 27 10"
+              stroke="rgba(255,255,255,0.7)" stroke-width="1.5"
+              stroke-linecap="round" fill="none"/>
         <defs>
-            <linearGradient id="logo-grad" x1="0" y1="0" x2="44" y2="44">
-                <stop offset="0%" stop-color="#E8834A"/>
-                <stop offset="100%" stop-color="#9A4710"/>
+            <linearGradient id="g-logo-bg" x1="0" y1="0" x2="46" y2="46">
+                <stop offset="0%"   stop-color="#E8834A"/>
+                <stop offset="60%"  stop-color="#C8651B"/>
+                <stop offset="100%" stop-color="#8B3F10"/>
             </linearGradient>
         </defs>
     </svg>`;
 }
 
-/**
- * Renderiza el HTML completo de la navbar
- */
+/* ─────────────────────────────────────────────
+   NAVBAR HTML TEMPLATE
+───────────────────────────────────────────── */
 function getNavbarHTML() {
     return `
-        <!-- Progress bar de scroll -->
-        <div class="nav-progress" id="nav-progress"></div>
+        <div class="nav-progress" id="nav-progress" aria-hidden="true"></div>
 
         <div class="navbar-container">
-            <!-- Logo -->
-            <a href="/" class="navbar-logo" data-link aria-label="GINGERcaps inicio">
+
+            <a href="/" class="navbar-logo" data-link aria-label="GINGERcaps — Inicio">
                 <div class="logo-emblem">
+                    <div class="logo-orbit" aria-hidden="true"></div>
                     ${getLogoSVG()}
                 </div>
                 <div class="logo-wordmark">
-                    <span class="logo-brand">GINGERcaps</span>
+                    <span class="logo-brand"><em>GINGER</em>caps</span>
                     <span class="logo-tagline">Bienestar Natural</span>
                 </div>
             </a>
 
-            <!-- Links centrales -->
             <nav class="navbar-center" aria-label="Navegación principal">
-                <div class="navbar-links" id="navbar-links">
-                    <a href="/" class="nav-link" data-link>
-                        <span class="nav-dot"></span>
+                <div class="navbar-links" id="navbar-links" role="list">
+                    <span class="nav-indicator" id="nav-indicator" aria-hidden="true"></span>
+
+                    <a href="/" class="nav-link" data-link role="listitem">
+                        <span class="nav-link-icon" aria-hidden="true">🏡</span>
                         Inicio
                     </a>
-                    <a href="/tienda" class="nav-link" data-link>
-                        <span class="nav-dot"></span>
+                    <a href="/tienda" class="nav-link" data-link role="listitem">
+                        <span class="nav-link-icon" aria-hidden="true">🛍️</span>
                         Productos
                     </a>
-                    <a href="/beneficios" class="nav-link" data-link>
-                        <span class="nav-dot"></span>
+                    <a href="/beneficios" class="nav-link" data-link role="listitem">
+                        <span class="nav-link-icon" aria-hidden="true">🌿</span>
                         Beneficios
                     </a>
-                    <a href="/blog" class="nav-link" data-link>
-                        <span class="nav-dot"></span>
+                    <a href="/blog" class="nav-link" data-link role="listitem">
+                        <span class="nav-link-icon" aria-hidden="true">📖</span>
                         Blog
                     </a>
                 </div>
             </nav>
 
-            <!-- Acciones derecha -->
             <div class="navbar-actions">
-                <!-- Ingredient pills (decorativas) -->
-                <div class="ingredient-pills" aria-hidden="true">
-                    <div class="pill-btn pill-ginger" title="Jengibre">
-                        <span class="pill-icon">🫚</span>
-                        <span>Jengibre</span>
+
+                <div class="ingredient-drops" aria-hidden="true">
+                    <div class="drop-pill drop-pill-ginger" title="Jengibre">
+                        <span class="drop-icon">🫚</span>
+                        <span class="drop-label">Jengibre</span>
                     </div>
-                    <div class="pill-btn pill-turmeric" title="Cúrcuma">
-                        <span class="pill-icon">🌿</span>
-                        <span>Cúrcuma</span>
+                    <div class="drop-pill drop-pill-turmeric" title="Cúrcuma">
+                        <span class="drop-icon">🌱</span>
+                        <span class="drop-label">Cúrcuma</span>
                     </div>
-                    <div class="pill-btn pill-chamomile" title="Manzanilla">
-                        <span class="pill-icon">🌼</span>
-                        <span>Manzanilla</span>
+                    <div class="drop-pill drop-pill-chamomile" title="Manzanilla">
+                        <span class="drop-icon">🌼</span>
+                        <span class="drop-label">Manzanilla</span>
                     </div>
                 </div>
 
-                <!-- Toggle tema -->
                 <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema">
-                    <span id="theme-icon">🌙</span>
+                    <span id="theme-icon" aria-hidden="true">🌙</span>
                 </button>
 
-                <!-- Carrito -->
-                <a href="/carrito" class="cart-btn" data-link aria-label="Carrito de compras">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <a href="/carrito" class="cart-btn" data-link aria-label="Ver carrito">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+                         aria-hidden="true">
                         <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
                         <line x1="3" y1="6" x2="21" y2="6"/>
                         <path d="M16 10a4 4 0 01-8 0"/>
@@ -109,52 +115,57 @@ function getNavbarHTML() {
                     <span class="cart-badge" id="cart-badge">0</span>
                 </a>
 
-                <!-- User menu (cuando está autenticado) -->
                 <div class="user-menu" id="user-menu" style="display:none;">
-                    <button class="user-avatar-btn" id="user-avatar-btn" aria-expanded="false">
-                        <div class="avatar-circle" id="avatar-initials">U</div>
+                    <button class="user-avatar-btn" id="user-avatar-btn"
+                            aria-haspopup="true" aria-expanded="false">
+                        <div class="avatar-ring">
+                            <div class="avatar-circle" id="avatar-initials"
+                                 aria-hidden="true">U</div>
+                        </div>
                         <span class="avatar-label" id="avatar-label">Mi cuenta</span>
-                        <svg class="avatar-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg class="avatar-chevron" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" aria-hidden="true">
                             <polyline points="6 9 12 15 18 9"/>
                         </svg>
                     </button>
-                    <div class="user-dropdown" id="user-dropdown">
-                        <div class="dropdown-top">
+
+                    <div class="user-dropdown" id="user-dropdown" role="menu">
+                        <div class="dropdown-header">
                             <div class="dropdown-user-name" id="dropdown-name">Usuario</div>
                             <div class="dropdown-user-email" id="dropdown-email">usuario@email.com</div>
                         </div>
                         <div class="dropdown-nav">
-                            <a href="/mi-cuenta" class="dropdown-item" data-link>
-                                <span class="item-icon">👤</span>
+                            <a href="/mi-cuenta" class="dropdown-item" data-link role="menuitem">
+                                <span class="item-icon-wrap" aria-hidden="true">👤</span>
                                 Mi perfil
                             </a>
-                            <a href="/mis-pedidos" class="dropdown-item" data-link>
-                                <span class="item-icon">📦</span>
+                            <a href="/mis-pedidos" class="dropdown-item" data-link role="menuitem">
+                                <span class="item-icon-wrap" aria-hidden="true">📦</span>
                                 Mis pedidos
                             </a>
-                            <a href="/suscripcion" class="dropdown-item" data-link>
-                                <span class="item-icon">🌿</span>
+                            <a href="/suscripcion" class="dropdown-item" data-link role="menuitem">
+                                <span class="item-icon-wrap" aria-hidden="true">🌿</span>
                                 Suscripción
                             </a>
-                            <div class="dropdown-divider"></div>
-                            <button class="dropdown-item logout-item" id="logout-btn">
-                                <span class="item-icon">🚪</span>
+                            <div class="dropdown-divider" role="separator"></div>
+                            <button class="dropdown-item logout-item" id="logout-btn" role="menuitem">
+                                <span class="item-icon-wrap" aria-hidden="true">🚪</span>
                                 Cerrar sesión
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Auth buttons (cuando NO está autenticado) -->
                 <div class="auth-buttons" id="auth-buttons">
                     <a href="/login" class="btn-login" data-link>Ingresar</a>
                     <a href="/registro" class="btn-register" data-link>
-                        <span>Comenzar</span>
+                        <span class="btn-register-leaf" aria-hidden="true">🌿</span>
+                        Comenzar
                     </a>
                 </div>
 
-                <!-- Botón menú móvil -->
-                <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Menú móvil">
+                <button class="mobile-menu-btn" id="mobile-menu-btn"
+                        aria-label="Abrir menú" aria-expanded="false">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -162,112 +173,132 @@ function getNavbarHTML() {
             </div>
         </div>
 
-        <!-- Mobile drawer -->
-        <div class="mobile-drawer" id="mobile-drawer" role="dialog" aria-label="Menú de navegación">
+        <div class="mobile-drawer" id="mobile-drawer"
+             role="dialog" aria-label="Menú principal" aria-modal="false">
             <nav class="mobile-nav-links">
-                <a href="/" class="mobile-nav-link" data-link>🏠 Inicio</a>
-                <a href="/tienda" class="mobile-nav-link" data-link>🛍️ Productos</a>
-                <a href="/beneficios" class="mobile-nav-link" data-link>🌿 Beneficios</a>
-                <a href="/blog" class="mobile-nav-link" data-link>📖 Blog</a>
+                <a href="/" class="mobile-nav-link" data-link>
+                    <span class="mobile-nav-icon" aria-hidden="true">🏡</span>
+                    Inicio
+                </a>
+                <a href="/tienda" class="mobile-nav-link" data-link>
+                    <span class="mobile-nav-icon" aria-hidden="true">🛍️</span>
+                    Productos
+                </a>
+                <a href="/beneficios" class="mobile-nav-link" data-link>
+                    <span class="mobile-nav-icon" aria-hidden="true">🌿</span>
+                    Beneficios
+                </a>
+                <a href="/blog" class="mobile-nav-link" data-link>
+                    <span class="mobile-nav-icon" aria-hidden="true">📖</span>
+                    Blog
+                </a>
             </nav>
-            <div class="mobile-actions" id="mobile-auth-actions">
+            <div class="mobile-divider"></div>
+            <div class="mobile-auth" id="mobile-auth-section">
                 <a href="/login" class="btn-login" data-link>Ingresar</a>
-                <a href="/registro" class="btn-register" data-link><span>Comenzar</span></a>
+                <a href="/registro" class="btn-register" data-link>
+                    <span class="btn-register-leaf" aria-hidden="true">🌿</span>
+                    Comenzar
+                </a>
             </div>
         </div>
     `;
 }
 
-/**
- * Inicializa el scroll behavior: barra de progreso + shadow
- */
+/* ─────────────────────────────────────────────
+   SCROLL BEHAVIOR
+───────────────────────────────────────────── */
 function initScrollBehavior(navbar) {
     const progress = document.getElementById('nav-progress');
+    let ticking = false;
 
     const onScroll = () => {
-        const scrollTop = window.scrollY;
-        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-        const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                const scrollTop = window.scrollY;
+                const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+                const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
 
-        if (progress) progress.style.width = `${pct}%`;
+                if (progress) progress.style.width = `${Math.min(pct, 100)}%`;
+                navbar.classList.toggle('scrolled', scrollTop > 20);
 
-        if (scrollTop > 20) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
+                ticking = false;
+            });
+            ticking = true;
         }
     };
 
     window.addEventListener('scroll', onScroll, { passive: true });
 }
 
-/**
- * Inicializa el menú móvil
- */
-function initMobileMenu() {
-    const btn = document.getElementById('mobile-menu-btn');
-    const drawer = document.getElementById('mobile-drawer');
-    if (!btn || !drawer) return;
+/* ─────────────────────────────────────────────
+   SLIDING ACTIVE INDICATOR
+───────────────────────────────────────────── */
+function initNavIndicator() {
+    const indicator = document.getElementById('nav-indicator');
+    const container = document.getElementById('navbar-links');
+    if (!indicator || !container) return;
 
-    btn.addEventListener('click', () => {
-        const isOpen = drawer.classList.toggle('open');
-        btn.classList.toggle('open', isOpen);
-        btn.setAttribute('aria-expanded', isOpen);
+    const moveIndicator = (link) => {
+        if (!link) {
+            indicator.style.opacity = '0';
+            return;
+        }
+        const containerRect = container.getBoundingClientRect();
+        const linkRect = link.getBoundingClientRect();
 
-        // Bloquear scroll del body cuando el drawer está abierto
-        document.body.style.overflow = isOpen ? 'hidden' : '';
-    });
-
-    // Cerrar al hacer click en un link del drawer
-    drawer.querySelectorAll('[data-link]').forEach(link => {
-        link.addEventListener('click', () => {
-            drawer.classList.remove('open');
-            btn.classList.remove('open');
-            btn.setAttribute('aria-expanded', 'false');
-            document.body.style.overflow = '';
-        });
-    });
-}
-
-/**
- * Inicializa el toggle de tema
- */
-function initThemeToggle() {
-    const btn = document.getElementById('theme-toggle');
-    const icon = document.getElementById('theme-icon');
-    if (!btn || !icon) return;
-
-    const updateIcon = () => {
-        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        icon.textContent = isDark ? '☀️' : '🌙';
+        indicator.style.left = `${linkRect.left - containerRect.left}px`;
+        indicator.style.width = `${linkRect.width}px`;
+        indicator.style.opacity = '1';
     };
 
-    updateIcon();
+    const activeLink = container.querySelector('.nav-link.active');
+    moveIndicator(activeLink);
 
-    btn.addEventListener('click', () => {
-        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        const newTheme = isDark ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-        updateIcon();
+    container.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('mouseenter', () => moveIndicator(link));
+    });
+
+    container.addEventListener('mouseleave', () => {
+        const current = container.querySelector('.nav-link.active');
+        moveIndicator(current);
     });
 }
 
-/**
- * Activa el link correspondiente a la ruta actual
- */
+/* ─────────────────────────────────────────────
+   ACTIVE LINK DETECTION
+───────────────────────────────────────────── */
 function setActiveLink() {
     const path = window.location.pathname;
+    
+    console.log('[NAVBAR] setActiveLink - path:', path);
+
     document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(link => {
         const href = link.getAttribute('href');
-        const isActive = href === path || (href !== '/' && path.startsWith(href));
-        link.classList.toggle('active', isActive);
+        
+        // Comparación exacta para home y startsWith para subrutas
+        let isActive;
+        if (href === '/') {
+            isActive = path === '/';
+        } else {
+            isActive = path.startsWith(href);
+        }
+        
+        if (isActive) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
     });
+
+    // Actualizar el indicador deslizante después de cambiar el active
+    setTimeout(() => initNavIndicator(), 30);
 }
 
-/**
- * Efecto ripple en nav links
- */
+
+/* ─────────────────────────────────────────────
+   RIPPLE EFFECT
+───────────────────────────────────────────── */
 function initNavRipple() {
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', (e) => {
@@ -282,118 +313,223 @@ function initNavRipple() {
     });
 }
 
-/**
- * Actualiza la navbar según el estado de autenticación
- */
+/* ─────────────────────────────────────────────
+   MOBILE MENU
+───────────────────────────────────────────── */
+function initMobileMenu() {
+    const btn = document.getElementById('mobile-menu-btn');
+    const drawer = document.getElementById('mobile-drawer');
+    if (!btn || !drawer) return;
+
+    const closeDrawer = () => {
+        drawer.classList.remove('open');
+        btn.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+    };
+
+    const openDrawer = () => {
+        drawer.classList.add('open');
+        btn.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+    };
+
+    btn.addEventListener('click', () => {
+        drawer.classList.contains('open') ? closeDrawer() : openDrawer();
+    });
+
+    drawer.querySelectorAll('[data-link]').forEach(link => {
+        link.addEventListener('click', closeDrawer);
+    });
+
+    document.addEventListener('click', (e) => {
+        if (drawer.classList.contains('open') &&
+            !drawer.contains(e.target) &&
+            !btn.contains(e.target)) {
+            closeDrawer();
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && drawer.classList.contains('open')) {
+            closeDrawer();
+            btn.focus();
+        }
+    });
+}
+
+/* ─────────────────────────────────────────────
+   USER DROPDOWN
+───────────────────────────────────────────── */
+function initUserDropdown() {
+    const menuEl = document.getElementById('user-menu');
+    const btnEl = document.getElementById('user-avatar-btn');
+    const dropEl = document.getElementById('user-dropdown');
+    if (!menuEl || !btnEl || !dropEl) return;
+
+    const close = () => {
+        menuEl.classList.remove('open');
+        btnEl.setAttribute('aria-expanded', 'false');
+    };
+
+    const open = () => {
+        menuEl.classList.add('open');
+        btnEl.setAttribute('aria-expanded', 'true');
+    };
+
+    btnEl.addEventListener('click', (e) => {
+        e.stopPropagation();
+        menuEl.classList.contains('open') ? close() : open();
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!menuEl.contains(e.target)) close();
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') close();
+    });
+
+    dropEl.querySelectorAll('[data-link]').forEach(link => {
+        link.addEventListener('click', close);
+    });
+}
+
+/* ─────────────────────────────────────────────
+   THEME TOGGLE
+───────────────────────────────────────────── */
+function initThemeToggle() {
+    const btn = document.getElementById('theme-toggle');
+    const icon = document.getElementById('theme-icon');
+    if (!btn || !icon) return;
+
+    const update = () => {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        icon.textContent = isDark ? '☀️' : '🌙';
+    };
+
+    update();
+
+    btn.addEventListener('click', () => {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const newTheme = isDark ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        update();
+    });
+}
+
+/* ─────────────────────────────────────────────
+   AUTH STATE → NAVBAR
+───────────────────────────────────────────── */
 export function updateNavbarAuth() {
     const isAuth = store.get('auth.isAuthenticated');
     const user = store.get('auth.user');
 
     const userMenuEl = document.getElementById('user-menu');
     const authBtnsEl = document.getElementById('auth-buttons');
-    const mobileAuthEl = document.getElementById('mobile-auth-actions');
+    const mobileAuthEl = document.getElementById('mobile-auth-section');
 
     if (isAuth && user) {
-        // Mostrar user menu
         if (userMenuEl) userMenuEl.style.display = 'block';
         if (authBtnsEl) authBtnsEl.style.display = 'none';
 
-        // Actualizar datos de usuario
         const name = user.name || user.email?.split('@')[0] || 'Usuario';
         const initials = name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
 
-        const el = (id) => document.getElementById(id);
-        if (el('avatar-initials')) el('avatar-initials').textContent = initials;
-        if (el('avatar-label')) el('avatar-label').textContent = name.split(' ')[0];
-        if (el('dropdown-name')) el('dropdown-name').textContent = name;
-        if (el('dropdown-email')) el('dropdown-email').textContent = user.email || '';
+        const avatarInitials = document.getElementById('avatar-initials');
+        const avatarLabel = document.getElementById('avatar-label');
+        const dropdownName = document.getElementById('dropdown-name');
+        const dropdownEmail = document.getElementById('dropdown-email');
 
-        // Mobile: reemplazar auth buttons con saludo
+        if (avatarInitials) avatarInitials.textContent = initials;
+        if (avatarLabel) avatarLabel.textContent = name.split(' ')[0];
+        if (dropdownName) dropdownName.textContent = name;
+        if (dropdownEmail) dropdownEmail.textContent = user.email || '';
+
         if (mobileAuthEl) {
             mobileAuthEl.innerHTML = `
-                <a href="/mi-cuenta" class="btn-login" data-link>Mi cuenta</a>
-                <button class="btn-register mobile-logout-btn"><span>Cerrar sesión</span></button>
+                <a href="/mi-cuenta" class="btn-login" data-link>👤 Mi cuenta</a>
+                <button class="btn-register mobile-logout" type="button">
+                    <span>Cerrar sesión</span>
+                </button>
             `;
-            mobileAuthEl.querySelector('.mobile-logout-btn')?.addEventListener('click', handleLogout);
+            mobileAuthEl.querySelector('.mobile-logout')?.addEventListener('click', handleLogout);
         }
     } else {
-        // Mostrar auth buttons
         if (userMenuEl) userMenuEl.style.display = 'none';
         if (authBtnsEl) authBtnsEl.style.display = 'flex';
 
         if (mobileAuthEl) {
             mobileAuthEl.innerHTML = `
                 <a href="/login" class="btn-login" data-link>Ingresar</a>
-                <a href="/registro" class="btn-register" data-link><span>Comenzar</span></a>
+                <a href="/registro" class="btn-register" data-link>
+                    <span class="btn-register-leaf" aria-hidden="true">🌿</span>
+                    Comenzar
+                </a>
             `;
         }
     }
 }
 
-/**
- * Handle logout
- */
+/* ─────────────────────────────────────────────
+   LOGOUT HANDLER
+───────────────────────────────────────────── */
 function handleLogout() {
     store.logout();
     authGuard.logout();
     window.location.href = '/';
 }
 
-/**
- * Anima las ingredient pills con stagger
- */
-function animatePills() {
-    const pills = document.querySelectorAll('.pill-btn');
-    pills.forEach((pill, i) => {
-        pill.style.animationDelay = `${i * 0.15}s`;
-        pill.style.animation = `fade-up 0.5s ${i * 0.15}s ease both`;
-    });
+/* ─────────────────────────────────────────────
+   CART BADGE
+───────────────────────────────────────────── */
+export function bumpCartBadge() {
+    const badge = document.getElementById('cart-badge');
+    if (!badge) return;
+    badge.classList.remove('bump');
+    void badge.offsetWidth;
+    badge.classList.add('bump');
 }
 
-/**
- * Renderiza y monta la navbar en el DOM
- */
+/* ─────────────────────────────────────────────
+   RENDER & MOUNT NAVBAR
+───────────────────────────────────────────── */
 export function renderNavbar() {
-    // Evitar duplicados
     if (document.querySelector('.navbar-ginger')) return;
 
     const navbar = document.createElement('nav');
     navbar.className = 'navbar-ginger';
     navbar.setAttribute('role', 'navigation');
-    navbar.setAttribute('aria-label', 'Navegación principal');
+    navbar.setAttribute('aria-label', 'Navegación principal GINGERcaps');
     navbar.innerHTML = getNavbarHTML();
 
     document.body.insertBefore(navbar, document.body.firstChild);
 
-    // Inicializar comportamientos
     initScrollBehavior(navbar);
     initMobileMenu();
     initThemeToggle();
     initNavRipple();
+    initNavIndicator();
     setActiveLink();
-    animatePills();
+    initUserDropdown();
 
-    // Logout button
     document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
 
-    // Actualizar carrito
     updateCartBadge();
 
-    // Actualizar auth state
-    setTimeout(updateNavbarAuth, 100);
+    setTimeout(updateNavbarAuth, 120);
 
-    // Escuchar cambios de ruta para actualizar active link
-    window.addEventListener('popstate', setActiveLink);
-    window.addEventListener('pushstate', setActiveLink);
-}
+    // Escuchar cambios de ruta del router
+    window.addEventListener('popstate', () => {
+        console.log('[NAVBAR] popstate detected, updating active link');
+        setActiveLink();
+    });
 
-/**
- * Bump animation en badge del carrito
- */
-export function bumpCartBadge() {
-    const badge = document.getElementById('cart-badge');
-    if (!badge) return;
-    badge.classList.remove('bump');
-    void badge.offsetWidth; // reflow
-    badge.classList.add('bump');
+    // 🔥 ESCUCHAR EVENTO PERSONALIZADO DEL ROUTER
+    window.addEventListener('router-navigate', (event) => {
+        console.log('[NAVBAR] router-navigate detected, path:', event.detail?.path);
+        setActiveLink();
+    });
 }

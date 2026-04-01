@@ -1,5 +1,6 @@
 /**
  * Estado global de la aplicación (Store)
+ * store.js - Similar a un mini Vuex/Redux pero liviano
  * Similar a un mini Vuex/Redux pero liviano
  */
 

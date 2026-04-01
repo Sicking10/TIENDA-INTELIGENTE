@@ -84,16 +84,11 @@ class Router {
         this.routes = routes;
     }
     
-    /**
-     * Inicializa el router
-     */
     init() {
-        // Escuchar cambios en el historial
         window.addEventListener('popstate', () => {
             this.handleRoute(window.location.pathname);
         });
         
-        // Manejar clics en enlaces internos
         document.addEventListener('click', (e) => {
             const link = e.target.closest('a[data-link]');
             if (link) {
@@ -105,17 +100,10 @@ class Router {
             }
         });
         
-        // Manejar ruta inicial
         this.handleRoute(window.location.pathname);
-        
         console.log('🛣️ Router inicializado');
     }
     
-    /**
-     * Navega a una ruta
-     * @param {string} path - Ruta destino
-     * @param {boolean} replace - Si reemplaza en historial
-     */
     navigate(path, replace = false) {
         const fullPath = path.startsWith('/') ? path : '/' + path;
         
@@ -126,21 +114,19 @@ class Router {
         }
         
         this.handleRoute(fullPath);
+        
+        // 🔥 DISPARAR EVENTO PERSONALIZADO PARA LA NAVBAR
+        window.dispatchEvent(new CustomEvent('router-navigate', { 
+            detail: { path: fullPath }
+        }));
     }
     
-    /**
-     * Maneja la ruta actual
-     * @param {string} path - Ruta a procesar
-     */
     async handleRoute(path) {
-        // Remover query string y hash
         const cleanPath = path.split('?')[0].split('#')[0];
         
-        // Buscar ruta que coincida
         let route = null;
         let params = {};
         
-        // Buscar coincidencia exacta o con parámetros
         for (const [pattern, routeConfig] of Object.entries(this.routes)) {
             const match = this.matchRoute(pattern, cleanPath);
             if (match) {
@@ -150,12 +136,10 @@ class Router {
             }
         }
         
-        // Si no se encuentra, usar 404
         if (!route) {
             route = this.routes['/404'];
         }
         
-        // Verificar permisos
         if (!route.public) {
             const hasAccess = await authGuard.checkAccess(route);
             if (!hasAccess) {
@@ -164,24 +148,19 @@ class Router {
             }
         }
         
-        // Verificar si es solo para invitados
         if (route.guestOnly && authGuard.isAuthenticated()) {
             this.navigate('/');
             return;
         }
         
-        // Mostrar loader
         this.showLoader();
         
         try {
-            // Cargar la vista
             const module = await route.view();
             const ViewComponent = module.default || module;
             
-            // Actualizar título
             document.title = `${route.title} | ${config.APP_NAME}`;
             
-            // Renderizar vista
             if (this.currentView && typeof this.currentView.destroy === 'function') {
                 this.currentView.destroy();
             }
@@ -195,7 +174,6 @@ class Router {
                 params: params
             };
             
-            // Scroll al inicio
             window.scrollTo(0, 0);
             
         } catch (error) {
@@ -206,12 +184,6 @@ class Router {
         }
     }
     
-    /**
-     * Compara una ruta con un patrón
-     * @param {string} pattern - Patrón de ruta
-     * @param {string} path - Ruta real
-     * @returns {object|null} Parámetros encontrados o null
-     */
     matchRoute(pattern, path) {
         const patternParts = pattern.split('/');
         const pathParts = path.split('/');
@@ -237,9 +209,6 @@ class Router {
         return params;
     }
     
-    /**
-     * Muestra loader mientras carga vista
-     */
     showLoader() {
         const loader = document.createElement('div');
         loader.id = 'route-loader';
@@ -248,9 +217,6 @@ class Router {
         this.container?.appendChild(loader);
     }
     
-    /**
-     * Oculta loader
-     */
     hideLoader() {
         const loader = document.getElementById('route-loader');
         if (loader) {
@@ -258,10 +224,6 @@ class Router {
         }
     }
     
-    /**
-     * Muestra error
-     * @param {string} message - Mensaje de error
-     */
     showError(message) {
         const errorDiv = document.createElement('div');
         errorDiv.className = 'route-error';
@@ -271,13 +233,9 @@ class Router {
             <button onclick="location.reload()">Reintentar</button>
         `;
         this.container?.appendChild(errorDiv);
-        
         setTimeout(() => errorDiv.remove(), 5000);
     }
     
-    /**
-     * Obtiene la ruta actual
-     */
     getCurrentRoute() {
         return this.currentRoute;
     }
