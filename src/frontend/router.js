@@ -17,6 +17,11 @@ const routes = {
         view: () => import('./modules/products/shop.js'),
         public: true
     },
+    '/beneficios': {
+        title: 'Beneficios',
+        view: () => import('./modules/benefits/beneficios.js'),
+        public: true
+    },
     '/producto/:id': {
         title: 'Producto',
         view: () => import('./modules/products/productDetail.js'),
@@ -115,7 +120,6 @@ class Router {
         
         this.handleRoute(fullPath);
         
-        // 🔥 DISPARAR EVENTO PERSONALIZADO PARA LA NAVBAR
         window.dispatchEvent(new CustomEvent('router-navigate', { 
             detail: { path: fullPath }
         }));
