@@ -1,5 +1,6 @@
 /**
  * Módulo Tienda - Catálogo de productos GINGERcaps
+ * Versión mejorada con soporte para imágenes reales
  */
 
 import { store } from '../../store.js';
@@ -15,6 +16,7 @@ export default class ShopView {
         this.currentCategory = 'all';
         this.currentSort = 'popular';
         this.searchQuery = '';
+        this.imagesLoaded = false;
     }
     
     async render() {
@@ -24,8 +26,10 @@ export default class ShopView {
             <div class="shop-page">
                 <div class="shop-hero">
                     <div class="container">
-                        <h1>Nuestras cápsulas</h1>
-                        <p>Descubre el poder del jengibre en cada dosis</p>
+                        <div class="shop-hero-content">
+                            <h1>Nuestras cápsulas</h1>
+                            <p>Descubre el poder del jengibre en cada dosis</p>
+                        </div>
                     </div>
                 </div>
                 
@@ -62,16 +66,18 @@ export default class ShopView {
                             <div class="filter-section">
                                 <h3>Precio</h3>
                                 <div class="price-range">
-                                    <input type="range" id="price-min" min="0" max="1500" value="0">
-                                    <input type="range" id="price-max" min="0" max="1500" value="1500">
+                                    <input type="range" id="price-min" min="0" max="2000" value="0">
+                                    <input type="range" id="price-max" min="0" max="2000" value="2000">
                                     <div class="price-values">
                                         <span>$$<span id="min-value">0</span></span>
-                                        <span>$$<span id="max-value">1500</span></span>
+                                        <span>$$<span id="max-value">2000</span></span>
                                     </div>
                                 </div>
                             </div>
                             
-                            <button class="btn-clear-filters" id="clear-filters">Limpiar filtros</button>
+                            <button class="btn-clear-filters" id="clear-filters">
+                                <i class="fas fa-undo-alt"></i> Limpiar filtros
+                            </button>
                         </aside>
                         
                         <!-- Main Content -->
@@ -90,7 +96,7 @@ export default class ShopView {
                             
                             <div class="products-grid" id="products-grid">
                                 <div class="loading-products">
-                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <div class="loading-spinner"></div>
                                     <p>Cargando productos...</p>
                                 </div>
                             </div>
@@ -112,96 +118,119 @@ export default class ShopView {
             {
                 id: 1,
                 name: 'GINGERcaps Original',
+                slug: 'gingercaps-original',
                 category: 'original',
                 concentration: '500mg',
                 price: 349,
                 oldPrice: 499,
                 rating: 4.8,
                 reviews: 128,
-                description: 'Extracto puro de jengibre estandarizado al 5% de gingerol',
-                benefits: ['Antiinflamatorio', 'Digestión', 'Energía'],
+                description: 'Extracto puro de jengibre estandarizado al 5% de gingerol. Ideal para el bienestar diario.',
+                longDescription: 'GINGERcaps Original es la forma más pura de obtener los beneficios del jengibre. Cada cápsula contiene 500mg de extracto de jengibre estandarizado al 5% de gingerol, el compuesto activo responsable de sus propiedades antiinflamatorias y antioxidantes.',
+                benefits: ['Antiinflamatorio natural', 'Mejora la digestión', 'Aumenta la energía', 'Fortalece el sistema inmune'],
                 badge: 'Más vendido',
                 stock: 150,
-                image: 'capsules'
+                image: 'original',
+                images: ['original-main', 'original-2', 'original-3']
             },
             {
                 id: 2,
                 name: 'GINGERcaps Plus',
+                slug: 'gingercaps-plus',
                 category: 'plus',
                 concentration: '1000mg',
                 price: 449,
                 oldPrice: 649,
                 rating: 4.9,
                 reviews: 89,
-                description: 'Doble concentración para resultados intensificados',
-                benefits: ['Inmunidad', 'Rendimiento', 'Recuperación'],
+                description: 'Doble concentración para resultados intensificados y soporte inmunológico superior.',
+                longDescription: 'GINGERcaps Plus ofrece el doble de potencia. Con 1000mg de extracto de jengibre por cápsula, está diseñado para quienes buscan resultados más rápidos y una mayor protección inmunológica.',
+                benefits: ['Inmunidad fortalecida', 'Reducción de náuseas', 'Rendimiento deportivo', 'Recuperación muscular'],
                 badge: 'Recomendado',
                 stock: 89,
-                image: 'capsules'
+                image: 'plus',
+                images: ['plus-main', 'plus-2', 'plus-3']
             },
             {
                 id: 3,
                 name: 'GINGERcaps Pro',
+                slug: 'gingercaps-pro',
                 category: 'pro',
                 concentration: '1500mg',
                 price: 549,
                 oldPrice: 799,
                 rating: 5.0,
                 reviews: 45,
-                description: 'Fórmula premium con complejo de vitaminas',
-                benefits: ['Rendimiento máximo', 'Energía extrema', 'Bienestar total'],
+                description: 'Fórmula premium con máxima potencia y complejo de vitaminas.',
+                longDescription: 'GINGERcaps Pro es nuestra fórmula más avanzada. Combina 1500mg de extracto de jengibre con un complejo vitamínico para potenciar la absorción y maximizar los beneficios. Ideal para deportistas y personas con alta demanda energética.',
+                benefits: ['Rendimiento máximo', 'Energía extrema', 'Bienestar total', 'Recuperación acelerada'],
                 badge: 'Nuevo',
                 stock: 45,
-                image: 'capsules'
+                image: 'pro',
+                images: ['pro-main', 'pro-2', 'pro-3']
             },
             {
                 id: 4,
                 name: 'Kit Detox 30 Días',
+                slug: 'kit-detox-30-dias',
                 category: 'kits',
                 concentration: '500mg',
                 price: 899,
                 oldPrice: 1299,
                 rating: 4.8,
                 reviews: 67,
-                description: '2 frascos de Original + Guía de bienestar',
-                benefits: ['Desintoxicación', 'Energía sostenida', 'Resultados garantizados'],
+                description: '2 frascos de Original + Guía de bienestar. Ideal para comenzar tu rutina.',
+                longDescription: 'El Kit Detox incluye 2 frascos de GINGERcaps Original y una guía digital con consejos de bienestar, recetas y rutinas para potenciar los efectos del jengibre en tu cuerpo.',
+                benefits: ['Desintoxicación', 'Energía sostenida', 'Resultados garantizados', 'Ahorro del 30%'],
                 badge: 'Ahorra 30%',
                 stock: 32,
-                image: 'kit'
+                image: 'kit-detox',
+                images: ['kit-detox-main', 'kit-detox-2']
             },
             {
                 id: 5,
                 name: 'Kit Rendimiento Máximo',
+                slug: 'kit-rendimiento-maximo',
                 category: 'kits',
                 concentration: '1000mg',
                 price: 1199,
                 oldPrice: 1699,
                 rating: 4.9,
                 reviews: 42,
-                description: '2 frascos de Plus + Shaker exclusivo',
-                benefits: ['Rendimiento deportivo', 'Recuperación muscular', 'Energía prolongada'],
+                description: '2 frascos de Plus + Shaker exclusivo para deportistas.',
+                longDescription: 'El Kit Rendimiento Máximo incluye 2 frascos de GINGERcaps Plus y un shaker deportivo de edición limitada. Perfecto para quienes buscan mejorar su rendimiento físico y recuperación.',
+                benefits: ['Rendimiento deportivo', 'Recuperación muscular', 'Energía prolongada', 'Ahorro del 29%'],
                 badge: 'Edición especial',
                 stock: 28,
-                image: 'kit'
+                image: 'kit-performance',
+                images: ['kit-performance-main', 'kit-performance-2']
             },
             {
                 id: 6,
                 name: 'Kit Familiar 90 Días',
+                slug: 'kit-familiar-90-dias',
                 category: 'kits',
                 concentration: '500mg + 1000mg',
                 price: 1599,
                 oldPrice: 2299,
                 rating: 5.0,
                 reviews: 23,
-                description: 'Original + Plus + Pro, ideal para toda la familia',
-                benefits: ['Bienestar completo', 'Para todos', 'Ahorro máximo'],
+                description: 'Original + Plus + Pro, ideal para toda la familia.',
+                longDescription: 'El Kit Familiar incluye las tres fórmulas GINGERcaps: Original, Plus y Pro. Cada miembro de la familia puede elegir la concentración que mejor se adapte a sus necesidades. Ahorro máximo y bienestar para todos.',
+                benefits: ['Bienestar completo', 'Para todos los niveles', 'Ahorro máximo', '90 días de suministro'],
                 badge: 'Mejor precio',
                 stock: 15,
-                image: 'kit'
+                image: 'kit-family',
+                images: ['kit-family-main', 'kit-family-2']
             }
         ];
         
         this.filteredProducts = [...this.products];
+    }
+    
+    getProductImageUrl(product) {
+        // Si hay imagen personalizada, usarla, si no, usar placeholder
+        return `/assets/images/products/${product.image}.jpg`;
     }
     
     renderProducts() {
@@ -235,8 +264,14 @@ export default class ShopView {
             <div class="product-card-shop" data-product-id="${product.id}">
                 <div class="product-badge-shop ${this.getBadgeClass(product.badge)}">${product.badge}</div>
                 <div class="product-image-shop">
-                    <div class="image-placeholder">
-                        <i class="fas ${product.image === 'capsules' ? 'fa-capsules' : 'fa-boxes'}"></i>
+                    <div class="image-container">
+                        <img 
+                            src="${this.getProductImageUrl(product)}" 
+                            alt="${product.name}"
+                            class="product-image"
+                            loading="lazy"
+                            onerror="this.src='/assets/images/products/placeholder.jpg'"
+                        >
                     </div>
                 </div>
                 <div class="product-info-shop">
@@ -251,7 +286,7 @@ export default class ShopView {
                     </div>
                     <p class="product-desc-shop">${product.description}</p>
                     <div class="product-benefits-shop">
-                        ${product.benefits.map(b => `<span class="benefit-tag">${b}</span>`).join('')}
+                        ${product.benefits.slice(0, 3).map(b => `<span class="benefit-tag">${b}</span>`).join('')}
                     </div>
                     <div class="product-price-shop">
                         <span class="current">${formatPrice(product.price)}</span>
@@ -269,19 +304,24 @@ export default class ShopView {
             </div>
         `).join('');
         
-        // Event listeners para botones
+        this.initProductEvents();
+    }
+    
+    initProductEvents() {
+        // Vista rápida
         document.querySelectorAll('.btn-quick-view').forEach(btn => {
             btn.addEventListener('click', (e) => {
+                e.stopPropagation();
                 const id = parseInt(btn.dataset.id);
                 const product = this.products.find(p => p.id === id);
-                if (product) {
-                    this.showQuickView(product);
-                }
+                if (product) this.showQuickView(product);
             });
         });
         
+        // Agregar al carrito
         document.querySelectorAll('.btn-add-cart-shop').forEach(btn => {
             btn.addEventListener('click', (e) => {
+                e.stopPropagation();
                 const id = parseInt(btn.dataset.id);
                 const product = this.products.find(p => p.id === id);
                 if (product) {
@@ -294,14 +334,17 @@ export default class ShopView {
                     });
                     showNotification(`${product.name} agregado al carrito`, 'success');
                     updateCartBadge();
+                    
+                    // Animación del botón
+                    btn.style.transform = 'scale(0.95)';
+                    setTimeout(() => btn.style.transform = '', 200);
                 }
             });
         });
         
-        // Event listeners para tarjetas (navegación a detalle)
+        // Navegación a detalle
         document.querySelectorAll('.product-card-shop').forEach(card => {
             card.addEventListener('click', (e) => {
-                // Evitar si se hizo clic en un botón
                 if (e.target.closest('.btn-quick-view') || e.target.closest('.btn-add-cart-shop')) return;
                 const productId = card.dataset.productId;
                 window.location.href = `/producto/${productId}`;
@@ -314,6 +357,7 @@ export default class ShopView {
         if (badge.includes('Nuevo')) return 'new';
         if (badge.includes('Ahorra')) return 'sale';
         if (badge.includes('precio')) return 'sale';
+        if (badge.includes('Edición')) return 'special';
         return 'default';
     }
     
@@ -332,9 +376,7 @@ export default class ShopView {
         // Filtro de concentración
         const concentrationCheckboxes = document.querySelectorAll('.filter-checkbox input');
         concentrationCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', () => {
-                this.applyFilters();
-            });
+            checkbox.addEventListener('change', () => this.applyFilters());
         });
         
         // Filtro de precio
@@ -345,11 +387,17 @@ export default class ShopView {
         
         if (priceMin && priceMax) {
             priceMin.addEventListener('input', () => {
+                if (parseInt(priceMin.value) > parseInt(priceMax.value)) {
+                    priceMin.value = priceMax.value;
+                }
                 minValue.textContent = priceMin.value;
                 this.applyFilters();
             });
             
             priceMax.addEventListener('input', () => {
+                if (parseInt(priceMax.value) < parseInt(priceMin.value)) {
+                    priceMax.value = priceMin.value;
+                }
                 maxValue.textContent = priceMax.value;
                 this.applyFilters();
             });
@@ -391,7 +439,7 @@ export default class ShopView {
         
         // Filtro por precio
         const minPrice = parseInt(document.getElementById('price-min')?.value || 0);
-        const maxPrice = parseInt(document.getElementById('price-max')?.value || 1500);
+        const maxPrice = parseInt(document.getElementById('price-max')?.value || 2000);
         
         filtered = filtered.filter(p => p.price >= minPrice && p.price <= maxPrice);
         
@@ -419,7 +467,6 @@ export default class ShopView {
     }
     
     clearAllFilters() {
-        // Resetear categoría
         this.currentCategory = 'all';
         document.querySelectorAll('.filter-btn').forEach(btn => {
             if (btn.dataset.category === 'all') {
@@ -429,21 +476,19 @@ export default class ShopView {
             }
         });
         
-        // Resetear concentración
         document.querySelectorAll('.filter-checkbox input').forEach(cb => {
             cb.checked = false;
         });
         
-        // Resetear precio
         const priceMin = document.getElementById('price-min');
         const priceMax = document.getElementById('price-max');
         const minValue = document.getElementById('min-value');
         const maxValue = document.getElementById('max-value');
         
         if (priceMin) priceMin.value = 0;
-        if (priceMax) priceMax.value = 1500;
+        if (priceMax) priceMax.value = 2000;
         if (minValue) minValue.textContent = '0';
-        if (maxValue) maxValue.textContent = '1500';
+        if (maxValue) maxValue.textContent = '2000';
         
         this.applyFilters();
     }
@@ -457,10 +502,15 @@ export default class ShopView {
                 <button class="quickview-close">&times;</button>
                 <div class="quickview-grid">
                     <div class="quickview-image">
-                        <i class="fas fa-capsules"></i>
+                        <img 
+                            src="${this.getProductImageUrl(product)}" 
+                            alt="${product.name}"
+                            class="quickview-img"
+                            onerror="this.src='/assets/images/products/placeholder.jpg'"
+                        >
                     </div>
                     <div class="quickview-info">
-                        <div class="quickview-badge">${product.badge}</div>
+                        <div class="quickview-badge ${this.getBadgeClass(product.badge)}">${product.badge}</div>
                         <h2>${product.name}</h2>
                         <div class="quickview-rating">
                             <i class="fas fa-star"></i>
@@ -471,7 +521,7 @@ export default class ShopView {
                             <span class="current">${formatPrice(product.price)}</span>
                             <span class="old">${formatPrice(product.oldPrice)}</span>
                         </div>
-                        <p class="quickview-description">${product.description}</p>
+                        <p class="quickview-description">${product.longDescription || product.description}</p>
                         <div class="quickview-benefits">
                             <strong>Beneficios:</strong>
                             <div class="benefits-list">
@@ -493,28 +543,22 @@ export default class ShopView {
         
         document.body.appendChild(modal);
         
-        const closeBtn = modal.querySelector('.quickview-close');
-        const overlay = modal.querySelector('.quickview-overlay');
-        
         const closeModal = () => modal.remove();
-        closeBtn.addEventListener('click', closeModal);
-        overlay.addEventListener('click', closeModal);
+        modal.querySelector('.quickview-close').addEventListener('click', closeModal);
+        modal.querySelector('.quickview-overlay').addEventListener('click', closeModal);
         
-        const addBtn = modal.querySelector('.btn-add-cart-quick');
-        if (addBtn) {
-            addBtn.addEventListener('click', () => {
-                store.addToCart({
-                    id: product.id,
-                    name: product.name,
-                    price: product.price,
-                    image: product.image,
-                    concentration: product.concentration
-                });
-                showNotification(`${product.name} agregado al carrito`, 'success');
-                updateCartBadge();
-                modal.remove();
+        modal.querySelector('.btn-add-cart-quick').addEventListener('click', () => {
+            store.addToCart({
+                id: product.id,
+                name: product.name,
+                price: product.price,
+                image: product.image,
+                concentration: product.concentration
             });
-        }
+            showNotification(`${product.name} agregado al carrito`, 'success');
+            updateCartBadge();
+            modal.remove();
+        });
     }
     
     destroy() {}

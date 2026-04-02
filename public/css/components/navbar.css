@@ -147,7 +147,7 @@
     transition: border-color 0.3s ease;
 }
 
-.navbar-logo:hover .logo-orbit {
+.navbar-logo .logo-orbit {
     border-color: rgba(200, 101, 27, 0.3);
     animation: orbit-spin 6s linear infinite;
 }

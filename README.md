@@ -1,1 +1,197 @@
 # TIENDA-INTELIGENTE
+
+GINGER/
+│
+├── node_modules/
+│
+├── public/
+│   │
+│   ├── index.html
+│   │
+│   ├── locales/
+│   │
+│   ├── css/
+│   │   │
+│   │   ├── animations/
+|   |   |   └── animations.css
+│   │   │
+│   │   ├── base/
+|   |   |   ├── reset.css
+|   |   |   ├── utilities.css
+|   |   |   └── variables.css
+│   │   │
+│   │   ├── components/
+|   |   |   ├── buttons.css
+|   |   |   ├── cards.css
+|   |   |   ├── navbar.css
+|   |   |   └── notifications.css
+│   │   │
+│   │   ├── layouts/
+|   |   |   └── main/layout.css
+│   │   │
+│   │   ├── pages/
+|   |   |   ├── auth.css
+|   |   |   ├── home.css
+|   |   |   └── shop.css
+│   │   │
+│   │   ├── themes/
+│   │   │
+│   │   ├── responsive/
+│   │   │
+│   │   └── main.css
+│   │
+│   └── assets/
+│       ├── images/
+│       │   ├── products/
+│       │   ├── banners/
+│       │   └── icons/
+│       └── fonts/
+│
+├── src/
+│   │
+│   ├── frontend/
+│   │   │
+│   │   ├── app.js
+│   │   ├── authGuard.js
+│   │   ├── config.js
+│   │   ├── router.js
+│   │   ├── store.js
+│   │   │
+│   │   ├── modules/
+│   │   │   │
+│   │   │   ├── admin/
+│   │   │   │   ├── categories/
+│   │   │   │   ├── dashboard/
+│   │   │   │   │   ├── adminDashboard.js
+│   │   │   │   ├── orders/
+│   │   │   │   ├── products/
+│   │   │   │   ├── banners/
+│   │   │   │   ├── reports/
+│   │   │   │   └── users/
+│   │   │   │
+│   │   │   ├── auth/
+│   │   │   │   ├── login.js
+│   │   │   │   ├── register.js
+│   │   │   │
+│   │   │   ├── benefits/
+│   │   │   │   ├── beneficios.js
+│   │   │   │
+│   │   │   ├── blog/
+│   │   │   │   ├── blog.js
+│   │   │   │
+│   │   │   ├── cart/
+│   │   │   │   ├── core/
+│   │   │   │   ├── modals/
+│   │   │   │   └── cart.js
+│   │   │   │
+│   │   │   ├── checkout/
+│   │   │   │   ├── core/
+│   │   │   │   ├── payment/
+│   │   │   │   ├── validation/
+│   │   │   │   └── checkout.js
+│   │   │   │
+│   │   │   ├── errors/
+│   │   │   │   ├── notFound.js
+│   │   │   │
+│   │   │   ├── home/
+│   │   │   │   ├── home.js
+│   │   │   │
+│   │   │   ├── products/
+│   │   │   │   ├── core/
+│   │   │   │   ├── filters/
+│   │   │   │   └── modals/
+│   │   │   │
+│   │   │   ├── inventory/
+│   │   │   │   ├── core/
+│   │   │   │   ├── alerts/
+│   │   │   │   └── reports/
+│   │   │   │
+│   │   │   ├── navbar/
+│   │   │   │   ├── navbar.js
+│   │   │   │
+│   │   │   ├── notifications/
+│   │   │   │   ├── notifications.js
+│   │   │   │
+│   │   │   ├── orders/
+│   │   │   │   ├── core/
+│   │   │   │   ├── tracking/
+│   │   │   │   │   └── orderTracking.js
+│   │   │   │   ├── history/
+│   │   │   │   └── orders.js
+│   │   │   │
+│   │   │   ├── products/
+│   │   │   │   ├── core/
+│   │   │   │   ├── filters/
+│   │   │   │   ├── productDetail.js
+│   │   │   │   └── shop.js
+│   │   │   │
+│   │   │   ├── promotions/
+│   │   │   │   ├── core/
+│   │   │   │   ├── coupons/
+│   │   │   │   └── offers/
+│   │   │   │
+│   │   │   ├── recommendations/
+│   │   │   │   ├── core/
+│   │   │   │   └── ai/
+│   │   │   │
+│   │   │   ├── suscripcion/
+│   │   │   │   ├── suscripcion.js
+│   │   │   │
+│   │   │   └── users/
+│   │   │       ├── profile/
+│   │   │       │   ├── profile.js
+│   │   │       ├── addresses/
+│   │   │       └── preferences/
+│   │   │
+│   │   ├── services/
+│   │   │   ├── api/
+│   │   │   ├── websocket/
+│   │   │   └── storage/
+│   │   │
+│   │   ├── utils/
+│   │   │
+│   │   ├── hooks/
+│   │   │
+│   │   └── components/
+│   │       ├── common/
+│   │       ├── forms/
+│   │       └── layout/
+│   │
+│   └── backend/
+│       │
+│       ├── config/
+│       │
+│       ├── controllers/
+│       │   ├── auth/
+│       │   │   ├── authController.js
+│       │   ├── products/
+│       │   ├── orders/
+│       │   ├── cart/
+│       │   ├── inventory/
+│       │   ├── users/
+│       │   ├── promotions/
+│       │   ├── payments/
+│       │   ├── recommendations/
+│       │   └── admin/
+│       │
+│       ├── middleware/
+│       │   ├── auth.js
+│       │
+│       ├── models/
+│       │   ├── User.js
+│       │
+│       ├── services/
+│       │   ├── payment/
+│       │   ├── email/
+│       │   ├── inventory/
+│       │   └── recommendation/
+│       │
+│       └── routes/
+│           ├── authRoutes.js
+│           ├── api/
+│           └── webhooks/
+│
+├── server.js
+├── package.json
+├── .env
+└── README.md

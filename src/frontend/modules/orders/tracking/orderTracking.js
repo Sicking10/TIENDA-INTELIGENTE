@@ -2,10 +2,10 @@
  * Módulo Seguimiento de Pedido
  */
 
-import { store } from '../../store.js';
-import { authGuard } from '../../authGuard.js';
-import { showNotification } from '../notifications/notifications.js';
-import { formatPrice } from '../../utils/cartUtils.js';
+import { store } from '../../../store.js';
+import { authGuard } from '../../../authGuard.js';
+import { showNotification } from '../../notifications/notifications.js';
+import { formatPrice } from '../../../utils/cartUtils.js';
 
 export default class OrderTrackingView {
     constructor(container, params = {}) {

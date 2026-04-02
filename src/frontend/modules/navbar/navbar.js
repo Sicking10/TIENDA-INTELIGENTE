@@ -13,31 +13,12 @@ import { updateCartBadge } from '../../utils/cartUtils.js';
 ───────────────────────────────────────────── */
 function getLogoSVG() {
     return `
-    <svg viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="46" height="46" rx="14" fill="url(#g-logo-bg)"/>
-        <path d="M23 9 C19 9 15 13 15 18 C15 23 18 26 21 28 L21 38"
-              stroke="rgba(255,255,255,0.92)" stroke-width="2.5"
-              stroke-linecap="round" fill="none"/>
-        <path d="M21 21 C24 18.5 29 21 29 26"
-              stroke="rgba(255,255,255,0.78)" stroke-width="2.2"
-              stroke-linecap="round" fill="none"/>
-        <path d="M21 28 C18 31 16 34 19 38"
-              stroke="rgba(255,255,255,0.65)" stroke-width="2"
-              stroke-linecap="round" fill="none"/>
-        <circle cx="23" cy="9"  r="2.8" fill="rgba(255,255,255,0.95)"/>
-        <circle cx="29" cy="26" r="2.2" fill="rgba(255,255,255,0.8)"/>
-        <circle cx="19" cy="38" r="1.9" fill="rgba(255,255,255,0.7)"/>
-        <path d="M23 9 C25 6 28 7 27 10"
-              stroke="rgba(255,255,255,0.7)" stroke-width="1.5"
-              stroke-linecap="round" fill="none"/>
-        <defs>
-            <linearGradient id="g-logo-bg" x1="0" y1="0" x2="46" y2="46">
-                <stop offset="0%"   stop-color="#E8834A"/>
-                <stop offset="60%"  stop-color="#C8651B"/>
-                <stop offset="100%" stop-color="#8B3F10"/>
-            </linearGradient>
-        </defs>
-    </svg>`;
+    <img src="/assets/images/icons/ginger.png" 
+         alt="GINGERcaps Logo" 
+         class="logo-image"
+         width="46" 
+         height="46">
+    `;
 }
 
 /* ─────────────────────────────────────────────
