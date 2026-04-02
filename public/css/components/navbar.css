@@ -222,14 +222,35 @@
     font-weight: 500;
     transition: color 0.25s ease;
     white-space: nowrap;
+    cursor: pointer;
+    letter-spacing: 0.01em;
     color: var(--bark-light);
 }
 
-[data-theme="dark"] .nav-link { color: rgba(200, 168, 130, 0.85); }
+[data-theme="dark"] .nav-link {
+    color: rgba(200, 168, 130, 0.85);
+}
 
-.nav-link.active { color: white !important; z-index: 2; }
-.nav-link:hover { color: white !important; }
+/* Cuando el indicador está debajo de un link (hover o active), ese link debe ser blanco */
+.nav-link.active,
+.nav-link:hover {
+    color: white !important;
+}
 
+.navbar-links:hover .nav-link.active:not(:hover) {
+    color: var(--bark-light) !important;
+}
+
+[data-theme="dark"] .navbar-links:hover .nav-link.active:not(:hover) {
+    color: rgba(200, 168, 130, 0.85) !important;
+}
+
+/* El link activo cuando está siendo hovereado también es blanco */
+.nav-link.active:hover {
+    color: white !important;
+}
+
+/* Nav Link Icon */
 .nav-link-icon {
     font-size: 14px;
     opacity: 0;
