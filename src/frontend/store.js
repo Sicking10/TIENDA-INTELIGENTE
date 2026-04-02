@@ -1,7 +1,6 @@
 /**
  * Estado global de la aplicación (Store)
  * store.js - Similar a un mini Vuex/Redux pero liviano
- * Similar a un mini Vuex/Redux pero liviano
  */
 
 class Store {
@@ -87,7 +86,7 @@ class Store {
      */
     setupAuthListener() {
         // Escuchar cambios en auth para actualizar UI
-        this.subscribe((path, newValue) => {
+        this.subscribe((path, newValue, oldValue, state) => {
             if (path === 'auth.isAuthenticated' || path === 'auth.user') {
                 this.updateNavbarAuth();
             }
@@ -240,6 +239,11 @@ class Store {
      * @returns {Function} Función para desuscribir
      */
     subscribe(callback) {
+        // Validar que callback sea una función
+        if (typeof callback !== 'function') {
+            console.warn('[STORE] subscribe: callback no es una función', callback);
+            return () => {};
+        }
         this.listeners.push(callback);
         return () => {
             this.listeners = this.listeners.filter(cb => cb !== callback);
@@ -252,7 +256,11 @@ class Store {
     notifyListeners(path, newValue, oldValue) {
         this.listeners.forEach(callback => {
             try {
-                callback(path, newValue, oldValue, this.state);
+                if (typeof callback === 'function') {
+                    callback(path, newValue, oldValue, this.state);
+                } else {
+                    console.warn('[STORE] listener no es una función', callback);
+                }
             } catch (error) {
                 console.error('Error in store listener:', error);
             }

@@ -22,6 +22,11 @@ const routes = {
         view: () => import('./modules/benefits/beneficios.js'),
         public: true
     },
+    '/blog': {
+        title: 'Blog',
+        view: () => import('./modules/blog/blog.js'),
+        public: true
+    },
     '/producto/:id': {
         title: 'Producto',
         view: () => import('./modules/products/productDetail.js'),
@@ -53,6 +58,12 @@ const routes = {
     '/mi-cuenta': {
         title: 'Mi Cuenta',
         view: () => import('./modules/users/profile/profile.js'),
+        public: false,
+        roles: ['user', 'admin']
+    },
+    '/suscripcion': {
+        title: 'Suscripcion',
+        view: () => import('./modules/suscripcion/suscripcion.js'),
         public: false,
         roles: ['user', 'admin']
     },

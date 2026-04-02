@@ -424,10 +424,29 @@ export function updateNavbarAuth() {
         const dropdownName = document.getElementById('dropdown-name');
         const dropdownEmail = document.getElementById('dropdown-email');
 
-        if (avatarInitials) avatarInitials.textContent = initials;
         if (avatarLabel) avatarLabel.textContent = name.split(' ')[0];
         if (dropdownName) dropdownName.textContent = name;
         if (dropdownEmail) dropdownEmail.textContent = user.email || '';
+
+        // 🔥 CARGAR AVATAR GUARDADO DESDE LOCALSTORAGE
+        const savedAvatar = localStorage.getItem('user_avatar');
+        const avatarCircle = document.querySelector('.avatar-circle');
+        
+        if (savedAvatar && avatarCircle) {
+            // Si hay avatar guardado, mostrarlo como imagen
+            avatarCircle.innerHTML = '';
+            const img = document.createElement('img');
+            img.src = savedAvatar;
+            img.alt = 'Avatar';
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.borderRadius = '50%';
+            img.style.objectFit = 'cover';
+            avatarCircle.appendChild(img);
+        } else if (avatarInitials) {
+            // Si no hay avatar guardado, mostrar iniciales
+            avatarInitials.textContent = initials;
+        }
 
         if (mobileAuthEl) {
             mobileAuthEl.innerHTML = `

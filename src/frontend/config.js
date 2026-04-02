@@ -37,7 +37,7 @@ const configs = {
         APP_NAME: 'Tienda Inteligente (Staging)'
     },
     production: {
-        API_URL: 'https://api.tiendainteligente.com/api',
+        API_URL: window.location.origin + '/api',
         WS_URL: 'wss://api.tiendainteligente.com',
         DEBUG: false,
         APP_NAME: 'Tienda Inteligente'
