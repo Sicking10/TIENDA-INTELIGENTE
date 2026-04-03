@@ -69,7 +69,6 @@ function getNavbarHTML() {
                         <div class="dropdown-nav">
                             <a href="/mi-cuenta" class="dropdown-item" data-link><span class="item-icon-wrap">👤</span>Mi perfil</a>
                             <a href="/mis-pedidos" class="dropdown-item" data-link><span class="item-icon-wrap">📦</span>Mis pedidos</a>
-                            <a href="/suscripcion" class="dropdown-item" data-link><span class="item-icon-wrap">🌿</span>Suscripción</a>
                             <div class="dropdown-divider"></div>
                             <button class="dropdown-item logout-item" id="logout-btn"><span class="item-icon-wrap">🚪</span>Cerrar sesión</button>
                         </div>
