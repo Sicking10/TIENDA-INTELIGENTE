@@ -240,22 +240,22 @@ export default class BeneficiosView {
                         </div>
                         <div class="numbers-grid">
                             <div class="number-card">
-                                <div class="number-value" data-count="32">32%</div>
+                                <div class="number-value" data-count="32%">32%</div>
                                 <div class="number-label">Reducción de marcadores inflamatorios</div>
                                 <div class="number-source">Journal of Nutrition, 2023</div>
                             </div>
                             <div class="number-card">
-                                <div class="number-value" data-count="28">28%</div>
+                                <div class="number-value" data-count="28%">28%</div>
                                 <div class="number-label">Mejora en función cognitiva</div>
                                 <div class="number-source">Frontiers in Aging, 2022</div>
                             </div>
                             <div class="number-card">
-                                <div class="number-value" data-count="45">45%</div>
+                                <div class="number-value" data-count="45%">45%</div>
                                 <div class="number-label">Reducción del estrés oxidativo</div>
                                 <div class="number-source">Antioxidants, 2021</div>
                             </div>
                             <div class="number-card">
-                                <div class="number-value" data-count="15">15k+</div>
+                                <div class="number-value" data-count="15k+">15k+</div>
                                 <div class="number-label">Clientes satisfechos</div>
                                 <div class="number-source">Más de 15,000 personas</div>
                             </div>
@@ -390,34 +390,42 @@ export default class BeneficiosView {
     }
     
     initCounters() {
-        const counters = document.querySelectorAll('.number-value');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const element = entry.target;
-                    const target = element.dataset.count;
-                    if (target) {
-                        let start = 0;
-                        const duration = 2000;
-                        const step = parseInt(target) / (duration / 16);
-                        const updateCounter = () => {
-                            start += step;
-                            if (start < parseInt(target)) {
-                                element.textContent = Math.floor(start) + (target.includes('k+') ? 'k+' : '%');
-                                requestAnimationFrame(updateCounter);
-                            } else {
-                                element.textContent = target;
-                            }
-                        };
-                        updateCounter();
-                    }
-                    observer.unobserve(element);
+    const counters = document.querySelectorAll('.number-value');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const element = entry.target;
+                const target = element.dataset.count;
+                if (target) {
+                    // Extraer el número puro del target
+                    const match = target.match(/\d+/);
+                    const targetNumber = match ? parseInt(match[0]) : 0;
+                    
+                    // Guardar el sufijo (%, k+, etc.)
+                    const suffix = target.replace(/[\d]/g, '');
+                    
+                    let current = 0;
+                    const duration = 2000;
+                    const increment = targetNumber / (duration / 16);
+                    
+                    const animate = () => {
+                        current += increment;
+                        if (current < targetNumber) {
+                            element.textContent = Math.floor(current) + suffix;
+                            requestAnimationFrame(animate);
+                        } else {
+                            element.textContent = target;
+                        }
+                    };
+                    animate();
                 }
-            });
-        }, { threshold: 0.5 });
-        
-        counters.forEach(counter => observer.observe(counter));
-    }
+                observer.unobserve(element);
+            }
+        });
+    }, { threshold: 0.5 });
+    
+    counters.forEach(counter => observer.observe(counter));
+}
     
     initScrollAnimations() {
         const animatedElements = document.querySelectorAll('.benefit-showcase, .synergy-card, .number-card, .timeline-item, .faq-item');

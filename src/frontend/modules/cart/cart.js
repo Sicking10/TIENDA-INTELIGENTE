@@ -1,6 +1,7 @@
 /**
  * Módulo Cart - Carrito de compras
- * Versión corregida - SIN onerror inline y rutas de imágenes fijas
+ * cart.js
+ * VERSIÓN DEFINITIVA - Con addEventListener que el router no puede interceptar
  */
 
 import { store } from '../../store.js';
@@ -17,6 +18,7 @@ export default class CartView {
         this.discount = 0;
         this.discountCode = '';
         this.shippingCost = 0;
+        this.checkoutHandler = null;
     }
     
     async render() {
@@ -30,6 +32,7 @@ export default class CartView {
         
         this.initEvents();
         this.setupImageErrorHandlers();
+        this.initCheckoutButton(); // ← Nueva función
         
         return this;
     }
@@ -40,7 +43,6 @@ export default class CartView {
         this.cartItemCount = store.get('cart.itemCount') || 0;
     }
     
-    // Manejador de errores de imagen SIN inline
     setupImageErrorHandlers() {
         document.querySelectorAll('.cart-item-image img, .suggestion-image img').forEach(img => {
             img.removeEventListener('error', img._errorHandler);
@@ -91,7 +93,6 @@ export default class CartView {
                     </div>
                     
                     <div class="cart-layout">
-                        <!-- Lista de productos -->
                         <div class="cart-items">
                             <div class="cart-items-header">
                                 <div class="col-product">Producto</div>
@@ -113,7 +114,6 @@ export default class CartView {
                             </div>
                         </div>
                         
-                        <!-- Resumen del pedido -->
                         <div class="cart-summary">
                             <h3>Resumen del pedido</h3>
                             
@@ -130,7 +130,7 @@ export default class CartView {
                             <div class="summary-row">
                                 <span>Envío</span>
                                 <span class="shipping-cost" id="shipping-cost">
-                                    ${shipping === 0 ? 'Gratis' : formatPrice(shipping)}
+                                    ${shipping === 0 ? 'Por descubrir' : formatPrice(shipping)}
                                 </span>
                             </div>
                             
@@ -154,17 +154,10 @@ export default class CartView {
                                 <div id="coupon-message" class="coupon-message"></div>
                             </div>
                             
-                            <button id="checkout-btn" class="btn-checkout">
+                            <!-- Botón sin onclick inline -->
+                            <button type="button" id="checkout-btn" class="btn-checkout">
                                 <i class="fas fa-lock"></i> Proceder al pago
                             </button>
-                            
-                            <div class="payment-methods">
-                                <i class="fab fa-cc-visa"></i>
-                                <i class="fab fa-cc-mastercard"></i>
-                                <i class="fab fa-cc-amex"></i>
-                                <i class="fab fa-paypal"></i>
-                                <i class="fas fa-university"></i>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -174,7 +167,6 @@ export default class CartView {
     
     renderCartItems() {
         return this.cartItems.map(item => {
-            // Determinar qué imagen mostrar basado en el ID del producto
             let imageName = 'placeholder';
             if (item.id === 'ginger-origin' || item.name.includes('ORIGIN')) {
                 imageName = 'original';
@@ -230,7 +222,7 @@ export default class CartView {
     }
     
     initEvents() {
-        // Eventos para modificar cantidad
+        // Cantidad
         document.querySelectorAll('.qty-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -240,12 +232,8 @@ export default class CartView {
                 if (!input) return;
                 
                 let currentValue = parseInt(input.value);
-                
-                if (action === 'increase') {
-                    currentValue++;
-                } else if (action === 'decrease') {
-                    currentValue--;
-                }
+                if (action === 'increase') currentValue++;
+                else if (action === 'decrease') currentValue--;
                 
                 if (currentValue >= 1 && currentValue <= 99) {
                     input.value = currentValue;
@@ -254,7 +242,7 @@ export default class CartView {
             });
         });
         
-        // Eventos para input de cantidad
+        // Input cantidad
         document.querySelectorAll('.quantity-input').forEach(input => {
             input.addEventListener('change', (e) => {
                 const productId = input.dataset.id;
@@ -266,7 +254,7 @@ export default class CartView {
             });
         });
         
-        // Eventos para eliminar item
+        // Eliminar item
         document.querySelectorAll('.btn-remove-item').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -278,31 +266,20 @@ export default class CartView {
         // Vaciar carrito
         const clearCartBtn = document.getElementById('clear-cart-btn');
         if (clearCartBtn) {
-            clearCartBtn.addEventListener('click', () => this.clearCart());
+            const newClearBtn = clearCartBtn.cloneNode(true);
+            clearCartBtn.parentNode.replaceChild(newClearBtn, clearCartBtn);
+            newClearBtn.addEventListener('click', () => this.clearCart());
         }
         
         // Aplicar cupón
         const applyCouponBtn = document.getElementById('apply-coupon-btn');
         if (applyCouponBtn) {
-            applyCouponBtn.addEventListener('click', () => this.applyCoupon());
+            const newCouponBtn = applyCouponBtn.cloneNode(true);
+            applyCouponBtn.parentNode.replaceChild(newCouponBtn, applyCouponBtn);
+            newCouponBtn.addEventListener('click', () => this.applyCoupon());
         }
         
-        // Proceder al pago
-        const checkoutBtn = document.getElementById('checkout-btn');
-        if (checkoutBtn) {
-            checkoutBtn.addEventListener('click', () => {
-                const isAuthenticated = store.get('auth.isAuthenticated');
-                if (!isAuthenticated) {
-                    showNotification('Debes iniciar sesión para continuar', 'warning');
-                    sessionStorage.setItem('redirectAfterLogin', '/checkout');
-                    window.location.href = '/login';
-                } else {
-                    window.location.href = '/checkout';
-                }
-            });
-        }
-        
-        // Sugerencias (carrito vacío)
+        // Sugerencias
         document.querySelectorAll('.btn-add-suggestion').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const product = JSON.parse(btn.dataset.product);
@@ -320,6 +297,61 @@ export default class CartView {
             });
         });
     }
+    
+    initCheckoutButton() {
+    const checkoutBtn = document.getElementById('checkout-btn');
+    if (!checkoutBtn) {
+        console.warn('⚠️ Botón checkout no encontrado');
+        return;
+    }
+
+    // Eliminar atributos que el router podría interceptar
+    checkoutBtn.removeAttribute('data-link');
+    checkoutBtn.removeAttribute('href');
+    checkoutBtn.setAttribute('type', 'button');
+
+    // Guardar referencia al handler para poder removerlo en destroy()
+    this.checkoutHandler = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+
+        console.log('🛒 Procesando checkout...');
+
+        const isAuthenticated = store.get('auth.isAuthenticated');
+        if (!isAuthenticated) {
+            showNotification('Debes iniciar sesión para continuar', 'warning');
+            sessionStorage.setItem('redirectAfterLogin', '/checkout');
+            window.location.href = '/login';
+            return;
+        }
+
+        const cartItems = store.get('cart.items') || [];
+        if (cartItems.length === 0) {
+            showNotification('Tu carrito está vacío', 'warning');
+            return;
+        }
+
+        window.location.href = '/checkout';
+    };
+
+    // Registrar en fase de CAPTURA directamente en el botón (no en document)
+    // Fase de captura garantiza que se ejecuta antes que el router
+    checkoutBtn.addEventListener('click', this.checkoutHandler, true);
+
+    console.log('✅ Botón checkout configurado');
+}
+
+destroy() {
+    // Limpiar el listener del botón si existe
+    if (this.checkoutHandler) {
+        const checkoutBtn = document.getElementById('checkout-btn');
+        if (checkoutBtn) {
+            checkoutBtn.removeEventListener('click', this.checkoutHandler, true);
+        }
+        this.checkoutHandler = null;
+    }
+}
     
     updateQuantity(productId, newQuantity) {
         store.updateCartItemQuantity(productId, newQuantity);
@@ -351,7 +383,6 @@ export default class CartView {
         const couponMessage = document.getElementById('coupon-message');
         const code = couponInput.value.trim().toUpperCase();
         
-        // Cupones de ejemplo
         const coupons = {
             'BIENVENIDO10': { discount: 10, message: '¡Cupón aplicado! 10% de descuento' },
             'GINGER20': { discount: 20, message: '¡Cupón aplicado! 20% de descuento' },

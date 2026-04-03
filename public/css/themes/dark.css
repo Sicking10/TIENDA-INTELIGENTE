@@ -3,6 +3,7 @@
     --cream: #160D06;
     --cream-deep: #1E1008;
     --ginger: #784b06;
+    --ginger-light: #9A6B1C;
     --bark: #F5E4B2;
     --bark-light: #E8D099;
     --chamomile: #261508;
@@ -23,6 +24,10 @@
     --gray-900: #eeeeee;
     --white: #ffffff;
     --black: #0a0a0a;
+    --nav-bg: rgba(22, 12, 5, 0.94);
+    --nav-border: rgba(200, 101, 27, 0.2);
+    --cream: #160C05;
+    --bark-faint: rgba(200, 168, 130, 0.06);
 }
 
 /* ============================================
@@ -459,12 +464,20 @@
 }
 
 [data-theme="dark"] .logo-brand em {
-    color: var(--ginger);
+    color: var(--ginger-light);
 }
 
 [data-theme="dark"] .logo-tagline {
-    color: var(--ginger);
+    color: var(--bark-light);
     opacity: 0.7;
+}
+
+[data-theme="dark"] .avatar-chevron {
+    color: var(--bark-light);
+}
+
+.notification-content p {
+    color: var(--black);
 }
 
 [data-theme="dark"] .theme-toggle {
@@ -2678,4 +2691,376 @@
 /* Asegurar que ningún texto sea negro sobre fondo oscuro */
 [data-theme="dark"] .cart-page * {
     color-scheme: dark;
+}
+
+[data-theme="dark"] .btn-location {
+    background: linear-gradient(135deg, #E8A838, #C8841C);
+}
+
+[data-theme="dark"] .delivery-warning {
+    background: rgba(244, 67, 54, 0.15);
+}
+
+[data-theme="dark"] .pickup-card {
+    background: rgba(232, 168, 56, 0.08);
+    border-color: rgba(232, 168, 56, 0.15);
+}
+
+[data-theme="dark"] .pickup-title h4 {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .pickup-detail {
+    color: #C8A882;
+}
+
+[data-theme="dark"] .pickup-note {
+    background: rgba(123, 174, 82, 0.15);
+}
+
+/* ============================================
+   MODO OSCURO - CHECKOUT
+============================================ */
+
+[data-theme="dark"] .checkout-page {
+    background: var(--cream);
+}
+
+[data-theme="dark"] .checkout-header h1 {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .checkout-header p {
+    color: #C8A882;
+}
+
+[data-theme="dark"] .checkout-form,
+[data-theme="dark"] .order-summary {
+    background: var(--chamomile);
+    border-color: rgba(232, 168, 56, 0.1);
+}
+
+[data-theme="dark"] .form-section {
+    border-bottom-color: rgba(232, 168, 56, 0.08);
+}
+
+[data-theme="dark"] .form-section h3 {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .form-group label {
+    color: #C8A882;
+}
+
+[data-theme="dark"] .form-group input,
+[data-theme="dark"] .form-group select,
+[data-theme="dark"] .form-group textarea {
+    background: var(--cream);
+    border-color: rgba(232, 168, 56, 0.15);
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .form-group input::placeholder {
+    color: #B89A7A;
+}
+
+[data-theme="dark"] .form-group input:focus {
+    border-color: #E8A838;
+    box-shadow: 0 0 0 3px rgba(232, 168, 56, 0.1);
+}
+
+[data-theme="dark"] .shipping-option,
+[data-theme="dark"] .payment-option {
+    background: var(--cream);
+    border-color: rgba(232, 168, 56, 0.08);
+}
+
+[data-theme="dark"] .shipping-option:hover,
+[data-theme="dark"] .payment-option:hover {
+    background: rgba(232, 168, 56, 0.08);
+    border-color: rgba(232, 168, 56, 0.2);
+}
+
+[data-theme="dark"] .shipping-option i,
+[data-theme="dark"] .payment-option i {
+    color: #E8A838;
+}
+
+[data-theme="dark"] .shipping-option span,
+[data-theme="dark"] .payment-option span {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .card-details {
+    background: var(--cream);
+}
+
+[data-theme="dark"] .btn-place-order {
+    background: linear-gradient(135deg, #E8A838, #C8841C);
+}
+
+[data-theme="dark"] .btn-place-order:hover {
+    box-shadow: 0 8px 20px rgba(232, 168, 56, 0.3);
+}
+
+[data-theme="dark"] .order-summary h3 {
+    color: #F0D9B0;
+    border-bottom-color: rgba(232, 168, 56, 0.08);
+}
+
+[data-theme="dark"] .summary-item {
+    border-bottom-color: rgba(232, 168, 56, 0.05);
+}
+
+[data-theme="dark"] .item-name {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .item-quantity {
+    background: rgba(232, 168, 56, 0.15);
+    color: #E8A838;
+}
+
+[data-theme="dark"] .item-price {
+    color: #E8A838;
+}
+
+[data-theme="dark"] .summary-totals {
+    border-top-color: rgba(232, 168, 56, 0.08);
+}
+
+[data-theme="dark"] .summary-row {
+    color: #C8A882;
+}
+
+[data-theme="dark"] .summary-row.total {
+    color: #F0D9B0;
+    border-top-color: rgba(232, 168, 56, 0.08);
+}
+
+[data-theme="dark"] .summary-row.total .total-amount {
+    color: #E8A838;
+}
+
+/* Asegurar que ningún texto sea negro sobre fondo oscuro */
+[data-theme="dark"] .checkout-page * {
+    color-scheme: dark;
+}
+
+/* ============================================
+   MODO OSCURO - ORDER TRACKING
+============================================ */
+
+[data-theme="dark"] .tracking-page {
+    background: var(--cream);
+}
+
+[data-theme="dark"] .tracking-hero {
+    background: var(--cream);
+}
+
+[data-theme="dark"] .hero-glow-1 {
+    background: #D97A2B;
+    opacity: 0.15;
+}
+
+[data-theme="dark"] .hero-glow-2 {
+    background: #E8A838;
+    opacity: 0.12;
+}
+
+[data-theme="dark"] .hero-icon {
+    background: rgba(232, 168, 56, 0.15);
+}
+
+[data-theme="dark"] .hero-icon i {
+    color: #E8A838;
+}
+
+[data-theme="dark"] .tracking-hero h1 {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .order-id {
+    color: #E8A838;
+}
+
+[data-theme="dark"] .tracking-steps-container {
+    background: var(--chamomile);
+    border-color: rgba(232, 168, 56, 0.1);
+}
+
+[data-theme="dark"] .step-icon {
+    background: var(--cream);
+    border-color: rgba(232, 168, 56, 0.2);
+    color: #C8A882;
+}
+
+[data-theme="dark"] .step.completed .step-icon {
+    background: #E8A838;
+    border-color: #E8A838;
+    color: #1A0A00;
+}
+
+[data-theme="dark"] .step.active .step-icon {
+    border-color: #E8A838;
+    color: #E8A838;
+}
+
+[data-theme="dark"] .step-line {
+    background: rgba(232, 168, 56, 0.2);
+}
+
+[data-theme="dark"] .step.completed .step-line {
+    background: #E8A838;
+}
+
+[data-theme="dark"] .step-content h4 {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .step-content p {
+    color: #C8A882;
+}
+
+[data-theme="dark"] .step-date {
+    color: #B89A7A;
+}
+
+[data-theme="dark"] .order-details-card,
+[data-theme="dark"] .shipping-info-card {
+    background: var(--chamomile);
+    border-color: rgba(232, 168, 56, 0.1);
+}
+
+[data-theme="dark"] .order-details-card h3,
+[data-theme="dark"] .shipping-info-card h3 {
+    color: #F0D9B0;
+    border-bottom-color: rgba(232, 168, 56, 0.08);
+}
+
+[data-theme="dark"] .order-item {
+    background: var(--cream);
+}
+
+[data-theme="dark"] .order-item:hover {
+    background: rgba(232, 168, 56, 0.08);
+}
+
+[data-theme="dark"] .item-details h4 {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .item-meta {
+    color: #B89A7A;
+}
+
+[data-theme="dark"] .item-meta .concentration {
+    background: rgba(232, 168, 56, 0.15);
+    color: #E8A838;
+}
+
+[data-theme="dark"] .item-price {
+    color: #E8A838;
+}
+
+[data-theme="dark"] .order-total {
+    border-top-color: rgba(232, 168, 56, 0.08);
+    color: #C8A882;
+}
+
+[data-theme="dark"] .order-total strong {
+    color: #E8A838;
+}
+
+[data-theme="dark"] .shipping-address i,
+[data-theme="dark"] .shipping-contact i {
+    background: rgba(232, 168, 56, 0.1);
+    color: #E8A838;
+}
+
+[data-theme="dark"] .shipping-address strong,
+[data-theme="dark"] .shipping-contact strong {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .shipping-address p,
+[data-theme="dark"] .shipping-contact p {
+    color: #C8A882;
+}
+
+[data-theme="dark"] .help-support-card {
+    background: rgba(232, 168, 56, 0.05);
+    border-color: rgba(232, 168, 56, 0.08);
+}
+
+[data-theme="dark"] .help-support-card i {
+    color: #E8A838;
+}
+
+[data-theme="dark"] .help-support-card h4 {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .help-support-card p {
+    color: #C8A882;
+}
+
+[data-theme="dark"] .btn-contact {
+    background: linear-gradient(135deg, #E8A838, #C8841C);
+}
+
+[data-theme="dark"] .btn-contact:hover {
+    box-shadow: 0 8px 20px rgba(232, 168, 56, 0.3);
+}
+
+[data-theme="dark"] .empty-icon {
+    background: rgba(232, 168, 56, 0.1);
+}
+
+[data-theme="dark"] .empty-icon i {
+    color: #E8A838;
+}
+
+/* Asegurar que ningún texto sea negro sobre fondo oscuro */
+[data-theme="dark"] .tracking-page * {
+    color-scheme: dark;
+}
+
+/* Modo oscuro */
+[data-theme="dark"] .gratis,
+[data-theme="dark"] .gratis-text,
+[data-theme="dark"] .envio-gratis-badge {
+    color: #7BAE52;
+}
+
+[data-theme="dark"] .envio-info {
+    background: rgba(123, 174, 82, 0.15);
+    color: #7BAE52;
+}
+
+/* Modo oscuro */
+[data-theme="dark"] .modal-addresses .modal-content {
+    background: var(--chamomile);
+}
+
+[data-theme="dark"] .modal-addresses .modal-header h3 {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .address-item {
+    background: var(--cream);
+}
+
+[data-theme="dark"] .address-item-content p {
+    color: #C8A882;
+}
+
+[data-theme="dark"] .address-type {
+    color: #E8A838;
+}
+
+[data-theme="dark"] .default-badge {
+    background: #E8A838;
+    color: #1A0A00;
 }

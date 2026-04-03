@@ -7,11 +7,11 @@
  * Este archivo solo orquesta la inicialización global.
  */
 
-import { router }           from './router.js';
-import { store }            from './store.js';
-import { config }           from './config.js';
+import { router } from './router.js';
+import { store } from './store.js';
+import { config } from './config.js';
 import { setupEventDelegation } from './utils/domEvents.js';
-import { authGuard }        from './authGuard.js';
+import { authGuard } from './authGuard.js';
 import { initNotifications } from './modules/notifications/notifications.js';
 import { renderNavbar, updateNavbarAuth } from './modules/navbar/navbar.js';
 
@@ -21,7 +21,7 @@ import { renderNavbar, updateNavbarAuth } from './modules/navbar/navbar.js';
 ───────────────────────────────────────────── */
 function setupTheme() {
     const saved = localStorage.getItem('theme');
-    const theme = 'light'; 
+    const theme = 'light';
 
     document.documentElement.setAttribute('data-theme', theme);
 
@@ -43,7 +43,7 @@ function hideInitialLoader() {
     if (!loader) return;
 
     loader.style.transition = 'opacity 0.35s ease';
-    loader.style.opacity    = '0';
+    loader.style.opacity = '0';
     setTimeout(() => {
         loader.style.display = 'none';
     }, 350);
@@ -90,9 +90,9 @@ function showCriticalError(message) {
 async function initializeServices() {
     try {
         const response = await fetch(`${config.API_URL}/health`, {
-            method:  'GET',
+            method: 'GET',
             headers: { 'Content-Type': 'application/json' },
-            signal:  AbortSignal.timeout(8000) // 8s timeout
+            signal: AbortSignal.timeout(8000) // 8s timeout
         });
 
         if (!response.ok) {
@@ -136,14 +136,14 @@ async function initApp() {
         // 1. Aplicar tema antes del primer paint (evita FOUC)
         setupTheme();
 
-        // 2. Montar la navbar (única fuente de verdad: navbar.js)
-        renderNavbar();
+        // 2. Inicializar el store global
+        store.init();
 
         // 3. Conectar con el backend
         await initializeServices();
 
-        // 4. Inicializar el store global
-        store.init();
+        // 4. Montar la navbar (única fuente de verdad: navbar.js)
+        renderNavbar();
 
         // 5. Sincronizar auth → navbar
         setupAuthSync();
@@ -158,8 +158,17 @@ async function initApp() {
         setupEventDelegation();
 
         // 9. Resolver ruta inicial respetando guards
-        const initialPath = authGuard.getInitialPath();
-        router.navigate(initialPath);
+        const currentPath = window.location.pathname;
+
+        // Solo navegar al home si estamos en la raíz exacta
+        // Si el usuario llega directo a /checkout, /carrito, etc., respetar esa ruta
+        if (currentPath === '/' || currentPath === '') {
+            const initialPath = authGuard.getInitialPath();
+            router.navigate(initialPath, true); // replace:true para no duplicar historial
+        } else {
+            // Dejar que el router maneje la ruta actual sin redirigir
+            router.handleRoute(currentPath);
+        }
 
         // 10. Ocultar loader
         hideInitialLoader();

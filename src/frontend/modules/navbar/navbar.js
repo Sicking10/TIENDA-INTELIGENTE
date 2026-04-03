@@ -264,55 +264,78 @@ export function updateNavbarAuth() {
     const user = store.get('auth.user');
     const userMenuEl = document.getElementById('user-menu');
     const authBtnsEl = document.getElementById('auth-buttons');
-    const mobileAuthSection = document.getElementById('mobile-auth-section');
-    const mobileActionsSection = document.getElementById('mobile-actions-section');
     const mobileUserSection = document.getElementById('mobile-user-section');
     const mobileUserName = document.getElementById('mobile-user-name');
     const mobileUserEmail = document.getElementById('mobile-user-email');
     const mobileAvatarInitials = document.getElementById('mobile-avatar-initials');
     const mobileAvatarContainer = document.querySelector('.mobile-user-avatar');
+    
+    console.log('🔐 updateNavbarAuth - isAuth:', isAuth, 'user:', user); // Debug
+    
     if (isAuth && user) {
         if (userMenuEl) userMenuEl.style.display = 'block';
         if (authBtnsEl) authBtnsEl.style.display = 'none';
+        
         const name = user.name || user.email?.split('@')[0] || 'Usuario';
         const initials = name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+        
         const avatarLabel = document.getElementById('avatar-label');
         const dropdownName = document.getElementById('dropdown-name');
         const dropdownEmail = document.getElementById('dropdown-email');
-        if (avatarLabel) avatarLabel.textContent = name.split(' ')[0];
+        
+        if (avatarLabel) avatarLabel.textContent = name.split(' ')[0] || name;
         if (dropdownName) dropdownName.textContent = name;
         if (dropdownEmail) dropdownEmail.textContent = user.email || '';
+        
+        // Avatar en el círculo
         const savedAvatar = localStorage.getItem('user_avatar');
         const avatarCircle = document.querySelector('.avatar-circle');
-        if (savedAvatar && avatarCircle) {
-            avatarCircle.innerHTML = '';
-            const img = document.createElement('img');
-            img.src = savedAvatar;
-            img.style.width = '100%'; img.style.height = '100%'; img.style.borderRadius = '50%'; img.style.objectFit = 'cover';
-            avatarCircle.appendChild(img);
-        } else {
-            const avatarInitials = document.getElementById('avatar-initials');
-            if (avatarInitials) avatarInitials.textContent = initials;
+        
+        if (avatarCircle) {
+            if (savedAvatar) {
+                avatarCircle.innerHTML = '';
+                const img = document.createElement('img');
+                img.src = savedAvatar;
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.borderRadius = '50%';
+                img.style.objectFit = 'cover';
+                avatarCircle.appendChild(img);
+            } else {
+                avatarCircle.innerHTML = '';
+                avatarCircle.textContent = initials;
+                avatarCircle.style.display = 'flex';
+                avatarCircle.style.alignItems = 'center';
+                avatarCircle.style.justifyContent = 'center';
+                avatarCircle.style.fontSize = '18px';
+                avatarCircle.style.fontWeight = '600';
+            }
         }
-        if (mobileAuthSection) mobileAuthSection.style.display = 'none';
-        if (mobileActionsSection) mobileActionsSection.style.display = 'flex';
+        
+        // Mobile
         if (mobileUserSection) mobileUserSection.style.display = 'flex';
         if (mobileUserName) mobileUserName.textContent = name;
         if (mobileUserEmail) mobileUserEmail.textContent = user.email || '';
         if (mobileAvatarInitials) mobileAvatarInitials.textContent = initials;
+        
         if (savedAvatar && mobileAvatarContainer) {
             mobileAvatarContainer.innerHTML = '';
             const img = document.createElement('img');
             img.src = savedAvatar;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.borderRadius = '50%';
+            img.style.objectFit = 'cover';
             mobileAvatarContainer.appendChild(img);
         }
+        
+        // Mobile logout
         const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
         if (mobileLogoutBtn) mobileLogoutBtn.onclick = () => handleLogout();
+        
     } else {
         if (userMenuEl) userMenuEl.style.display = 'none';
         if (authBtnsEl) authBtnsEl.style.display = 'flex';
-        if (mobileAuthSection) mobileAuthSection.style.display = 'flex';
-        if (mobileActionsSection) mobileActionsSection.style.display = 'none';
         if (mobileUserSection) mobileUserSection.style.display = 'none';
     }
 }
@@ -330,28 +353,43 @@ export function bumpCartBadge() {
 
 export function renderNavbar() {
     if (document.querySelector('.navbar-ginger')) return;
+    
     const navbar = document.createElement('nav');
     navbar.className = 'navbar-ginger';
     navbar.setAttribute('role', 'navigation');
     navbar.innerHTML = getNavbarHTML();
     document.body.insertBefore(navbar, document.body.firstChild);
+    
     initScrollBehavior(navbar);
     initMobileMenu();
     initThemeToggle();
     initNavIndicator();
     setActiveLink();
     initUserDropdown();
+    
     document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
     updateCartBadge();
     updateMobileCartBadge();
-    setTimeout(updateNavbarAuth, 120);
+    
+    setTimeout(() => updateNavbarAuth(), 100);
+    setTimeout(() => updateNavbarAuth(), 300);
+    setTimeout(() => updateNavbarAuth(), 500);
+    
     window.addEventListener('popstate', setActiveLink);
     window.addEventListener('router-navigate', setActiveLink);
-    store.subscribe((path) => {
+    
+    // Suscribirse a cambios en el store
+    store.subscribe((path, newValue) => {
         if (path === 'cart.itemCount') {
             updateCartBadge();
             updateMobileCartBadge();
         }
-        if (path === 'auth.isAuthenticated' || path === 'auth.user') updateNavbarAuth();
+        if (path === 'auth.isAuthenticated' || path === 'auth.user') {
+            updateNavbarAuth();
+        }
+    });
+    
+    document.addEventListener('store-ready', () => {
+        updateNavbarAuth();
     });
 }

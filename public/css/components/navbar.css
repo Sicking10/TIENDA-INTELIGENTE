@@ -5,37 +5,6 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap');
 
-:root {
-    --nav-height: 76px;
-    --ginger: #C8651B;
-    --ginger-deep: #9A4710;
-    --ginger-glow: rgba(200, 101, 27, 0.12);
-    --turmeric: #E8A838;
-    --chamomile: #F5E4B2;
-    --bark: #2C1A0E;
-    --bark-light: #4A2F1A;
-    --bark-faint: rgba(44, 26, 14, 0.04);
-    --cream: #FDF8F0;
-    --stem: #5C7A3E;
-    --leaf: #7BAE52;
-    --nav-bg: rgba(253, 248, 240, 0.92);
-    --nav-border: rgba(200, 101, 27, 0.12);
-    --nav-shadow: 0 4px 30px rgba(44, 26, 14, 0.08);
-    --font-display: 'Cormorant Garamond', Georgia, serif;
-    --font-body: 'Outfit', sans-serif;
-    --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-    --smooth: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-[data-theme="dark"] {
-    --nav-bg: rgba(22, 12, 5, 0.94);
-    --nav-border: rgba(200, 101, 27, 0.2);
-    --cream: #160C05;
-    --bark: #F0DFC0;
-    --bark-light: #C8A882;
-    --bark-faint: rgba(200, 168, 130, 0.06);
-}
-
 /* ============================================
    NAVBAR SHELL
 ============================================ */

@@ -1,10 +1,13 @@
 /**
  * Variables CSS
  * Colores, tipografías, sombras, etc.
+ * ROOT COMBINADO - Prioridad al root principal
  */
 
 :root {
-    /* Colores principales */
+    /* ============================================
+       COLORES PRINCIPALES 
+    ============================================ */
     --primary-color: #4CAF50;
     --primary-dark: #388E3C;
     --primary-light: #81C784;
@@ -34,23 +37,34 @@
     --error: #F44336;
     --info: #2196F3;
 
+    /* ============================================
+       COLORES BOTÁNICOS 
+    ============================================ */
     --ginger: #C8651B;
     --ginger-deep: #9A4710;
     --ginger-light: #E8834A;
+    --ginger-glow: rgba(200, 101, 27, 0.12);
     --turmeric: #E8A838;
     --turmeric-light: #F2C96A;
     --chamomile: #F5E4B2;
     --chamomile-deep: #E8D099;
     --bark: #2C1A0E;
     --bark-light: #4A2F1A;
+    --bark-faint: rgba(44, 26, 14, 0.04);
     --cream: #FDF8F0;
     --cream-deep: #F5EDE0;
     --stem: #5C7A3E;
     --leaf: #7BAE52;
     --mist: rgba(200, 101, 27, 0.06);
     
-    /* Tipografía */
+    /* ============================================
+       TIPOGRAFÍA 
+    ============================================ */
     --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'Outfit', sans-serif;
+    
+    /* Tamaños de fuente */
     --font-size-xs: 0.75rem;
     --font-size-sm: 0.875rem;
     --font-size-md: 1rem;
@@ -59,13 +73,28 @@
     --font-size-2xl: 1.5rem;
     --font-size-3xl: 1.875rem;
     --font-size-4xl: 2.25rem;
-    --font-display: 'Playfair Display', Georgia, serif;
-    --font-body: 'DM Sans', sans-serif;
-
+    
+    /* ============================================
+       NAVBAR 
+    ============================================ */
+    --nav-height: 76px;
+    --nav-bg: rgba(253, 248, 240, 0.92);
+    --nav-border: rgba(200, 101, 27, 0.12);
+    --nav-shadow: 0 4px 30px rgba(44, 26, 14, 0.08);
+    
+    /* ============================================
+       SOMBRAS 
+    ============================================ */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
     --shadow-warm: 0 20px 60px rgba(200, 101, 27, 0.12);
     --shadow-deep: 0 40px 80px rgba(44, 26, 14, 0.16);
     
-    /* Espaciado */
+    /* ============================================
+       ESPACIADO 
+    ============================================ */
     --spacing-xs: 0.25rem;
     --spacing-sm: 0.5rem;
     --spacing-md: 1rem;
@@ -74,25 +103,27 @@
     --spacing-2xl: 3rem;
     --spacing-3xl: 4rem;
     
-    /* Sombras */
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
-    
-    /* Bordes */
+    /* ============================================
+       BORDES 
+    ============================================ */
     --border-radius-sm: 0.25rem;
     --border-radius-md: 0.5rem;
     --border-radius-lg: 0.75rem;
     --border-radius-xl: 1rem;
     --border-radius-full: 9999px;
     
-    /* Transiciones */
+    /* ============================================
+       TRANSICIONES 
+    ============================================ */
     --transition-fast: 150ms ease;
     --transition-normal: 300ms ease;
     --transition-slow: 500ms ease;
+    --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --smooth: cubic-bezier(0.4, 0, 0.2, 1);
     
-    /* Layout */
+    /* ============================================
+       LAYOUT 
+    ============================================ */
     --container-max-width: 1280px;
     --header-height: 70px;
     --sidebar-width: 280px;

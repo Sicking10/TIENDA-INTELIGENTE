@@ -19,7 +19,6 @@ export default class ProfileView {
     }
     
     async render() {
-        // Verificar autenticación
         if (!this.isAuthenticated) {
             window.location.href = '/login';
             return;
@@ -28,7 +27,6 @@ export default class ProfileView {
         this.loadOrders();
         this.loadAddresses();
         
-        // Cargar avatar guardado
         const savedAvatar = localStorage.getItem('user_avatar');
         const avatarUrl = savedAvatar || null;
         
@@ -64,17 +62,11 @@ export default class ProfileView {
 
                 <div class="container">
                     <div class="profile-layout">
-                        <!-- Sidebar -->
                         <aside class="profile-sidebar">
                             <div class="sidebar-menu">
                                 <button class="sidebar-btn active" data-tab="personal">
                                     <i class="fas fa-user"></i>
                                     <span>Información Personal</span>
-                                </button>
-                                <button class="sidebar-btn" data-tab="pedidos">
-                                    <i class="fas fa-shopping-bag"></i>
-                                    <span>Mis Pedidos</span>
-                                    <span class="badge" id="orders-count">${this.orders.length}</span>
                                 </button>
                                 <button class="sidebar-btn" data-tab="direcciones">
                                     <i class="fas fa-map-marker-alt"></i>
@@ -85,16 +77,10 @@ export default class ProfileView {
                                     <i class="fas fa-shield-alt"></i>
                                     <span>Seguridad</span>
                                 </button>
-                                <button class="sidebar-btn" data-tab="suscripcion">
-                                    <i class="fas fa-calendar-alt"></i>
-                                    <span>Suscripción</span>
-                                </button>
                             </div>
                         </aside>
 
-                        <!-- Main Content -->
                         <main class="profile-main">
-                            <!-- Tab Personal -->
                             <div class="tab-pane active" id="tab-personal">
                                 <div class="profile-card">
                                     <div class="card-header">
@@ -124,20 +110,6 @@ export default class ProfileView {
                                 </div>
                             </div>
 
-                            <!-- Tab Pedidos -->
-                            <div class="tab-pane" id="tab-pedidos">
-                                <div class="profile-card">
-                                    <div class="card-header">
-                                        <h3><i class="fas fa-history"></i> Historial de Pedidos</h3>
-                                        <p>Todos tus pedidos realizados</p>
-                                    </div>
-                                    <div class="orders-list" id="orders-list">
-                                        ${this.renderOrders()}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Tab Direcciones -->
                             <div class="tab-pane" id="tab-direcciones">
                                 <div class="profile-card">
                                     <div class="card-header">
@@ -153,7 +125,6 @@ export default class ProfileView {
                                 </div>
                             </div>
 
-                            <!-- Tab Seguridad -->
                             <div class="tab-pane" id="tab-seguridad">
                                 <div class="profile-card">
                                     <div class="card-header">
@@ -182,60 +153,6 @@ export default class ProfileView {
                                     </form>
                                 </div>
                             </div>
-
-                            <!-- Tab Suscripción -->
-                            <div class="tab-pane" id="tab-suscripcion">
-                                <div class="profile-card">
-                                    <div class="card-header">
-                                        <h3><i class="fas fa-calendar-alt"></i> Plan de Suscripción</h3>
-                                        <p>Gestiona tu suscripción mensual</p>
-                                    </div>
-                                    <div class="subscription-info">
-                                        <div class="subscription-status">
-                                            <span class="status-badge inactive">Sin suscripción activa</span>
-                                            <p>Actualmente no tienes una suscripción activa</p>
-                                        </div>
-                                        <div class="subscription-plans">
-                                            <h4>Planes disponibles</h4>
-                                            <div class="plan-cards">
-                                                <div class="plan-card">
-                                                    <div class="plan-name">Plan Básico</div>
-                                                    <div class="plan-price">$299<span>/mes</span></div>
-                                                    <ul class="plan-features">
-                                                        <li>1 frasco al mes</li>
-                                                        <li>30 cápsulas</li>
-                                                        <li>Envío estándar</li>
-                                                    </ul>
-                                                    <button class="btn-select-plan">Seleccionar</button>
-                                                </div>
-                                                <div class="plan-card featured">
-                                                    <div class="plan-badge">Más popular</div>
-                                                    <div class="plan-name">Plan Plus</div>
-                                                    <div class="plan-price">$549<span>/mes</span></div>
-                                                    <ul class="plan-features">
-                                                        <li>2 frascos al mes</li>
-                                                        <li>60 cápsulas</li>
-                                                        <li>Envío express gratis</li>
-                                                        <li>10% descuento</li>
-                                                    </ul>
-                                                    <button class="btn-select-plan primary">Seleccionar</button>
-                                                </div>
-                                                <div class="plan-card">
-                                                    <div class="plan-name">Plan Pro</div>
-                                                    <div class="plan-price">$999<span>/mes</span></div>
-                                                    <ul class="plan-features">
-                                                        <li>4 frascos al mes</li>
-                                                        <li>120 cápsulas</li>
-                                                        <li>Envío prioritario</li>
-                                                        <li>20% descuento</li>
-                                                    </ul>
-                                                    <button class="btn-select-plan">Seleccionar</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </main>
                     </div>
                 </div>
@@ -246,7 +163,7 @@ export default class ProfileView {
         this.initProfileForm();
         this.initPasswordForm();
         this.initAddressForm();
-        this.initSubscriptionPlans();
+        this.initAddressActions();
         this.initAvatarUpload();
         
         return this;
@@ -266,7 +183,6 @@ export default class ProfileView {
     }
     
     loadOrders() {
-        // Datos de ejemplo - en producción vendrían del backend
         this.orders = [
             {
                 id: 'GIN-001',
@@ -296,18 +212,28 @@ export default class ProfileView {
     }
     
     loadAddresses() {
-        // Datos de ejemplo - en producción vendrían del backend
-        this.addresses = [
-            {
-                id: 1,
-                street: 'Av. Reforma 123',
-                city: 'Ciudad de México',
-                state: 'CDMX',
-                zipCode: '06500',
-                country: 'México',
-                isDefault: true
-            }
-        ];
+        // Cargar direcciones guardadas en localStorage
+        const savedAddresses = localStorage.getItem('user_addresses');
+        if (savedAddresses) {
+            this.addresses = JSON.parse(savedAddresses);
+        } else {
+            this.addresses = [
+                {
+                    id: 1,
+                    street: 'Av. Reforma 123',
+                    city: 'Ciudad de México',
+                    state: 'CDMX',
+                    zipCode: '06500',
+                    country: 'México',
+                    isDefault: true
+                }
+            ];
+            this.saveAddressesToLocalStorage();
+        }
+    }
+    
+    saveAddressesToLocalStorage() {
+        localStorage.setItem('user_addresses', JSON.stringify(this.addresses));
     }
     
     renderOrders() {
@@ -449,10 +375,8 @@ export default class ProfileView {
                     if (response.ok) {
                         store.set('auth.user', data.user);
                         showNotification('Perfil actualizado correctamente', 'success');
-                        // Actualizar nombre en el header
                         const nameHeader = document.querySelector('.profile-info h1');
                         if (nameHeader) nameHeader.textContent = name;
-                        // Actualizar iniciales en el avatar
                         const avatarInitials = document.getElementById('avatar-initials');
                         if (avatarInitials && !localStorage.getItem('user_avatar')) {
                             const newInitials = name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
@@ -539,18 +463,164 @@ export default class ProfileView {
         }
     }
     
-    initSubscriptionPlans() {
-        const planBtns = document.querySelectorAll('.btn-select-plan');
-        planBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                showNotification('Funcionalidad de suscripción próximamente', 'info');
+    initAddressActions() {
+        // Editar dirección
+        document.querySelectorAll('.address-edit').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const addressId = parseInt(btn.dataset.id);
+                const address = this.addresses.find(a => a.id === addressId);
+                if (address) {
+                    this.showAddressModal(address);
+                }
+            });
+        });
+        
+        // Eliminar dirección
+        document.querySelectorAll('.address-delete').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const addressId = parseInt(btn.dataset.id);
+                const address = this.addresses.find(a => a.id === addressId);
+                
+                if (address && confirm(`¿Eliminar la dirección "${address.street}"?`)) {
+                    this.addresses = this.addresses.filter(a => a.id !== addressId);
+                    this.saveAddressesToLocalStorage();
+                    this.renderAddressesList();
+                    showNotification('Dirección eliminada', 'success');
+                }
+            });
+        });
+        
+        // Establecer como principal
+        document.querySelectorAll('.btn-set-default').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const addressId = parseInt(btn.dataset.id);
+                this.addresses.forEach(a => {
+                    a.isDefault = (a.id === addressId);
+                });
+                this.saveAddressesToLocalStorage();
+                this.renderAddressesList();
+                showNotification('Dirección principal actualizada', 'success');
             });
         });
     }
     
-    // ============================================
-    // FUNCIONALIDAD DE CAMBIO DE FOTO DE PERFIL
-    // ============================================
+    renderAddressesList() {
+        const container = document.getElementById('addresses-list');
+        if (container) {
+            container.innerHTML = this.renderAddresses();
+            this.initAddressActions();
+        }
+        const badge = document.getElementById('addresses-count');
+        if (badge) badge.textContent = this.addresses.length;
+    }
+    
+    showAddressModal(address = null) {
+        const isEditing = !!address;
+        const modal = document.createElement('div');
+        modal.className = 'modal-address';
+        modal.innerHTML = `
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>${isEditing ? 'Editar dirección' : 'Agregar nueva dirección'}</h3>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="address-form-modal">
+                        <div class="form-group">
+                            <label>Calle y número</label>
+                            <input type="text" id="address-street" value="${isEditing ? this.escapeHtml(address.street) : ''}" placeholder="Calle 123, Colonia" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Ciudad</label>
+                                <input type="text" id="address-city" value="${isEditing ? this.escapeHtml(address.city) : ''}" placeholder="Ciudad" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Código Postal</label>
+                                <input type="text" id="address-zip" value="${isEditing ? this.escapeHtml(address.zipCode) : ''}" placeholder="CP" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Estado</label>
+                                <input type="text" id="address-state" value="${isEditing ? this.escapeHtml(address.state) : ''}" placeholder="Estado" required>
+                            </div>
+                            <div class="form-group">
+                                <label>País</label>
+                                <input type="text" id="address-country" value="${isEditing ? this.escapeHtml(address.country) : 'México'}" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="address-default" ${isEditing && address.isDefault ? 'checked' : ''}> 
+                                Establecer como dirección principal
+                            </label>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-save-address">
+                                <i class="fas fa-save"></i> ${isEditing ? 'Actualizar' : 'Guardar'} dirección
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        const closeBtn = modal.querySelector('.modal-close');
+        const overlay = modal.querySelector('.modal-overlay');
+        const closeModal = () => modal.remove();
+        closeBtn.addEventListener('click', closeModal);
+        overlay.addEventListener('click', closeModal);
+        
+        const form = modal.querySelector('#address-form-modal');
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const newAddress = {
+                id: isEditing ? address.id : Date.now(),
+                street: document.getElementById('address-street').value,
+                city: document.getElementById('address-city').value,
+                zipCode: document.getElementById('address-zip').value,
+                state: document.getElementById('address-state').value,
+                country: document.getElementById('address-country').value,
+                isDefault: document.getElementById('address-default').checked
+            };
+            
+            if (isEditing) {
+                const index = this.addresses.findIndex(a => a.id === address.id);
+                if (index !== -1) {
+                    this.addresses[index] = newAddress;
+                }
+            } else {
+                if (newAddress.isDefault) {
+                    this.addresses.forEach(a => a.isDefault = false);
+                }
+                this.addresses.push(newAddress);
+            }
+            
+            this.saveAddressesToLocalStorage();
+            this.renderAddressesList();
+            showNotification(isEditing ? 'Dirección actualizada' : 'Dirección guardada', 'success');
+            modal.remove();
+        });
+    }
+    
+    escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
     initAvatarUpload() {
         const editBtn = document.getElementById('edit-avatar-btn');
         const fileInput = document.getElementById('avatar-input');
@@ -558,14 +628,12 @@ export default class ProfileView {
         
         if (!editBtn || !fileInput) return;
         
-        // Abrir selector de archivos al hacer clic en la cámara
         editBtn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
             fileInput.click();
         });
         
-        // Manejar selección de archivo
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
@@ -573,7 +641,6 @@ export default class ProfileView {
             }
         });
         
-        // También permitir arrastrar y soltar
         if (avatarContainer) {
             avatarContainer.addEventListener('dragover', (e) => {
                 e.preventDefault();
@@ -598,208 +665,113 @@ export default class ProfileView {
     }
     
     processAvatarFile(file) {
-    // Validar tipo de archivo
-    const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
-    if (!validTypes.includes(file.type)) {
-        showNotification('Formato no soportado. Usa JPG, PNG o WEBP', 'error');
-        return;
-    }
-    
-    // Validar tamaño (máximo 2MB)
-    const maxSize = 2 * 1024 * 1024; // 2MB
-    if (file.size > maxSize) {
-        showNotification('La imagen es demasiado grande. Máximo 2MB', 'error');
-        return;
-    }
-    
-    // Mostrar loading
-    showNotification('Procesando imagen...', 'info');
-    
-    const reader = new FileReader();
-    reader.onload = (event) => {
-        const imageDataUrl = event.target.result;
+        const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+        if (!validTypes.includes(file.type)) {
+            showNotification('Formato no soportado. Usa JPG, PNG o WEBP', 'error');
+            return;
+        }
         
-        // Crear imagen para redimensionar
-        const img = new Image();
-        img.onload = () => {
-            // Redimensionar a 200x200 (manteniendo proporción)
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            
-            let width = 200;
-            let height = 200;
-            
-            canvas.width = width;
-            canvas.height = height;
-            
-            // Calcular área de recorte para mantener proporción cuadrada
-            const size = Math.min(img.width, img.height);
-            const offsetX = (img.width - size) / 2;
-            const offsetY = (img.height - size) / 2;
-            
-            ctx.drawImage(img, offsetX, offsetY, size, size, 0, 0, width, height);
-            
-            // Convertir a formato final
-            const resizedImage = canvas.toDataURL('image/jpeg', 0.8);
-            
-            // Actualizar el DOM
-            this.updateAvatarDisplay(resizedImage);
-            
-            // Guardar en localStorage
-            localStorage.setItem('user_avatar', resizedImage);
-            
-            showNotification('Foto de perfil actualizada', 'success');
+        const maxSize = 2 * 1024 * 1024;
+        if (file.size > maxSize) {
+            showNotification('La imagen es demasiado grande. Máximo 2MB', 'error');
+            return;
+        }
+        
+        showNotification('Procesando imagen...', 'info');
+        
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const imageDataUrl = event.target.result;
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                let width = 200;
+                let height = 200;
+                
+                canvas.width = width;
+                canvas.height = height;
+                
+                const size = Math.min(img.width, img.height);
+                const offsetX = (img.width - size) / 2;
+                const offsetY = (img.height - size) / 2;
+                
+                ctx.drawImage(img, offsetX, offsetY, size, size, 0, 0, width, height);
+                
+                const resizedImage = canvas.toDataURL('image/jpeg', 0.8);
+                
+                this.updateAvatarDisplay(resizedImage);
+                localStorage.setItem('user_avatar', resizedImage);
+                
+                showNotification('Foto de perfil actualizada', 'success');
+            };
+            img.src = imageDataUrl;
         };
-        img.src = imageDataUrl;
-    };
-    reader.readAsDataURL(file);
-}
+        reader.readAsDataURL(file);
+    }
     
     updateAvatarDisplay(imageDataUrl) {
         const avatarContainer = document.getElementById('profile-avatar-container');
         if (!avatarContainer) return;
         
-        // Eliminar el div de iniciales si existe
         const avatarInitials = avatarContainer.querySelector('.avatar-initials');
         if (avatarInitials) {
             avatarInitials.remove();
         }
         
-        // Eliminar imagen anterior si existe
         const existingImage = avatarContainer.querySelector('.avatar-image');
         if (existingImage) {
             existingImage.remove();
         }
         
-        // Crear nueva imagen
         const img = document.createElement('img');
         img.src = imageDataUrl;
         img.alt = 'Avatar';
         img.className = 'avatar-image';
         img.id = 'avatar-image';
         
-        // Insertar antes del botón de edición
         const editBtn = avatarContainer.querySelector('.avatar-edit-btn');
         avatarContainer.insertBefore(img, editBtn);
         
-        // También actualizar en la navbar si es necesario
         this.updateNavbarAvatar(imageDataUrl);
     }
     
     updateNavbarAvatar(imageDataUrl) {
-    // Actualizar avatar en la navbar (si existe)
-    // Buscar diferentes posibles selectores de avatar en la navbar
-    const navbarAvatarSelectors = [
-        '.avatar-circle',
-        '.user-avatar',
-        '#user-avatar',
-        '.ginger-nav-user-avatar',
-        '.nav-user-avatar'
-    ];
-    
-    let navbarAvatar = null;
-    for (const selector of navbarAvatarSelectors) {
-        navbarAvatar = document.querySelector(selector);
-        if (navbarAvatar) break;
-    }
-    
-    if (navbarAvatar) {
-        // Limpiar contenido existente
-        navbarAvatar.innerHTML = '';
+        const navbarAvatarSelectors = [
+            '.avatar-circle',
+            '.user-avatar',
+            '#user-avatar',
+            '.ginger-nav-user-avatar',
+            '.nav-user-avatar'
+        ];
         
-        // Crear imagen
-        const img = document.createElement('img');
-        img.src = imageDataUrl;
-        img.alt = 'Avatar';
-        img.style.width = '100%';
-        img.style.height = '100%';
-        img.style.borderRadius = '50%';
-        img.style.objectFit = 'cover';
-        
-        navbarAvatar.appendChild(img);
-        
-        // También guardar en localStorage para que persista
-        localStorage.setItem('user_avatar', imageDataUrl);
-    }
-    
-    // Actualizar también el store de manera segura
-    try {
-        if (this.user) {
-            this.user.avatar = imageDataUrl;
-            // No llamar a store.set si no es necesario para evitar ciclos
-            // store.set('auth.user', this.user);
+        let navbarAvatar = null;
+        for (const selector of navbarAvatarSelectors) {
+            navbarAvatar = document.querySelector(selector);
+            if (navbarAvatar) break;
         }
-    } catch (error) {
-        console.warn('Error actualizando store:', error);
-    }
-}
-    
-    showAddressModal() {
-        const modal = document.createElement('div');
-        modal.className = 'modal-address';
-        modal.innerHTML = `
-            <div class="modal-overlay"></div>
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Agregar nueva dirección</h3>
-                    <button class="modal-close">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <form id="address-form-modal">
-                        <div class="form-group">
-                            <label>Calle y número</label>
-                            <input type="text" id="address-street" placeholder="Calle 123, Colonia" required>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Ciudad</label>
-                                <input type="text" id="address-city" placeholder="Ciudad" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Código Postal</label>
-                                <input type="text" id="address-zip" placeholder="CP" required>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Estado</label>
-                                <input type="text" id="address-state" placeholder="Estado" required>
-                            </div>
-                            <div class="form-group">
-                                <label>País</label>
-                                <input type="text" id="address-country" value="México" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="address-default"> Establecer como dirección principal
-                            </label>
-                        </div>
-                        <div class="form-actions">
-                            <button type="submit" class="btn-save-address">
-                                <i class="fas fa-save"></i> Guardar dirección
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        `;
         
-        document.body.appendChild(modal);
+        if (navbarAvatar) {
+            navbarAvatar.innerHTML = '';
+            const img = document.createElement('img');
+            img.src = imageDataUrl;
+            img.alt = 'Avatar';
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.borderRadius = '50%';
+            img.style.objectFit = 'cover';
+            navbarAvatar.appendChild(img);
+            localStorage.setItem('user_avatar', imageDataUrl);
+        }
         
-        const closeBtn = modal.querySelector('.modal-close');
-        const overlay = modal.querySelector('.modal-overlay');
-        
-        const closeModal = () => modal.remove();
-        closeBtn.addEventListener('click', closeModal);
-        overlay.addEventListener('click', closeModal);
-        
-        const form = modal.querySelector('#address-form-modal');
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            showNotification('Dirección guardada correctamente', 'success');
-            modal.remove();
-        });
+        try {
+            if (this.user) {
+                this.user.avatar = imageDataUrl;
+            }
+        } catch (error) {
+            console.warn('Error actualizando store:', error);
+        }
     }
     
     destroy() {}

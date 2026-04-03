@@ -1,6 +1,6 @@
 /**
  * Módulo Seguimiento de Pedido
- * orderTracking.js - Seguimiento detallado
+ * orderTracking.js - Seguimiento detallado con datos reales
  */
 
 import { store } from '../../../store.js';
@@ -14,6 +14,7 @@ export default class OrderTrackingView {
         this.params = params;
         this.orderId = params.id;
         this.order = null;
+        this.isLoading = true;
     }
     
     async render() {
@@ -22,7 +23,69 @@ export default class OrderTrackingView {
             return;
         }
         
-        this.loadOrderData();
+        // Mostrar loading
+        this.container.innerHTML = `
+            <div class="tracking-page">
+                <div class="container" style="text-align: center; padding: 100px 0;">
+                    <div class="loading-spinner"></div>
+                    <p>Cargando información del pedido...</p>
+                </div>
+            </div>
+        `;
+        
+        // Cargar datos reales
+        await this.loadOrderData();
+        
+        if (!this.order) {
+            this.container.innerHTML = `
+                <div class="tracking-page">
+                    <div class="container" style="text-align: center; padding: 100px 0;">
+                        <div class="empty-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <h2>Pedido no encontrado</h2>
+                        <p>No pudimos encontrar el pedido #${this.orderId}</p>
+                        <a href="/mis-pedidos" class="btn-shop" data-link>
+                            Ver mis pedidos
+                        </a>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+        
+        this.renderOrderDetails();
+        this.initContactSupport();
+        
+        return this;
+    }
+    
+    async loadOrderData() {
+        try {
+            const token = store.get('auth.token');
+            const response = await fetch(`/api/orders/${this.orderId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al cargar el pedido');
+            }
+
+            const data = await response.json();
+            this.order = data.order;
+            
+        } catch (error) {
+            console.error('Error loading order:', error);
+            this.order = null;
+        }
+    }
+    
+    renderOrderDetails() {
+        // Determinar los pasos basados en el estado del pedido
+        const steps = this.getOrderSteps(this.order.status);
+        const currentStepIndex = this.getCurrentStepIndex(this.order.status);
         
         this.container.innerHTML = `
             <div class="tracking-page">
@@ -37,7 +100,10 @@ export default class OrderTrackingView {
                                 <i class="fas fa-truck"></i>
                             </div>
                             <h1>Seguimiento de pedido</h1>
-                            <p class="order-id">Pedido #${this.orderId}</p>
+                            <p class="order-id">Pedido #${this.order.orderNumber}</p>
+                            <div class="order-status-badge ${this.order.status}">
+                                ${this.getStatusText(this.order.status)}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -45,19 +111,59 @@ export default class OrderTrackingView {
                 <div class="container">
                     <div class="tracking-steps-container">
                         <div class="tracking-steps">
-                            ${this.renderSteps()}
+                            ${steps.map((step, index) => {
+                                let stepClass = '';
+                                if (index < currentStepIndex) stepClass = 'completed';
+                                else if (index === currentStepIndex) stepClass = 'active';
+                                
+                                return `
+                                    <div class="step ${stepClass}">
+                                        <div class="step-marker">
+                                            <div class="step-icon">
+                                                ${index < currentStepIndex ? '<i class="fas fa-check"></i>' : index + 1}
+                                            </div>
+                                            <div class="step-line"></div>
+                                        </div>
+                                        <div class="step-content">
+                                            <h4>${step.name}</h4>
+                                            <p>${step.description}</p>
+                                            ${step.date ? `
+                                                <div class="step-date">
+                                                    <i class="far fa-calendar-alt"></i> ${step.date}
+                                                </div>
+                                            ` : ''}
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
                         </div>
                     </div>
                     
                     <div class="tracking-grid">
                         <div class="order-details-card">
                             <h3><i class="fas fa-box"></i> Detalles del pedido</h3>
-                            <div class="order-items" id="order-items">
-                                ${this.renderOrderItems()}
+                            <div class="order-items">
+                                ${this.order.items.map(item => `
+                                    <div class="order-item">
+                                        <div class="item-image">
+                                            <img src="/assets/images/products/${item.image || 'placeholder'}" 
+                                                 alt="${item.name}"
+                                                 onerror="this.src='/assets/images/products/placeholder.jpg'">
+                                        </div>
+                                        <div class="item-details">
+                                            <h4>${item.name}</h4>
+                                            <div class="item-meta">
+                                                <span class="concentration">${item.concentration || ''}</span>
+                                                <span class="quantity">Cantidad: ${item.quantity}</span>
+                                            </div>
+                                        </div>
+                                        <div class="item-price">${formatPrice(item.price * item.quantity)}</div>
+                                    </div>
+                                `).join('')}
                             </div>
                             <div class="order-total">
                                 <span>Total</span>
-                                <strong>${formatPrice(349)}</strong>
+                                <strong>${formatPrice(this.order.total)}</strong>
                             </div>
                         </div>
                         
@@ -68,16 +174,20 @@ export default class OrderTrackingView {
                                     <i class="fas fa-home"></i>
                                     <div>
                                         <strong>Dirección de entrega</strong>
-                                        <p>Calle Principal 123, Colonia Centro</p>
-                                        <p>Ciudad de México, CDMX, CP 12345</p>
+                                        ${this.order.shipping?.method === 'pickup' ? 
+                                            '<p>Recoger en tienda</p>' :
+                                            `<p>${this.order.shipping?.address?.street || ''}</p>
+                                             <p>${this.order.shipping?.address?.city || ''}, ${this.order.shipping?.address?.state || ''}</p>
+                                             <p>CP ${this.order.shipping?.address?.zipCode || ''}</p>`
+                                        }
                                     </div>
                                 </div>
                                 <div class="shipping-contact">
                                     <i class="fas fa-user"></i>
                                     <div>
                                         <strong>Destinatario</strong>
-                                        <p>Juan Pérez</p>
-                                        <p>+52 55 1234 5678</p>
+                                        <p>${this.order.shipping?.recipientName || 'Cliente'}</p>
+                                        <p>${this.order.shipping?.phone || ''}</p>
                                     </div>
                                 </div>
                             </div>
@@ -86,7 +196,7 @@ export default class OrderTrackingView {
                     
                     <div class="help-support-card">
                         <i class="fas fa-headset"></i>
-                        <div>
+                        <div class="help-support-content">
                             <h4>¿Necesitas ayuda con tu pedido?</h4>
                             <p>Nuestro equipo de soporte está disponible para ayudarte</p>
                             <button class="btn-contact" id="contact-support">
@@ -97,92 +207,66 @@ export default class OrderTrackingView {
                 </div>
             </div>
         `;
-        
-        this.initContactSupport();
-        
-        return this;
     }
     
-    loadOrderData() {
-        // Datos de ejemplo - en producción vendrían del backend
-        this.order = {
-            id: this.orderId,
-            status: 'shipped',
-            steps: [
-                { name: 'Pedido confirmado', completed: true, date: '1 Mayo, 2024', time: '10:30 AM', description: 'Hemos recibido tu pedido correctamente' },
-                { name: 'Preparando pedido', completed: true, date: '2 Mayo, 2024', time: '2:15 PM', description: 'Estamos preparando tus cápsulas con mucho cuidado' },
-                { name: 'En camino', completed: true, date: '3 Mayo, 2024', time: '9:00 AM', description: 'Tu pedido ha sido entregado a la paquetería' },
-                { name: 'Entregado', completed: false, date: null, time: null, description: 'Tu pedido está en ruta hacia tu domicilio' }
-            ],
-            items: [
-                { name: 'GINGERcaps Pro', quantity: 1, price: 549, image: 'pro', concentration: '1500mg' }
-            ],
-            total: 549,
-            tracking: {
-                number: 'GIN-004-2024',
-                carrier: 'Estafeta',
-                estimatedDelivery: '25 Abril, 2024',
-                url: 'https://www.estafeta.com/tracking'
-            },
-            shipping: {
-                address: 'Calle Principal 123, Colonia Centro, Ciudad de México, CDMX, CP 12345',
-                name: 'Juan Pérez',
-                phone: '+52 55 1234 5678'
-            }
+    getOrderSteps(status) {
+        const steps = [
+            { name: 'Pedido confirmado', description: 'Hemos recibido tu pedido correctamente' },
+            { name: 'Preparando pedido', description: 'Estamos preparando tus cápsulas con mucho cuidado' },
+            { name: 'En camino', description: 'Tu pedido ha sido entregado a la paquetería' },
+            { name: 'Entregado', description: 'Tu pedido ha sido entregado exitosamente' }
+        ];
+        
+        // Marcar fechas según el estado
+        const createdAt = new Date(this.order.createdAt);
+        
+        if (status === 'pending') {
+            steps[0].date = createdAt.toLocaleDateString('es-MX');
+            return steps;
+        }
+        
+        if (status === 'processing') {
+            steps[0].date = createdAt.toLocaleDateString('es-MX');
+            return steps;
+        }
+        
+        if (status === 'shipped') {
+            steps[0].date = createdAt.toLocaleDateString('es-MX');
+            steps[1].date = new Date(createdAt.getTime() + 86400000).toLocaleDateString('es-MX');
+            return steps;
+        }
+        
+        if (status === 'delivered') {
+            steps[0].date = createdAt.toLocaleDateString('es-MX');
+            steps[1].date = new Date(createdAt.getTime() + 86400000).toLocaleDateString('es-MX');
+            steps[2].date = new Date(createdAt.getTime() + 172800000).toLocaleDateString('es-MX');
+            steps[3].date = new Date(createdAt.getTime() + 259200000).toLocaleDateString('es-MX');
+            return steps;
+        }
+        
+        return steps;
+    }
+    
+    getCurrentStepIndex(status) {
+        const statusMap = {
+            'pending': 0,
+            'processing': 1,
+            'shipped': 2,
+            'delivered': 3,
+            'cancelled': 0
         };
+        return statusMap[status] || 0;
     }
     
-    renderSteps() {
-        const steps = this.order.steps;
-        let currentStepIndex = steps.findIndex(s => !s.completed);
-        if (currentStepIndex === -1) currentStepIndex = steps.length;
-        
-        return steps.map((step, index) => {
-            let stepClass = '';
-            if (step.completed) stepClass = 'completed';
-            else if (index === currentStepIndex) stepClass = 'active';
-            
-            return `
-                <div class="step ${stepClass}">
-                    <div class="step-marker">
-                        <div class="step-icon">
-                            ${step.completed ? '<i class="fas fa-check"></i>' : index + 1}
-                        </div>
-                        <div class="step-line"></div>
-                    </div>
-                    <div class="step-content">
-                        <h4>${step.name}</h4>
-                        <p>${step.description}</p>
-                        ${step.date ? `
-                            <div class="step-date">
-                                <i class="far fa-calendar-alt"></i> ${step.date}
-                                <i class="far fa-clock"></i> ${step.time}
-                            </div>
-                        ` : ''}
-                    </div>
-                </div>
-            `;
-        }).join('');
-    }
-    
-    renderOrderItems() {
-        return this.order.items.map(item => `
-            <div class="order-item">
-                <div class="item-image">
-                    <img src="/assets/images/products/${item.image}.jpg" 
-                         alt="${item.name}"
-                         onerror="this.src='/assets/images/products/placeholder.jpg'">
-                </div>
-                <div class="item-details">
-                    <h4>${item.name}</h4>
-                    <div class="item-meta">
-                        <span class="concentration"><i class="fas fa-weight-hanging"></i> ${item.concentration}</span>
-                        <span class="quantity">Cantidad: ${item.quantity}</span>
-                    </div>
-                </div>
-                <div class="item-price">${formatPrice(item.price * item.quantity)}</div>
-            </div>
-        `).join('');
+    getStatusText(status) {
+        const statusMap = {
+            pending: 'Pendiente',
+            processing: 'Procesando',
+            shipped: 'Enviado',
+            delivered: 'Entregado',
+            cancelled: 'Cancelado'
+        };
+        return statusMap[status] || status;
     }
     
     initContactSupport() {

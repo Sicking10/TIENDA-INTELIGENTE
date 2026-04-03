@@ -519,13 +519,9 @@ function getHomeHTML() {
                         ¿Listo para sentir el<br>poder del <em>jengibre</em>?
                     </h2>
                     <p class="cta-text">
-                        Suscríbete y recibe 20% de descuento en tu primer pedido,
-                        envío gratis y acceso a nuestra comunidad de bienestar.
+                        Miles de personas ya experimentan los beneficios de GINGERcaps. No esperes más para transformar tu bienestar de forma natural.
                     </p>
                     <div class="cta-actions">
-                        <a href="/registro" class="btn-cta-main" data-link>
-                            🌿 Comenzar ahora
-                        </a>
                         <a href="/tienda" class="btn-cta-outline" data-link>
                             Ver todos los productos →
                         </a>

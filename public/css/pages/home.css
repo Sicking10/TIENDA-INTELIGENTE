@@ -729,18 +729,14 @@
     line-height: 1.2;
 }
 
-
-
 .card-ing-latin {
     font-family: var(--font-display);
-    font-size: 13px;
+    font-size: 18px;
     font-style: italic;
-    color: var(--bark-light);
+    color: var(--bark);
     opacity: 0.6;
     margin-bottom: 16px;
 }
-
-
 
 .card-ing-desc {
     font-size: 14px;

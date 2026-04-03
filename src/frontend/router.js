@@ -1,5 +1,7 @@
 /**
  * Router SPA - Manejo de navegación entre vistas
+ * router.js
+ * CORREGIDO - Ignora clics en botones
  */
 
 import { config } from './config.js';
@@ -51,7 +53,7 @@ const routes = {
     },
     '/pedido/:id': {
         title: 'Seguimiento de Pedido',
-        view: () => import('./modules/orders/orderTracking.js'),
+        view: () => import('./modules/orders/tracking/orderTracking.js'),
         public: false,
         roles: ['user', 'admin']
     },
@@ -99,26 +101,47 @@ class Router {
         this.container = document.getElementById('app');
         this.routes = routes;
     }
+
+    async handleRouteFromInit(path) {
+    // Igual que handleRoute pero sin tocar el historial
+    await this.handleRoute(path);
+}
     
     init() {
-        window.addEventListener('popstate', () => {
-            this.handleRoute(window.location.pathname);
-        });
-        
-        document.addEventListener('click', (e) => {
-            const link = e.target.closest('a[data-link]');
-            if (link) {
-                e.preventDefault();
-                const href = link.getAttribute('href');
-                if (href && !href.startsWith('http') && !href.startsWith('//')) {
-                    this.navigate(href);
-                }
-            }
-        });
-        
+    window.addEventListener('popstate', () => {
         this.handleRoute(window.location.pathname);
-        console.log('🛣️ Router inicializado');
-    }
+    });
+
+    document.addEventListener('click', (e) => {
+        // Ignorar si el clic fue en un botón o dentro de uno
+        let target = e.target;
+        while (target && target !== document.body) {
+            if (target.tagName === 'BUTTON') {
+                console.log('🔘 Clic en botón ignorado por router:', target.id || target.className);
+                return; // Salir completamente, no procesar como navegación
+            }
+            target = target.parentElement;
+        }
+
+        // Ignorar si el elemento o su ancestro tiene data-no-router
+        if (e.target.closest('[data-no-router]')) return;
+
+        const link = e.target.closest('a[data-link]');
+        if (!link) return;
+
+        const href = link.getAttribute('href');
+        if (!href) return;
+        if (href.startsWith('http') || href.startsWith('//')) return;
+        if (href.startsWith('#')) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+        this.navigate(href);
+    });
+
+    this.handleRoute(window.location.pathname);
+    console.log('🛣️ Router inicializado');
+}
     
     navigate(path, replace = false) {
         const fullPath = path.startsWith('/') ? path : '/' + path;

@@ -12,6 +12,9 @@ require('dotenv').config();
 
 // Importar rutas
 const authRoutes = require('./src/backend/routes/authRoutes');
+const orderRoutes = require('./src/backend/routes/api/orderRoutes');
+const geocodeRoutes = require('./src/backend/routes/api/geocodeRoutes');
+const userRoutes = require('./src/backend/routes/api/userRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -20,7 +23,20 @@ const PORT = process.env.PORT || 3000;
 
 // Seguridad
 app.use(helmet({
-    crossOriginResourcePolicy: { policy: "cross-origin" }
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
+            styleSrcElem: ["'self'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
+            fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
+            imgSrc: ["'self'", "data:", "https://*.googleapis.com", "https://*.google.com", "https://*.openstreetmap.org"],
+            frameSrc: ["'self'", "https://maps.google.com", "https://www.google.com"],
+            connectSrc: ["'self'", "https://nominatim.openstreetmap.org"],
+            scriptSrcAttr: ["'unsafe-inline'"]
+        }
+    }
 }));
 
 // Logging
@@ -83,6 +99,9 @@ app.get('/api/health', (req, res) => {
 
 // Rutas de autenticación
 app.use('/api/auth', authRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/geocode', geocodeRoutes);
+app.use('/api/users', userRoutes);
 
 // Ruta base de API
 app.get('/api', (req, res) => {
