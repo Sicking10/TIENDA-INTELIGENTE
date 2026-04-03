@@ -12,10 +12,6 @@
     overflow: hidden;
 }
 
-[data-theme="dark"] .orders-hero,
-[data-theme="dark"] .tracking-hero {
-    background: linear-gradient(135deg, #0D0804 0%, #1A1008 100%);
-}
 
 .orders-hero-bg, .tracking-hero-bg {
     position: absolute;
@@ -75,10 +71,6 @@
     color: var(--gray-900);
 }
 
-[data-theme="dark"] .orders-hero h1,
-[data-theme="dark"] .tracking-hero h1 {
-    color: var(--white);
-}
 
 .order-id {
     font-size: 16px;
@@ -197,9 +189,6 @@
     color: var(--gray-800);
 }
 
-[data-theme="dark"] .order-number {
-    color: var(--white);
-}
 
 .order-date {
     font-size: 13px;
@@ -290,9 +279,6 @@
     color: var(--gray-800);
 }
 
-[data-theme="dark"] .item-details h4 {
-    color: var(--white);
-}
 
 .item-meta {
     display: flex;
@@ -506,9 +492,6 @@
     color: var(--gray-800);
 }
 
-[data-theme="dark"] .step-content h4 {
-    color: var(--white);
-}
 
 .step-content p {
     font-size: 13px;
@@ -553,10 +536,6 @@
     gap: 8px;
 }
 
-[data-theme="dark"] .order-details-card h3,
-[data-theme="dark"] .shipping-info-card h3 {
-    color: var(--white);
-}
 
 .order-details-card .order-item {
     padding: 12px 0;
@@ -622,9 +601,6 @@
     color: var(--gray-800);
 }
 
-[data-theme="dark"] .help-support-card h4 {
-    color: var(--white);
-}
 
 .help-support-card p {
     font-size: 13px;
@@ -677,9 +653,6 @@
     overflow: hidden;
 }
 
-[data-theme="dark"] .order-details-modal .modal-content {
-    background: #0D0804;
-}
 
 .order-details-modal .modal-header {
     display: flex;

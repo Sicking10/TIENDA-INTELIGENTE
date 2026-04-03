@@ -31,8 +31,14 @@ GINGER/
 │   │   │
 │   │   ├── pages/
 |   |   |   ├── auth.css
+|   |   |   ├── benefits.css
+|   |   |   ├── blog.css
+|   |   |   ├── cart.css
 |   |   |   ├── home.css
-|   |   |   └── shop.css
+|   |   |   ├── orders.css
+|   |   |   ├── profile.css
+|   |   |   ├── shop.css
+|   |   |   └── suscripcion.css
 │   │   │
 │   │   ├── themes/
 │   │   │

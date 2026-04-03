@@ -24,10 +24,6 @@
     color: var(--gray-900);
 }
 
-[data-theme="dark"] .cart-header h1 {
-    color: var(--white);
-}
-
 .cart-items-count {
     color: var(--gray-500);
     font-size: 14px;
@@ -50,11 +46,6 @@
     overflow: hidden;
 }
 
-[data-theme="dark"] .cart-items {
-    background: var(--gray-800);
-    border-color: var(--gray-700);
-}
-
 .cart-items-header {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr 1fr 40px;
@@ -65,12 +56,6 @@
     font-size: 13px;
     color: var(--gray-600);
 }
-
-[data-theme="dark"] .cart-items-header {
-    background: var(--gray-900);
-    border-color: var(--gray-700);
-}
-
 .cart-items-list {
     max-height: 500px;
     overflow-y: auto;
@@ -85,17 +70,8 @@
     border-bottom: 1px solid var(--gray-200);
     transition: background 0.2s ease;
 }
-
-[data-theme="dark"] .cart-item {
-    border-color: var(--gray-700);
-}
-
 .cart-item:hover {
     background: var(--gray-50);
-}
-
-[data-theme="dark"] .cart-item:hover {
-    background: var(--gray-900);
 }
 
 /* Producto */
@@ -123,12 +99,8 @@
 .cart-item-info h4 {
     font-size: 15px;
     font-weight: 600;
-    margin-bottom: 4px;
+    margin-top: 24px;
     color: var(--gray-900);
-}
-
-[data-theme="dark"] .cart-item-info h4 {
-    color: var(--white);
 }
 
 .cart-item-concentration {
@@ -150,14 +122,10 @@
 .quantity-selector {
     display: inline-flex;
     align-items: center;
+    transform: translateX(-25%);
     border: 1px solid var(--gray-300);
     border-radius: 40px;
     background: var(--white);
-}
-
-[data-theme="dark"] .quantity-selector {
-    background: var(--gray-800);
-    border-color: var(--gray-600);
 }
 
 .qty-btn {
@@ -196,6 +164,7 @@
 /* Total del item */
 .cart-item-total {
     font-weight: 700;
+    margin-left: 6px;
     color: var(--ginger);
 }
 
@@ -231,11 +200,6 @@
     padding: 20px;
     border-top: 1px solid var(--gray-200);
     background: var(--white);
-}
-
-[data-theme="dark"] .cart-actions {
-    background: var(--gray-800);
-    border-color: var(--gray-700);
 }
 
 .btn-clear-cart {
@@ -281,22 +245,12 @@
     height: fit-content;
 }
 
-[data-theme="dark"] .cart-summary {
-    background: var(--gray-800);
-    border-color: var(--gray-700);
-}
-
 .cart-summary h3 {
     font-size: 18px;
     font-weight: 600;
     margin-bottom: 20px;
     color: var(--gray-900);
 }
-
-[data-theme="dark"] .cart-summary h3 {
-    color: var(--white);
-}
-
 .summary-row {
     display: flex;
     justify-content: space-between;
@@ -311,11 +265,6 @@
     color: var(--gray-900);
     padding-top: 16px;
 }
-
-[data-theme="dark"] .summary-row.total {
-    color: var(--white);
-}
-
 .summary-row.total .total-amount {
     color: var(--ginger);
 }
@@ -325,11 +274,6 @@
     background: var(--gray-200);
     margin: 12px 0;
 }
-
-[data-theme="dark"] .summary-divider {
-    background: var(--gray-700);
-}
-
 .discount-row .discount-amount {
     color: #4CAF50;
 }
@@ -352,12 +296,6 @@
     font-size: 13px;
     background: var(--white);
     transition: all 0.2s;
-}
-
-[data-theme="dark"] .coupon-input-group input {
-    background: var(--gray-900);
-    border-color: var(--gray-600);
-    color: var(--white);
 }
 
 .coupon-input-group input:focus {
@@ -429,11 +367,6 @@
     padding-top: 20px;
     border-top: 1px solid var(--gray-200);
 }
-
-[data-theme="dark"] .payment-methods {
-    border-color: var(--gray-700);
-}
-
 .payment-methods i {
     font-size: 24px;
     color: var(--gray-400);
@@ -473,11 +406,6 @@
     margin-bottom: 12px;
     color: var(--gray-900);
 }
-
-[data-theme="dark"] .cart-empty h2 {
-    color: var(--white);
-}
-
 .cart-empty p {
     color: var(--gray-500);
     margin-bottom: 32px;
@@ -502,11 +430,6 @@
     color: var(--gray-800);
     text-align: center;
 }
-
-[data-theme="dark"] .cart-empty-suggestions h3 {
-    color: var(--white);
-}
-
 .suggestions-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -520,11 +443,6 @@
     text-align: center;
     border: 1px solid var(--gray-200);
     transition: all 0.3s ease;
-}
-
-[data-theme="dark"] .suggestion-card {
-    background: var(--gray-800);
-    border-color: var(--gray-700);
 }
 
 .suggestion-card:hover {
@@ -552,11 +470,6 @@
     margin-bottom: 8px;
     color: var(--gray-800);
 }
-
-[data-theme="dark"] .suggestion-card h4 {
-    color: var(--white);
-}
-
 .suggestion-price {
     font-weight: 700;
     color: var(--ginger);

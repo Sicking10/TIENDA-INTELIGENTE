@@ -20,11 +20,12 @@ import { renderNavbar, updateNavbarAuth } from './modules/navbar/navbar.js';
    (runs before paint to avoid flash of wrong theme)
 ───────────────────────────────────────────── */
 function setupTheme() {
-    const saved       = localStorage.getItem('theme');
-    const systemDark  = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const theme       = saved || (systemDark ? 'dark' : 'light');
+    const saved = localStorage.getItem('theme');
+    const theme = 'light'; 
 
     document.documentElement.setAttribute('data-theme', theme);
+
+    localStorage.setItem('theme', theme);
 
     /* React to OS-level changes (only when user hasn't overridden) */
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {

@@ -5,47 +5,6 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=DM+Sans:wght@300;400;500&display=swap');
 
-/* ─── Variables ─── */
-:root {
-    --ginger: #C8651B;
-    --ginger-deep: #9A4710;
-    --ginger-light: #E8834A;
-    --turmeric: #E8A838;
-    --turmeric-light: #F2C96A;
-    --chamomile: #F5E4B2;
-    --chamomile-deep: #E8D099;
-    --bark: #2C1A0E;
-    --bark-light: #4A2F1A;
-    --cream: #FDF8F0;
-    --cream-deep: #F5EDE0;
-    --stem: #5C7A3E;
-    --leaf: #7BAE52;
-    --mist: rgba(200, 101, 27, 0.06);
-
-    --font-display: 'Playfair Display', Georgia, serif;
-    --font-body: 'DM Sans', sans-serif;
-
-    --shadow-warm: 0 20px 60px rgba(200, 101, 27, 0.12);
-    --shadow-deep: 0 40px 80px rgba(44, 26, 14, 0.16);
-}
-
-[data-theme="dark"] {
-    --cream: #160D06;
-    --cream-deep: #1E1008;
-    --bark: #F5E4B2;
-    --bark-light: #E8D099;
-    --chamomile: #261508;
-    --chamomile-deep: #2E1A0A;
-    --mist: rgba(200, 101, 27, 0.08);
-}
-
-/* ─── Base ─── */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 .home-ginger {
     font-family: var(--font-body);
     background: var(--cream);
@@ -77,13 +36,6 @@
         radial-gradient(ellipse 80% 60% at 65% 40%, rgba(232, 168, 56, 0.12) 0%, transparent 60%),
         radial-gradient(ellipse 60% 80% at 30% 70%, rgba(200, 101, 27, 0.08) 0%, transparent 60%),
         radial-gradient(ellipse 100% 50% at 50% 0%, rgba(245, 228, 178, 0.4) 0%, transparent 50%),
-        var(--cream);
-}
-
-[data-theme="dark"] .hero-bg-layer {
-    background:
-        radial-gradient(ellipse 80% 60% at 65% 40%, rgba(200, 101, 27, 0.12) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 80% at 30% 70%, rgba(200, 101, 27, 0.06) 0%, transparent 60%),
         var(--cream);
 }
 
@@ -199,13 +151,6 @@
     animation: fade-up 0.6s 0.1s ease both;
 }
 
-[data-theme="dark"] .hero-heading { color: var(--chamomile-deep); }
-
-/* Wait — override dark in root context */
-[data-theme="dark"] .hero-heading {
-    color: #F0D9B0;
-}
-
 .hero-heading em {
     font-style: italic;
     color: var(--ginger);
@@ -243,7 +188,6 @@
     opacity: 0.75;
 }
 
-[data-theme="dark"] .hero-sub-heading { color: #BFA882; }
 
 .hero-description {
     font-size: 17px;
@@ -254,8 +198,6 @@
     max-width: 460px;
     animation: fade-up 0.6s 0.3s ease both;
 }
-
-[data-theme="dark"] .hero-description { color: #A89070; }
 
 /* Ingredients highlight inline */
 .ingredient-highlight {
@@ -350,10 +292,6 @@
     transition: all 0.3s ease;
 }
 
-[data-theme="dark"] .btn-hero-ghost {
-    color: #C8A882;
-    border-color: rgba(200, 101, 27, 0.25);
-}
 
 .btn-hero-ghost:hover {
     border-color: var(--ginger);
@@ -379,7 +317,7 @@
     opacity: 0.65;
 }
 
-[data-theme="dark"] .trust-item { color: #A89070; }
+
 
 .trust-item svg {
     width: 14px;
@@ -422,14 +360,6 @@
     animation: morph 10s ease-in-out infinite alternate;
 }
 
-[data-theme="dark"] .pod-base {
-    background: linear-gradient(160deg,
-        rgba(200, 101, 27, 0.15) 0%,
-        rgba(232, 168, 56, 0.1) 50%,
-        rgba(200, 101, 27, 0.08) 100%
-    );
-}
-
 @keyframes morph {
     0%  { border-radius: 56% 44% 60% 40% / 50% 46% 54% 50%; }
     33% { border-radius: 44% 56% 40% 60% / 60% 54% 46% 40%; }
@@ -449,11 +379,6 @@
     backdrop-filter: blur(4px);
     border: 1px solid rgba(232, 168, 56, 0.3);
     overflow: hidden;
-}
-
-[data-theme="dark"] .pod-inner {
-    background: linear-gradient(145deg, rgba(50, 25, 10, 0.8), rgba(200, 101, 27, 0.1));
-    border-color: rgba(200, 101, 27, 0.25);
 }
 
 .pod-icon-wrap {
@@ -583,11 +508,6 @@
     animation: bubble-float 5s ease-in-out infinite alternate;
 }
 
-[data-theme="dark"] .stat-card {
-    background: rgba(30, 16, 6, 0.92);
-    border-color: rgba(200, 101, 27, 0.2);
-}
-
 .stat-card-1 {
     top: 10%;
     right: -50px;
@@ -618,7 +538,7 @@
     margin-top: 3px;
 }
 
-[data-theme="dark"] .stat-label { color: #A89070; }
+
 
 @keyframes fade-up {
     from { opacity: 0; transform: translateY(20px); }
@@ -638,7 +558,7 @@
     position: relative;
 }
 
-[data-theme="dark"] .marquee-strip { background: #0E0800; }
+
 
 .marquee-track {
     display: flex;
@@ -719,7 +639,7 @@
     margin-bottom: 16px;
 }
 
-[data-theme="dark"] .section-title { color: #F0D9B0; }
+
 
 .section-title em {
     font-style: italic;
@@ -735,7 +655,7 @@
     line-height: 1.6;
 }
 
-[data-theme="dark"] .section-subtitle { color: #9A7A5A; }
+
 
 /* Ingredient Cards — large editorial cards */
 .ingredients-grid {
@@ -759,15 +679,15 @@
 
 /* Ginger card */
 .card-ginger-ing { background: linear-gradient(160deg, #FDE8D8 0%, #F5C4A0 100%); }
-[data-theme="dark"] .card-ginger-ing { background: linear-gradient(160deg, #2A1308 0%, #3A1C10 100%); }
+
 
 /* Turmeric card */
 .card-turmeric-ing { background: linear-gradient(160deg, #FFF8E1 0%, #FFE082 70%, #FFC542 100%); }
-[data-theme="dark"] .card-turmeric-ing { background: linear-gradient(160deg, #1E1500 0%, #2E2000 100%); }
+
 
 /* Chamomile card */
 .card-chamomile-ing { background: linear-gradient(160deg, #F1F8E9 0%, #DCEDC8 100%); }
-[data-theme="dark"] .card-chamomile-ing { background: linear-gradient(160deg, #0E1A06 0%, #182A0C 100%); }
+
 
 .card-top {
     padding: 36px 36px 0;
@@ -809,7 +729,7 @@
     line-height: 1.2;
 }
 
-[data-theme="dark"] .card-ing-name { color: #F0D9B0; }
+
 
 .card-ing-latin {
     font-family: var(--font-display);
@@ -820,7 +740,7 @@
     margin-bottom: 16px;
 }
 
-[data-theme="dark"] .card-ing-latin { color: #8A6A50; }
+
 
 .card-ing-desc {
     font-size: 14px;
@@ -830,7 +750,7 @@
     margin-bottom: 22px;
 }
 
-[data-theme="dark"] .card-ing-desc { color: #9A7A5A; }
+
 
 .card-compounds {
     display: flex;
@@ -855,10 +775,6 @@
     padding: 100px 0;
     background: var(--cream-deep);
     position: relative;
-}
-
-[data-theme="dark"] .benefits-section {
-    background: var(--chamomile);
 }
 
 .benefits-layout {
@@ -886,11 +802,6 @@
     border: 1px solid rgba(200, 101, 27, 0.1);
 }
 
-[data-theme="dark"] .benefits-stat-block {
-    background: rgba(200, 101, 27, 0.06);
-    border-color: rgba(200, 101, 27, 0.15);
-}
-
 .stat-big {
     font-family: var(--font-display);
     font-size: 56px;
@@ -907,7 +818,7 @@
     line-height: 1.4;
 }
 
-[data-theme="dark"] .stat-big-label { color: #9A7A5A; }
+
 
 .benefits-right {
     display: flex;
@@ -927,20 +838,11 @@
     cursor: default;
 }
 
-[data-theme="dark"] .benefit-row {
-    background: rgba(200, 101, 27, 0.04);
-    border-color: rgba(200, 101, 27, 0.12);
-}
-
 .benefit-row:hover {
     transform: translateX(8px);
     background: rgba(255,255,255,0.95);
     border-color: rgba(200, 101, 27, 0.18);
     box-shadow: 0 8px 24px rgba(200, 101, 27, 0.08);
-}
-
-[data-theme="dark"] .benefit-row:hover {
-    background: rgba(200, 101, 27, 0.08);
 }
 
 .benefit-icon-box {
@@ -976,7 +878,7 @@
     margin-bottom: 6px;
 }
 
-[data-theme="dark"] .benefit-title { color: #F0D9B0; }
+
 
 .benefit-text {
     font-size: 13.5px;
@@ -985,7 +887,7 @@
     opacity: 0.7;
 }
 
-[data-theme="dark"] .benefit-text { color: #9A7A5A; }
+
 
 .benefit-source {
     display: inline-block;
@@ -1022,20 +924,6 @@
     cursor: default;
 }
 
-[data-theme="dark"] .product-card {
-    background: var(--chamomile);
-    border-color: rgba(200, 101, 27, 0.15);
-}
-
-.product-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(160deg, rgba(200, 101, 27, 0.04), transparent);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
 .product-card:hover {
     transform: translateY(-10px);
     box-shadow: 0 30px 60px rgba(200, 101, 27, 0.14);
@@ -1047,11 +935,9 @@
 }
 
 .product-card.featured {
-    background: linear-gradient(160deg, var(--ginger), var(--ginger-deep));
+    background: var(--chamomile);
     border-color: transparent;
 }
-
-.product-card.featured * { color: white !important; }
 
 .product-badge {
     display: inline-flex;
@@ -1073,7 +959,7 @@
 
 .badge-recommended {
     background: rgba(255,255,255,0.2);
-    color: white;
+    color: rgb(0, 0, 0);
     border: 1px solid rgba(255,255,255,0.3);
 }
 
@@ -1110,7 +996,7 @@
     margin-bottom: 6px;
 }
 
-[data-theme="dark"] .product-name { color: #F0D9B0; }
+
 
 .product-concentration {
     display: inline-block;
@@ -1123,9 +1009,9 @@
     margin-bottom: 14px;
 }
 
-.product-card.featured .product-concentration {
-    background: rgba(255,255,255,0.15);
-    color: rgba(255,255,255,0.9);
+.product-card.featured {
+    background: var(--chamomile-deep);
+    color: rgba(0, 0, 0, 0.9);
 }
 
 .product-desc {
@@ -1136,7 +1022,7 @@
     margin-bottom: 22px;
 }
 
-[data-theme="dark"] .product-desc { color: #9A7A5A; }
+
 
 .product-benefits-list {
     list-style: none;
@@ -1156,7 +1042,7 @@
     opacity: 0.8;
 }
 
-[data-theme="dark"] .product-benefits-list li { color: #9A7A5A; }
+
 
 .product-benefits-list li::before {
     content: '✓';
@@ -1192,7 +1078,7 @@
     color: var(--bark);
 }
 
-[data-theme="dark"] .price-current { color: #F0D9B0; }
+
 
 .price-old {
     font-size: 16px;
@@ -1230,18 +1116,9 @@
     overflow: hidden;
 }
 
-.product-card.featured .btn-add-cart {
+.btn-add-cart {
     background: white;
-    color: var(--ginger-deep);
-}
-
-.btn-add-cart::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(255,255,255,0.15);
-    opacity: 0;
-    transition: opacity 0.2s;
+    color: var(--bark);
 }
 
 .btn-add-cart:hover {
@@ -1265,7 +1142,7 @@
     overflow: hidden;
 }
 
-[data-theme="dark"] .process-section { background: var(--chamomile); }
+
 
 .process-line {
     position: absolute;
@@ -1295,19 +1172,10 @@
     cursor: default;
 }
 
-[data-theme="dark"] .step-card {
-    background: rgba(200, 101, 27, 0.04);
-    border-color: rgba(200, 101, 27, 0.1);
-}
-
 .step-card:hover {
     transform: translateY(-6px);
     background: rgba(255,255,255,0.9);
     box-shadow: 0 20px 40px rgba(200, 101, 27, 0.1);
-}
-
-[data-theme="dark"] .step-card:hover {
-    background: rgba(200, 101, 27, 0.07);
 }
 
 .step-number-wrap {
@@ -1351,7 +1219,7 @@
     margin-bottom: 10px;
 }
 
-[data-theme="dark"] .step-title { color: #F0D9B0; }
+
 
 .step-text {
     font-size: 14px;
@@ -1360,7 +1228,7 @@
     opacity: 0.65;
 }
 
-[data-theme="dark"] .step-text { color: #9A7A5A; }
+
 
 /* ─── TESTIMONIALS ─── */
 .testimonials-section {
@@ -1381,11 +1249,6 @@
     border: 1px solid rgba(200, 101, 27, 0.08);
     border-radius: 24px;
     transition: all 0.3s ease;
-}
-
-[data-theme="dark"] .testimonial-card {
-    background: var(--chamomile);
-    border-color: rgba(200, 101, 27, 0.12);
 }
 
 .testimonial-card:hover {
@@ -1434,7 +1297,7 @@
     position: relative;
 }
 
-[data-theme="dark"] .testimonial-quote { color: #9A7A5A; }
+
 
 .testimonial-quote::before {
     content: '"';
@@ -1460,7 +1323,7 @@
     color: var(--bark);
 }
 
-[data-theme="dark"] .testimonial-name { color: #F0D9B0; }
+
 
 .testimonial-tag {
     font-size: 10.5px;
@@ -1480,7 +1343,7 @@
     background: var(--cream-deep);
 }
 
-[data-theme="dark"] .cta-section { background: var(--chamomile); }
+
 
 .cta-inner {
     position: relative;
@@ -1489,10 +1352,6 @@
     padding: 80px 60px;
     overflow: hidden;
     text-align: center;
-}
-
-[data-theme="dark"] .cta-inner {
-    background: linear-gradient(135deg, #0E0800 0%, #1E1008 100%);
 }
 
 .cta-bg-blob {
@@ -1622,7 +1481,7 @@
     padding: 70px 0 30px;
 }
 
-[data-theme="dark"] .footer-ginger { background: #0A0500; }
+
 
 .footer-grid {
     display: grid;

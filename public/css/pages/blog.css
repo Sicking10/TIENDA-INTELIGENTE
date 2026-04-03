@@ -12,10 +12,6 @@
     overflow: hidden;
 }
 
-[data-theme="dark"] .blog-hero {
-    background: linear-gradient(135deg, #0D0804 0%, #1A1008 100%);
-}
-
 .blog-hero-bg {
     position: absolute;
     inset: 0;
@@ -76,10 +72,6 @@
     color: var(--gray-900);
 }
 
-[data-theme="dark"] .blog-hero h1 {
-    color: var(--white);
-}
-
 .gradient-word {
     background: linear-gradient(135deg, #D97A2B, #E8A838);
     -webkit-background-clip: text;
@@ -122,10 +114,6 @@
     padding: 40px 0;
     background: var(--bg-cream);
     border-bottom: 1px solid rgba(217, 122, 43, 0.08);
-}
-
-[data-theme="dark"] .blog-filters {
-    background: #0D0804;
 }
 
 .filters-wrapper {
@@ -235,10 +223,6 @@
     overflow: hidden;
 }
 
-[data-theme="dark"] .blog-card-image {
-    background: linear-gradient(135deg, #1A1A1A, #2A241E);
-}
-
 .image-placeholder i {
     font-size: 64px;
     color: #D97A2B;
@@ -281,10 +265,6 @@
     margin-bottom: 12px;
     line-height: 1.4;
     color: var(--gray-800);
-}
-
-[data-theme="dark"] .blog-card-content h3 {
-    color: var(--white);
 }
 
 .blog-card-content p {
@@ -374,10 +354,6 @@
     background: linear-gradient(135deg, #FEF7E8, #FFF5E6);
 }
 
-[data-theme="dark"] .newsletter-section {
-    background: linear-gradient(135deg, #0D0804, #1A1008);
-}
-
 .newsletter-card {
     max-width: 600px;
     margin: 0 auto;
@@ -399,10 +375,6 @@
     font-weight: 700;
     margin-bottom: 12px;
     color: var(--gray-800);
-}
-
-[data-theme="dark"] .newsletter-card h2 {
-    color: var(--white);
 }
 
 .newsletter-card h2 span {
@@ -491,10 +463,6 @@
     padding: 0;
 }
 
-[data-theme="dark"] .post-modal-content {
-    background: #0D0804;
-}
-
 .post-modal-close {
     position: absolute;
     top: 20px;
@@ -536,10 +504,6 @@
     font-weight: 700;
     margin-bottom: 16px;
     color: var(--gray-800);
-}
-
-[data-theme="dark"] .post-modal-header h2 {
-    color: var(--white);
 }
 
 .post-meta {
@@ -599,19 +563,11 @@
     margin-bottom: 16px;
 }
 
-[data-theme="dark"] .post-content p {
-    color: var(--gray-300);
-}
-
 .post-content h3 {
     font-size: 20px;
     font-weight: 600;
     margin: 24px 0 16px;
     color: var(--gray-800);
-}
-
-[data-theme="dark"] .post-content h3 {
-    color: var(--white);
 }
 
 .post-content ul {

@@ -454,24 +454,6 @@ function getHomeHTML() {
             </div>
         </section>
 
-        <!-- ══════════ PRODUCTOS ══════════ -->
-        <section class="products-section">
-            <div class="container">
-                <div class="section-header animate-on-scroll">
-                    <span class="section-eyebrow">Nuestras fórmulas</span>
-                    <h2 class="section-title">
-                        Elige tu <em>GINGERcaps</em> ideal
-                    </h2>
-                    <p class="section-subtitle">
-                        Tres concentraciones para cada etapa de tu camino hacia el bienestar.
-                    </p>
-                </div>
-                <div class="products-grid">
-                    ${renderProducts()}
-                </div>
-            </div>
-        </section>
-
         <!-- ══════════ CÓMO FUNCIONA ══════════ -->
         <section class="process-section">
             <div class="process-line" aria-hidden="true"></div>
@@ -488,7 +470,7 @@ function getHomeHTML() {
                         <div class="step-number-wrap"><div class="step-num">1</div></div>
                         <span class="step-icon-big">🛒</span>
                         <h3 class="step-title">Elige tu fórmula</h3>
-                        <p class="step-text">Selecciona Original, Plus o Pro según tus objetivos y estilo de vida.</p>
+                        <p class="step-text">Selecciona Vegana o No Vegana según tus objetivos y estilo de vida.</p>
                     </div>
                     <div class="step-card animate-on-scroll animate-delay-2">
                         <div class="step-number-wrap"><div class="step-num">2</div></div>

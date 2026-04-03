@@ -14,12 +14,6 @@
     --border-light: rgba(200, 101, 27, 0.1);
 }
 
-[data-theme="dark"] {
-    --bg-cream: #0D0804;
-    --bg-card: rgba(30, 20, 12, 0.9);
-    --border-light: rgba(200, 101, 27, 0.15);
-}
-
 /* ============================================
    Hero Refinado
 ============================================ */
@@ -114,13 +108,7 @@
     line-height: 1.2;
     margin-bottom: 24px;
     color: var(--gray-900);
-}
-
-[data-theme="dark"] .hero-title {
-    color: var(--white);
-}
-
-.gradient-word {
+}gradient-word {
     background: linear-gradient(135deg, #763500, #674100);
     -webkit-background-clip: text;
     background-clip: text;
@@ -135,13 +123,7 @@
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
-}
-
-[data-theme="dark"] .hero-description {
-    color: var(--gray-400);
-}
-
-.hero-scroll {
+}hero-scroll {
     display: inline-flex;
     flex-direction: column;
     align-items: center;
@@ -285,13 +267,7 @@
     font-weight: 700;
     margin-bottom: 8px;
     color: var(--gray-900);
-}
-
-[data-theme="dark"] .benefit-details h2 {
-    color: var(--white);
-}
-
-.scientific {
+}scientific {
     font-size: 16px;
     font-weight: 400;
     color: var(--gray-500);
@@ -309,13 +285,7 @@
     line-height: 1.6;
     color: var(--gray-600);
     margin-bottom: 32px;
-}
-
-[data-theme="dark"] .benefit-description {
-    color: var(--gray-400);
-}
-
-.benefit-grid-mini {
+}benefit-grid-mini {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
@@ -347,13 +317,7 @@
     font-weight: 600;
     margin-bottom: 4px;
     color: var(--gray-800);
-}
-
-[data-theme="dark"] .mini-card h4 {
-    color: var(--white);
-}
-
-.mini-card p {
+}mini-card p {
     font-size: 12px;
     color: var(--gray-500);
     line-height: 1.4;
@@ -466,13 +430,7 @@
     font-weight: 700;
     margin-bottom: 16px;
     color: var(--gray-900);
-}
-
-[data-theme="dark"] .numbers-header h2 {
-    color: var(--white);
-}
-
-.numbers-header p {
+}numbers-header p {
     font-size: 18px;
     color: var(--gray-600);
 }
@@ -510,13 +468,7 @@
     font-weight: 500;
     margin-bottom: 8px;
     color: var(--gray-700);
-}
-
-[data-theme="dark"] .number-label {
-    color: var(--gray-300);
-}
-
-.number-source {
+}number-source {
     font-size: 11px;
     color: var(--gray-500);
 }
@@ -539,13 +491,7 @@
     font-weight: 700;
     margin-bottom: 16px;
     color: var(--gray-900);
-}
-
-[data-theme="dark"] .timeline-header h2 {
-    color: var(--white);
-}
-
-.timeline-header p {
+}timeline-header p {
     font-size: 18px;
     color: var(--gray-600);
 }
@@ -635,13 +581,7 @@
     font-size: 18px;
     margin-bottom: 8px;
     color: var(--gray-800);
-}
-
-[data-theme="dark"] .timeline-content h4 {
-    color: var(--white);
-}
-
-.timeline-content p {
+}timeline-content p {
     font-size: 14px;
     color: var(--gray-600);
     line-height: 1.5;
@@ -665,13 +605,7 @@
     font-weight: 700;
     margin-bottom: 16px;
     color: var(--gray-900);
-}
-
-[data-theme="dark"] .faq-header h2 {
-    color: var(--white);
-}
-
-.faq-header p {
+}faq-header p {
     font-size: 18px;
     color: var(--gray-600);
 }
@@ -705,13 +639,7 @@
     font-weight: 600;
     color: var(--gray-800);
     transition: all 0.3s ease;
-}
-
-[data-theme="dark"] .faq-question {
-    color: var(--white);
-}
-
-.faq-question:hover {
+}faq-question:hover {
     background: rgba(217, 122, 43, 0.05);
 }
 
@@ -772,13 +700,7 @@
     font-weight: 700;
     margin-bottom: 16px;
     color: var(--gray-900);
-}
-
-[data-theme="dark"] .closing-card h2 {
-    color: var(--white);
-}
-
-.closing-card h2 span {
+}closing-card h2 span {
     color: #D97A2B;
 }
 

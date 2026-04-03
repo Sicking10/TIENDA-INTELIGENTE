@@ -26,3 +26,6 @@
 @import url('./pages/profile.css');
 @import url('./pages/orders.css');
 @import url('./pages/suscripcion.css');
+
+/* Themes */
+@import url('./themes/dark.css');

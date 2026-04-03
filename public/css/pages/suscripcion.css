@@ -12,10 +12,6 @@
     overflow: hidden;
 }
 
-[data-theme="dark"] .subscription-hero {
-    background: linear-gradient(135deg, #0D0804 0%, #1A1008 100%);
-}
-
 .subscription-hero-bg {
     position: absolute;
     inset: 0;
@@ -85,10 +81,6 @@
     color: var(--gray-900);
 }
 
-[data-theme="dark"] .subscription-hero h1 {
-    color: var(--white);
-}
-
 .gradient-word {
     background: linear-gradient(135deg, #D97A2B, #E8A838);
     -webkit-background-clip: text;
@@ -129,10 +121,6 @@
     background: var(--bg-cream);
 }
 
-[data-theme="dark"] .plans-section {
-    background: var(--gray-900);
-}
-
 .section-header {
     text-align: center;
     margin-bottom: 48px;
@@ -152,10 +140,6 @@
     font-weight: 700;
     margin-bottom: 16px;
     color: var(--gray-900);
-}
-
-[data-theme="dark"] .section-header h2 {
-    color: var(--white);
 }
 
 .section-header .accent {
@@ -264,10 +248,6 @@
     font-weight: 700;
     margin-bottom: 16px;
     color: var(--gray-800);
-}
-
-[data-theme="dark"] .plan-card h3 {
-    color: var(--white);
 }
 
 .plan-price {
@@ -389,10 +369,6 @@
     background: linear-gradient(135deg, #FEF7E8, #FFF5E6);
 }
 
-[data-theme="dark"] .how-it-works {
-    background: linear-gradient(135deg, #0D0804, #1A1008);
-}
-
 .steps-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -431,10 +407,6 @@
     color: var(--gray-800);
 }
 
-[data-theme="dark"] .step-card h3 {
-    color: var(--white);
-}
-
 .step-card p {
     font-size: 14px;
     color: var(--gray-600);
@@ -445,10 +417,6 @@
 .faq-section {
     padding: 80px 0;
     background: var(--bg-cream);
-}
-
-[data-theme="dark"] .faq-section {
-    background: var(--gray-900);
 }
 
 .faq-grid {
@@ -474,10 +442,6 @@
     font-weight: 600;
     color: var(--gray-800);
     transition: all 0.3s ease;
-}
-
-[data-theme="dark"] .faq-question {
-    color: var(--white);
 }
 
 .faq-question:hover {
@@ -606,10 +570,6 @@
     background: var(--bg-cream);
     border-radius: 24px;
     overflow: hidden;
-}
-
-[data-theme="dark"] .subscription-modal .modal-content {
-    background: #0D0804;
 }
 
 .modal-header {

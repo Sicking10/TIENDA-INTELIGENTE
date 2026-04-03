@@ -1,6 +1,6 @@
 /**
  * Módulo Cart - Carrito de compras
- * Versión completa con funcionalidades: modificar cantidades, eliminar, resumen, cupones
+ * Versión corregida - SIN onerror inline y rutas de imágenes fijas
  */
 
 import { store } from '../../store.js';
@@ -29,6 +29,7 @@ export default class CartView {
         }
         
         this.initEvents();
+        this.setupImageErrorHandlers();
         
         return this;
     }
@@ -37,6 +38,18 @@ export default class CartView {
         this.cartItems = store.get('cart.items') || [];
         this.cartTotal = store.get('cart.total') || 0;
         this.cartItemCount = store.get('cart.itemCount') || 0;
+    }
+    
+    // Manejador de errores de imagen SIN inline
+    setupImageErrorHandlers() {
+        document.querySelectorAll('.cart-item-image img, .suggestion-image img').forEach(img => {
+            img.removeEventListener('error', img._errorHandler);
+            const handler = () => {
+                img.src = '/assets/images/products/placeholder.jpg';
+            };
+            img._errorHandler = handler;
+            img.addEventListener('error', handler);
+        });
     }
     
     renderEmptyCart() {
@@ -50,46 +63,17 @@ export default class CartView {
                         <h2>Tu carrito está vacío</h2>
                         <p>Parece que aún no has agregado productos a tu carrito.</p>
                         <div class="cart-empty-actions">
-                            <a href="/tienda" class="btn-primary" data-link>
+                            <a href="/tienda" class="btn-add-cart" data-link>
                                 <i class="fas fa-store"></i> Explorar productos
                             </a>
-                            <a href="/beneficios" class="btn-outline" data-link>
+                            <a href="/beneficios" class="btn-add-cart" data-link>
                                 <i class="fas fa-leaf"></i> Conocer beneficios
                             </a>
-                        </div>
-                        <div class="cart-empty-suggestions">
-                            <h3>Productos recomendados</h3>
-                            <div class="suggestions-grid">
-                                ${this.renderSuggestions()}
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         `;
-    }
-    
-    renderSuggestions() {
-        const suggestions = [
-            { name: 'GINGERcaps Original', price: 349, image: 'original' },
-            { name: 'GINGERcaps Plus', price: 449, image: 'plus' },
-            { name: 'Kit Detox 30 Días', price: 899, image: 'kit-detox' }
-        ];
-        
-        return suggestions.map(product => `
-            <div class="suggestion-card">
-                <div class="suggestion-image">
-                    <img src="/assets/images/products/${product.image}.jpg" 
-                         alt="${product.name}"
-                         onerror="this.src='/assets/images/products/placeholder.jpg'">
-                </div>
-                <h4>${product.name}</h4>
-                <div class="suggestion-price">${formatPrice(product.price)}</div>
-                <button class="btn-add-suggestion" data-product='${JSON.stringify(product)}'>
-                    <i class="fas fa-cart-plus"></i> Agregar
-                </button>
-            </div>
-        `).join('');
     }
     
     renderCartWithItems() {
@@ -189,13 +173,25 @@ export default class CartView {
     }
     
     renderCartItems() {
-        return this.cartItems.map(item => `
+        return this.cartItems.map(item => {
+            // Determinar qué imagen mostrar basado en el ID del producto
+            let imageName = 'placeholder';
+            if (item.id === 'ginger-origin' || item.name.includes('ORIGIN')) {
+                imageName = 'original';
+            } else if (item.id === 'ginger-elixir' || item.name.includes('ELIXIR')) {
+                imageName = 'pro';
+            } else if (item.image) {
+                imageName = item.image;
+            }
+            
+            return `
             <div class="cart-item" data-id="${item.id}">
                 <div class="cart-item-product">
                     <div class="cart-item-image">
-                        <img src="/assets/images/products/${item.image}.jpg" 
+                        <img src="/assets/images/products/${imageName}.jpg" 
                              alt="${item.name}"
-                             onerror="this.src='/assets/images/products/placeholder.jpg'">
+                             class="cart-item-img"
+                             loading="lazy">
                     </div>
                     <div class="cart-item-info">
                         <h4>${item.name}</h4>
@@ -230,7 +226,7 @@ export default class CartView {
                     </button>
                 </div>
             </div>
-        `).join('');
+        `}).join('');
     }
     
     initEvents() {
@@ -238,9 +234,11 @@ export default class CartView {
         document.querySelectorAll('.qty-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                const productId = parseInt(btn.dataset.id);
+                const productId = btn.dataset.id;
                 const action = btn.dataset.action;
                 const input = document.querySelector(`.quantity-input[data-id="${productId}"]`);
+                if (!input) return;
+                
                 let currentValue = parseInt(input.value);
                 
                 if (action === 'increase') {
@@ -259,7 +257,7 @@ export default class CartView {
         // Eventos para input de cantidad
         document.querySelectorAll('.quantity-input').forEach(input => {
             input.addEventListener('change', (e) => {
-                const productId = parseInt(input.dataset.id);
+                const productId = input.dataset.id;
                 let newValue = parseInt(input.value);
                 if (isNaN(newValue) || newValue < 1) newValue = 1;
                 if (newValue > 99) newValue = 99;
@@ -272,7 +270,7 @@ export default class CartView {
         document.querySelectorAll('.btn-remove-item').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                const productId = parseInt(btn.dataset.id);
+                const productId = btn.dataset.id;
                 this.removeItem(productId);
             });
         });
@@ -309,11 +307,12 @@ export default class CartView {
             btn.addEventListener('click', (e) => {
                 const product = JSON.parse(btn.dataset.product);
                 store.addToCart({
-                    id: Date.now(),
+                    id: product.id || Date.now(),
                     name: product.name,
                     price: product.price,
                     image: product.image,
-                    concentration: '500mg'
+                    concentration: '500mg',
+                    quantity: 1
                 });
                 showNotification(`${product.name} agregado al carrito`, 'success');
                 updateCartBadge();

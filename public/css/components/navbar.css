@@ -166,8 +166,6 @@
     color: var(--ginger);
 }
 
-[data-theme="dark"] .logo-brand { color: var(--chamomile); }
-
 .logo-tagline {
     font-size: 8px;
     font-weight: 500;
@@ -227,10 +225,6 @@
     color: var(--bark-light);
 }
 
-[data-theme="dark"] .nav-link {
-    color: rgba(200, 168, 130, 0.85);
-}
-
 /* Cuando el indicador está debajo de un link (hover o active), ese link debe ser blanco */
 .nav-link.active,
 .nav-link:hover {
@@ -239,10 +233,6 @@
 
 .navbar-links:hover .nav-link.active:not(:hover) {
     color: var(--bark-light) !important;
-}
-
-[data-theme="dark"] .navbar-links:hover .nav-link.active:not(:hover) {
-    color: rgba(200, 168, 130, 0.85) !important;
 }
 
 /* El link activo cuando está siendo hovereado también es blanco */
@@ -489,7 +479,7 @@
     border-radius: 2px;
     transition: all 0.3s ease;
 }
-[data-theme="dark"] .mobile-menu-btn span { background: var(--chamomile); }
+
 .mobile-menu-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
 .mobile-menu-btn.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
 .mobile-menu-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
@@ -512,7 +502,7 @@
     overflow-y: auto;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
-[data-theme="dark"] .mobile-drawer { background: #1A1008; }
+
 .mobile-drawer.open { transform: translateY(0); }
 
 /* Logo dentro del drawer */
@@ -549,7 +539,7 @@
     font-style: italic;
     color: var(--ginger);
 }
-[data-theme="dark"] .mobile-logo-brand { color: var(--chamomile); }
+
 .mobile-logo-tagline {
     font-size: 8px;
     font-weight: 500;
