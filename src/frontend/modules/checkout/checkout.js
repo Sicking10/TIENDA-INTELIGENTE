@@ -457,67 +457,61 @@ export default class CheckoutView {
     }
 
     async reverseGeocode(lat, lng) {
-        const locationBtn = document.getElementById('use-location-btn');
+    const locationBtn = document.getElementById('use-location-btn');
+    
+    try {
+        locationBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Obteniendo dirección...';
+        locationBtn.disabled = true;
         
-        try {
-            locationBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Obteniendo dirección...';
-            locationBtn.disabled = true;
+        const token = store.get('auth.token');
+        
+        const response = await fetch('/api/geocode/reverse', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ lat, lng })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success && data.address) {
+            const addr = data.address;
             
-            // Usar Nominatim de OpenStreetMap (gratuito, sin API key)
-            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1&zoom=18&accept-language=es`);
-            const data = await response.json();
+            // Llenar formulario
+            document.getElementById('street').value = addr.street;
+            document.getElementById('street-number').value = addr.streetNumber;
+            document.getElementById('neighborhood').value = addr.neighborhood;
+            document.getElementById('zipCode').value = addr.zipCode;
+            document.getElementById('city').value = 'Mazatlán';
+            document.getElementById('state').value = 'Sinaloa';
             
-            if (data && data.address) {
-                const addr = data.address;
-                const displayName = data.display_name || '';
-                
-                let street = addr.road || '';
-                let houseNumber = addr.house_number || '';
-                let neighborhood = addr.suburb || addr.neighbourhood || addr.quarter || '';
-                let city = addr.city || addr.town || addr.municipality || '';
-                let zipCode = addr.postcode || '';
-                
-                // Si no hay número, intentar extraer del display_name
-                if (!houseNumber && displayName) {
-                    const match = displayName.match(/\d+/);
-                    if (match) houseNumber = match[0];
-                }
-                
-                // Validar que sea Mazatlán
-                const isMazatlan = city.toLowerCase().includes('mazatlán') || 
-                                  city.toLowerCase().includes('mazatlan') ||
-                                  displayName.toLowerCase().includes('mazatlán');
-                
-                if (!isMazatlan) {
-                    showNotification('Solo realizamos envíos dentro de Mazatlán, Sinaloa', 'warning');
-                    return;
-                }
-                
-                document.getElementById('street').value = street;
-                document.getElementById('street-number').value = houseNumber;
-                document.getElementById('neighborhood').value = neighborhood;
-                document.getElementById('zipCode').value = zipCode;
-                document.getElementById('city').value = 'Mazatlán';
-                document.getElementById('state').value = 'Sinaloa';
-                
-                showNotification('¡Dirección cargada! Verifica los datos', 'success');
-                
-                if (zipCode && ZONAS_ENVIO_MAZATLAN.includes(zipCode)) {
-                    const warning = document.getElementById('delivery-warning');
-                    if (warning) warning.style.display = 'none';
-                }
-            } else {
-                showNotification('No se pudo obtener tu dirección', 'error');
+            showNotification('¡Dirección cargada correctamente!', 'success');
+            
+            // Validar código postal
+            const zipCode = addr.zipCode;
+            if (zipCode && ZONAS_ENVIO_MAZATLAN.includes(zipCode)) {
+                const warning = document.getElementById('delivery-warning');
+                if (warning) warning.style.display = 'none';
+            } else if (zipCode) {
+                const warning = document.getElementById('delivery-warning');
+                if (warning) warning.style.display = 'flex';
+                showNotification('El código postal no corresponde a Mazatlán', 'warning');
             }
             
-        } catch (error) {
-            console.error('Error:', error);
-            showNotification('Error al obtener la ubicación', 'error');
-        } finally {
-            locationBtn.innerHTML = '<i class="fas fa-location-dot"></i> Usar mi ubicación';
-            locationBtn.disabled = false;
+        } else {
+            showNotification(data.message || 'No se pudo obtener tu dirección', 'error');
         }
+        
+    } catch (error) {
+        console.error('Error:', error);
+        showNotification('Error al obtener la ubicación', 'error');
+    } finally {
+        locationBtn.innerHTML = '<i class="fas fa-location-dot"></i> Usar mi ubicación';
+        locationBtn.disabled = false;
     }
+}
 
     async showSavedAddresses() {
         // Cargar direcciones desde localStorage
