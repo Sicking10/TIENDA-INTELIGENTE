@@ -1,6 +1,6 @@
 /**
  * Estado global de la aplicación (Store)
- * store.js - Similar a un mini Vuex/Redux pero liviano
+ * store.js - Carrito por usuario
  */
 
 class Store {
@@ -68,7 +68,7 @@ class Store {
         };
         
         this.listeners = [];
-        this.persistedKeys = ['auth', 'cart', 'ui.theme'];
+        this.persistedKeys = ['auth', 'ui.theme'];
     }
     
     /**
@@ -82,13 +82,76 @@ class Store {
     }
     
     /**
+     * Obtiene la clave del carrito según el usuario actual
+     */
+    getCartKey() {
+        const user = this.state.auth.user;
+        if (user && (user.id || user._id)) {
+            const userId = user.id || user._id;
+            return `store_cart_${userId}`;
+        }
+        return 'store_cart_guest';
+    }
+    
+    /**
+     * Carga el carrito del usuario actual
+     */
+    loadCartForCurrentUser() {
+        const cartKey = this.getCartKey();
+        const savedCart = localStorage.getItem(cartKey);
+        
+        if (savedCart) {
+            try {
+                this.state.cart = JSON.parse(savedCart);
+                this.validateCartItems();
+                console.log(`📦 Carrito cargado: ${cartKey}`);
+            } catch (error) {
+                console.error('Error al cargar carrito:', error);
+                this.resetCart();
+            }
+        } else {
+            this.resetCart();
+            console.log(`📦 Carrito nuevo: ${cartKey}`);
+        }
+        
+        this.recalculateCartTotals();
+        this.notifyListeners('cart', this.state.cart, null);
+    }
+    
+    /**
+     * Resetea el carrito a vacío
+     */
+    resetCart() {
+        this.state.cart = {
+            items: [],
+            total: 0,
+            itemCount: 0,
+            lastUpdated: null
+        };
+    }
+    
+    /**
+     * Guarda el carrito actual en localStorage
+     */
+    saveCart() {
+        const cartKey = this.getCartKey();
+        localStorage.setItem(cartKey, JSON.stringify(this.state.cart));
+        console.log(`💾 Carrito guardado: ${cartKey}`);
+    }
+    
+    /**
      * Configura listener para cambios en autenticación
      */
     setupAuthListener() {
-        // Escuchar cambios en auth para actualizar UI
         this.subscribe((path, newValue, oldValue, state) => {
             if (path === 'auth.isAuthenticated' || path === 'auth.user') {
                 this.updateNavbarAuth();
+                
+                // Cuando cambia el usuario (login/logout), cargar su carrito
+                if (path === 'auth.user') {
+                    this.loadCartForCurrentUser();
+                    this.notifyListeners('cart.itemCount', this.state.cart.itemCount, null);
+                }
             }
         });
     }
@@ -125,15 +188,7 @@ class Store {
             if (auth) {
                 const parsedAuth = JSON.parse(auth);
                 this.state.auth = parsedAuth;
-                // Actualizar navbar después de cargar auth
                 setTimeout(() => this.updateNavbarAuth(), 100);
-            }
-            
-            // Cargar carrito
-            const cart = localStorage.getItem('store_cart');
-            if (cart) {
-                this.state.cart = JSON.parse(cart);
-                this.validateCartItems();
             }
             
             // Cargar tema
@@ -141,6 +196,9 @@ class Store {
             if (theme) {
                 this.state.ui.theme = theme;
             }
+            
+            // Cargar carrito según el usuario actual (o invitado)
+            this.loadCartForCurrentUser();
             
         } catch (error) {
             console.error('Error loading persisted state:', error);
@@ -166,13 +224,13 @@ class Store {
     }
     
     /**
-     * Guarda estado persistido
+     * Guarda estado persistido (solo auth y theme, el carrito se guarda por separado)
      */
     persistState() {
         try {
             localStorage.setItem('store_auth', JSON.stringify(this.state.auth));
-            localStorage.setItem('store_cart', JSON.stringify(this.state.cart));
             localStorage.setItem('theme', this.state.ui.theme);
+            // El carrito se guarda automáticamente con saveCart() después de cada modificación
         } catch (error) {
             console.error('Error persisting state:', error);
         }
@@ -239,7 +297,6 @@ class Store {
      * @returns {Function} Función para desuscribir
      */
     subscribe(callback) {
-        // Validar que callback sea una función
         if (typeof callback !== 'function') {
             console.warn('[STORE] subscribe: callback no es una función', callback);
             return () => {};
@@ -278,7 +335,6 @@ class Store {
         
         this.state.ui.notifications.push(notification);
         
-        // Auto eliminar después de 5 segundos
         setTimeout(() => {
             this.state.ui.notifications = this.state.ui.notifications.filter(n => n.id !== id);
         }, 5000);
@@ -291,8 +347,9 @@ class Store {
         this.state.cart.items = [];
         this.state.cart.total = 0;
         this.state.cart.itemCount = 0;
-        this.persistState();
+        this.saveCart();
         this.notify('Carrito vaciado', 'info');
+        this.notifyListeners('cart.itemCount', 0, null);
     }
     
     /**
@@ -312,13 +369,15 @@ class Store {
                 price: product.price,
                 image: product.image,
                 quantity: quantity,
+                concentration: product.concentration || '',
                 maxStock: product.stock || 99
             });
         }
         
         this.recalculateCartTotals();
-        this.persistState();
+        this.saveCart();
         this.notify(`${product.name} agregado al carrito`, 'success');
+        this.notifyListeners('cart.itemCount', this.state.cart.itemCount, null);
     }
     
     /**
@@ -330,8 +389,9 @@ class Store {
         if (item) {
             this.state.cart.items = this.state.cart.items.filter(item => item.id !== productId);
             this.recalculateCartTotals();
-            this.persistState();
+            this.saveCart();
             this.notify(`${item.name} eliminado del carrito`, 'info');
+            this.notifyListeners('cart.itemCount', this.state.cart.itemCount, null);
         }
     }
     
@@ -348,7 +408,8 @@ class Store {
             } else {
                 item.quantity = Math.min(quantity, item.maxStock);
                 this.recalculateCartTotals();
-                this.persistState();
+                this.saveCart();
+                this.notifyListeners('cart.itemCount', this.state.cart.itemCount, null);
             }
         }
     }
@@ -365,6 +426,8 @@ class Store {
             'auth.token': token,
             'auth.role': user.role || 'user'
         });
+        
+        // El carrito se carga automáticamente en setupAuthListener
         this.updateNavbarAuth();
         this.notify(`¡Bienvenido, ${user.name || user.email}!`, 'success');
     }
@@ -373,12 +436,20 @@ class Store {
      * Cierra sesión
      */
     logout() {
+        // Guardar el carrito actual antes de limpiar la sesión
+        if (this.state.auth.isAuthenticated && this.state.auth.user) {
+            this.saveCart();
+        }
+        
+        // Limpiar estado de autenticación
         this.setMultiple({
             'auth.isAuthenticated': false,
             'auth.user': null,
             'auth.token': null,
             'auth.role': null
         });
+        
+        // El carrito se carga automáticamente como invitado en setupAuthListener
         this.updateNavbarAuth();
         this.notify('Sesión cerrada', 'info');
     }

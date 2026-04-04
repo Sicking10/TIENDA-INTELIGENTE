@@ -172,7 +172,7 @@ const TESTIMONIALS = [
 const MARQUEE_ITEMS = [
     '🌿 100% Natural',
     '🧪 Clinicamente respaldado',
-    '🚚 Envío gratis desde $500',
+    '🚚 Envío gratis en la compra de 4 o mas productos',
     '♻️ Empaque sostenible',
     '🌱 Sin aditivos artificiales',
     '⭐ +15,000 clientes satisfechos',

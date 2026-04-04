@@ -1,5 +1,6 @@
 /**
  * Módulo Login - Inicio de sesión
+ * Con preloader
  */
 
 import { authGuard } from '../../authGuard.js';
@@ -59,7 +60,10 @@ export default class LoginView {
                             
                             <button type="submit" class="btn btn-primary btn-full">
                                 <span class="btn-text">Iniciar Sesión</span>
-                                <span class="btn-loader hidden">Cargando...</span>
+                                <div class="btn-preloader hidden">
+                                    <div class="preloader-spinner"></div>
+                                    <span>Verificando...</span>
+                                </div>
                             </button>
                         </form>
                         
@@ -71,7 +75,6 @@ export default class LoginView {
             </div>
         `;
         
-        // Configurar evento del formulario
         this.setupForm();
         
         return this;
@@ -95,11 +98,11 @@ export default class LoginView {
         
         const submitBtn = this.form.querySelector('button[type="submit"]');
         const btnText = submitBtn.querySelector('.btn-text');
-        const btnLoader = submitBtn.querySelector('.btn-loader');
+        const btnPreloader = submitBtn.querySelector('.btn-preloader');
         
-        // Mostrar loader
+        // Mostrar preloader
         btnText.classList.add('hidden');
-        btnLoader.classList.remove('hidden');
+        btnPreloader.classList.remove('hidden');
         submitBtn.disabled = true;
         
         try {
@@ -117,13 +120,11 @@ export default class LoginView {
                 throw new Error(data.message || 'Error al iniciar sesión');
             }
             
-            // Guardar sesión
             const loggedIn = await authGuard.login(data.user, data.token);
             
             if (loggedIn) {
                 showNotification('Inicio de sesión exitoso', 'success');
                 
-                // Redirigir según rol
                 const role = authGuard.getUserRole();
                 if (role === 'admin') {
                     window.location.href = '/admin';
@@ -135,10 +136,8 @@ export default class LoginView {
         } catch (error) {
             console.error('Login error:', error);
             showNotification(error.message, 'error');
-            
-            // Restaurar botón
             btnText.classList.remove('hidden');
-            btnLoader.classList.add('hidden');
+            btnPreloader.classList.add('hidden');
             submitBtn.disabled = false;
         }
     }

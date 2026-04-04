@@ -3064,3 +3064,287 @@
     background: #E8A838;
     color: #1A0A00;
 }
+
+/* ============================================
+   MODO OSCURO
+============================================ */
+[data-theme="dark"] .benefits-hero {
+    background: var(--cream);
+}
+
+[data-theme="dark"] .hero-title {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .hero-desc {
+    color: #C8A882;
+}
+
+[data-theme="dark"] .btn-ghost {
+    border-color: rgba(232,168,56,0.3);
+    color: #E8A838;
+}
+
+[data-theme="dark"] .tag {
+    background: rgba(232,168,56,0.15);
+    color: #E8A838;
+    border-color: rgba(232,168,56,0.3);
+}
+
+[data-theme="dark"] .tab-btn {
+    color: #C8A882;
+}
+
+[data-theme="dark"] .tab-btn.active {
+    background: var(--chamomile);
+    color: #E8A838;
+}
+
+[data-theme="dark"] .ingredient-badge {
+    background: var(--chamomile);
+    border-color: rgba(232,168,56,0.15);
+}
+
+[data-theme="dark"] .badge-text strong {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .bm-card {
+    background: var(--chamomile);
+    border-color: rgba(232,168,56,0.1);
+}
+
+[data-theme="dark"] .bm-title {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .bm-desc {
+    color: #C8A882;
+}
+
+[data-theme="dark"] .numbers-section {
+    background: var(--cream);
+}
+
+[data-theme="dark"] .n-card {
+    background: var(--chamomile);
+    border-color: rgba(232,168,56,0.1);
+}
+
+[data-theme="dark"] .n-value {
+    color: #E8A838;
+}
+
+[data-theme="dark"] .n-label {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .timeline-section {
+    background: var(--cream-deep);
+}
+
+[data-theme="dark"] .tl-card {
+    background: var(--chamomile);
+    border-color: rgba(232,168,56,0.1);
+}
+
+[data-theme="dark"] .tl-card h4 {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .tl-card p {
+    color: #C8A882;
+}
+
+[data-theme="dark"] .faq-section {
+    background: var(--cream-deep);
+}
+
+[data-theme="dark"] .faq-item {
+    background: var(--chamomile);
+    border-color: rgba(232,168,56,0.1);
+}
+
+[data-theme="dark"] .faq-q {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .faq-a {
+    color: #C8A882;
+}
+
+[data-theme="dark"] .closing-section {
+    background: var(--cream);
+}
+
+[data-theme="dark"] .closing-title {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .closing-desc {
+    color: #C8A882;
+}
+
+/* MODO OSCURO */
+[data-theme="dark"] .benefits-hero {
+    background: var(--cream);
+}
+
+[data-theme="dark"] .hero-title {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .hero-desc {
+    color: #C8A882;
+}
+
+[data-theme="dark"] .btn-ghost {
+    border-color: rgba(232,168,56,0.3);
+    color: #E8A838;
+}
+
+[data-theme="dark"] .tag {
+    background: rgba(232,168,56,0.15);
+    color: #E8A838;
+    border-color: rgba(232,168,56,0.3);
+}
+
+[data-theme="dark"] .tab-btn {
+    color: #C8A882;
+}
+
+[data-theme="dark"] .tab-btn.active {
+    background: var(--chamomile);
+    color: #E8A838;
+}
+
+[data-theme="dark"] .ingredient-badge {
+    background: var(--chamomile);
+    border-color: rgba(232,168,56,0.15);
+}
+
+[data-theme="dark"] .badge-text strong {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .bm-card {
+    background: var(--chamomile);
+    border-color: rgba(232,168,56,0.1);
+}
+
+[data-theme="dark"] .bm-title {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .bm-desc {
+    color: #C8A882;
+}
+
+[data-theme="dark"] .numbers-section {
+    background: var(--cream);
+}
+
+[data-theme="dark"] .n-card {
+    background: var(--chamomile);
+    border-color: rgba(232,168,56,0.1);
+}
+
+[data-theme="dark"] .n-value {
+    color: #E8A838;
+}
+
+[data-theme="dark"] .n-label {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .timeline-section {
+    background: var(--cream-deep);
+}
+
+[data-theme="dark"] .tl-card {
+    background: var(--chamomile);
+    border-color: rgba(232,168,56,0.1);
+}
+
+[data-theme="dark"] .tl-card h4 {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .tl-card p {
+    color: #C8A882;
+}
+
+[data-theme="dark"] .faq-section {
+    background: var(--cream-deep);
+}
+
+[data-theme="dark"] .faq-item {
+    background: var(--chamomile);
+    border-color: rgba(232,168,56,0.1);
+}
+
+[data-theme="dark"] .faq-q {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .faq-a {
+    color: #C8A882;
+}
+
+[data-theme="dark"] .closing-section {
+    background: var(--cream);
+}
+
+[data-theme="dark"] .closing-title {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .closing-desc {
+    color: #C8A882;
+}
+
+[data-theme="dark"] .ingredient-desc {
+    color: #C8A882;
+}
+
+[data-theme="dark"] .ingredient-lead {
+    color: var(--turmeric);
+}
+
+[data-theme="dark"] .cpd-body strong {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .cpd-body span {
+    color: var(--turmeric);
+}
+
+[data-theme="dark"] .badge-text span {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .sy-num {
+    color: var(--bark);
+}
+
+[data-theme="dark"] .section-desc {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .ingredient-sci {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .stat-value {
+    color: #F0D9B0;
+}
+
+
+/* Modo oscuro para preloader de página */
+[data-theme="dark"] .page-preloader {
+    background: rgba(26, 16, 8, 0.95);
+}
+
+[data-theme="dark"] .page-preloader .preloader-text {
+    color: #E8A838;
+}

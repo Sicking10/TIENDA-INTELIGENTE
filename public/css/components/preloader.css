@@ -1,0 +1,68 @@
+/* ============================================
+   PRELOADER - Componente de carga
+============================================ */
+
+/* Preloader dentro de botones */
+.btn-preloader {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.preloader-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: preloader-spin 0.8s linear infinite;
+}
+
+/* Preloader para modo oscuro */
+[data-theme="dark"] .preloader-spinner {
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-top-color: #F0D9B0;
+}
+
+/* Animación del spinner */
+@keyframes preloader-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Preloader de página completa */
+.page-preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(253, 248, 240, 0.95);
+    backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.page-preloader .preloader-spinner {
+    width: 48px;
+    height: 48px;
+    border-width: 3px;
+}
+
+.page-preloader .preloader-text {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--ginger);
+    letter-spacing: 1px;
+}
+
+/* Ocultar elementos */
+.hidden {
+    display: none !important;
+}

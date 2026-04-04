@@ -15,6 +15,7 @@
 @import url('./components/cards.css');
 @import url('./components/notifications.css');
 @import url('./components/navbar.css');
+@import url('./components/preloader.css');
 
 /* Pages */
 @import url('./pages/home.css');
@@ -25,9 +26,9 @@
 @import url('./pages/blog.css');
 @import url('./pages/profile.css');
 @import url('./pages/orders.css');
-@import url('./pages/suscripcion.css');
 @import url('./pages/checkout.css');
 @import url('./pages/orderTracking.css');
+@import url('./pages/login.css');
 
 /* Themes */
 @import url('./themes/dark.css');
