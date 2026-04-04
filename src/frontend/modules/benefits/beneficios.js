@@ -39,20 +39,6 @@ export default class BeneficiosView {
                                 <a href="/tienda" class="btn-primary" data-link>Descubrir productos</a>
                                 <a href="#ingredientes" class="btn-ghost" id="scroll-to-ingredients">Ver estudios →</a>
                             </div>
-                            <div class="hero-stats">
-                                <div>
-                                    <div class="hero-stat-num" data-counter="5000">5000+</div>
-                                    <div class="hero-stat-label">años de uso tradicional</div>
-                                </div>
-                                <div>
-                                    <div class="hero-stat-num" data-counter="15000">15k+</div>
-                                    <div class="hero-stat-label">clientes satisfechos</div>
-                                </div>
-                                <div>
-                                    <div class="hero-stat-num" data-counter="3">3</div>
-                                    <div class="hero-stat-label">ingredientes sinérgicos</div>
-                                </div>
-                            </div>
                         </div>
                         <div class="hero-right">
                             <div class="hero-ring-container">

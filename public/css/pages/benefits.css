@@ -149,13 +149,6 @@
     background: rgba(200,101,27,0.05);
 }
 
-.hero-stats {
-    display: flex;
-    gap: 40px;
-    padding-top: 40px;
-    border-top: 1px solid rgba(44,26,14,0.08);
-}
-
 .hero-stat-num {
     font-family: var(--font-display);
     font-size: 36px;
