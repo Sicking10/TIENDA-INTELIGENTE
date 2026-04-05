@@ -584,17 +584,6 @@
     color: var(--bark);
 }
 
-.modal-addresses .modal-close {
-    width: 32px;
-    height: 32px;
-    background: rgba(217, 122, 43, 0.1);
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 18px;
-    transition: all 0.2s;
-}
-
 .modal-addresses .modal-body {
     padding: 24px;
     overflow-y: auto;

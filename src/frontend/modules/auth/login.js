@@ -1,11 +1,12 @@
 /**
  * Módulo Login - Inicio de sesión
- * Con preloader
+ * Con preloader y toggle de contraseña
  */
 
 import { authGuard } from '../../authGuard.js';
 import { store } from '../../store.js';
 import { showNotification } from '../notifications/notifications.js';
+import { addPasswordToggle } from '../../utils/passwordToggle.js';
 
 export default class LoginView {
     constructor(container, params = {}) {
@@ -75,6 +76,12 @@ export default class LoginView {
             </div>
         `;
         
+        // Agregar toggle de contraseña
+        const passwordInput = document.getElementById('password');
+        if (passwordInput) {
+            addPasswordToggle(passwordInput);
+        }
+        
         this.setupForm();
         
         return this;
@@ -100,7 +107,6 @@ export default class LoginView {
         const btnText = submitBtn.querySelector('.btn-text');
         const btnPreloader = submitBtn.querySelector('.btn-preloader');
         
-        // Mostrar preloader
         btnText.classList.add('hidden');
         btnPreloader.classList.remove('hidden');
         submitBtn.disabled = true;

@@ -161,3 +161,61 @@ exports.getMe = async (req, res) => {
         });
     }
 };
+
+// @desc    Cambiar contraseña
+// @route   PUT /api/auth/password
+// @access  Private
+exports.changePassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({
+                success: false,
+                message: 'Se requieren la contraseña actual y la nueva contraseña'
+            });
+        }
+        
+        if (newPassword.length < 6) {
+            return res.status(400).json({
+                success: false,
+                message: 'La nueva contraseña debe tener al menos 6 caracteres'
+            });
+        }
+        
+        const User = require('../../models/User');
+        const user = await User.findById(req.user.id).select('+password');
+        
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'Usuario no encontrado'
+            });
+        }
+        
+        // Verificar contraseña actual
+        const isMatch = await user.comparePassword(currentPassword);
+        if (!isMatch) {
+            return res.status(401).json({
+                success: false,
+                message: 'La contraseña actual es incorrecta'
+            });
+        }
+        
+        // Actualizar contraseña
+        user.password = newPassword;
+        await user.save();
+        
+        res.json({
+            success: true,
+            message: 'Contraseña actualizada correctamente'
+        });
+        
+    } catch (error) {
+        console.error('Error al cambiar contraseña:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error al cambiar la contraseña'
+        });
+    }
+};

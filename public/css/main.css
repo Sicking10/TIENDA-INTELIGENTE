@@ -16,6 +16,7 @@
 @import url('./components/notifications.css');
 @import url('./components/navbar.css');
 @import url('./components/preloader.css');
+@import url('./components/modals.css');
 
 /* Pages */
 @import url('./pages/home.css');

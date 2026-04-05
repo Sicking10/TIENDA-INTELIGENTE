@@ -677,7 +677,12 @@
     box-shadow: 0 8px 20px rgba(217, 122, 43, 0.3);
 }
 
-/* Modal Dirección */
+/* ============================================
+   MODAL DE DIRECCIONES - CORREGIDO
+   Más ancho, altura adecuada
+============================================ */
+
+/* Modal base */
 .modal-address {
     position: fixed;
     top: 0;
@@ -700,28 +705,38 @@
 .modal-content {
     position: relative;
     z-index: 2001;
-    max-width: 500px;
+    max-width: 600px;
     width: 90%;
-    background: var(--bg-cream);
-    border-radius: 24px;
+    background: var(--white);
+    border-radius: 28px;
     overflow: hidden;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
 
+/* Header del modal */
 .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 24px;
+    padding: 20px 28px;
     border-bottom: 1px solid rgba(217, 122, 43, 0.1);
+    flex-shrink: 0;
 }
 
 .modal-header h3 {
     font-size: 20px;
     font-weight: 600;
-    color: var(--gray-800);
+    color: var(--bark);
+    margin: 0;
 }
 
 .modal-close {
+    position: absolute;
+    top: var(--spacing-lg);
+    right: var(--spacing-lg);
     width: 32px;
     height: 32px;
     background: rgba(217, 122, 43, 0.1);
@@ -730,26 +745,112 @@
     font-size: 20px;
     cursor: pointer;
     color: var(--gray-600);
+    z-index: 10;
+    transition: all var(--transition-fast);
 }
 
+.modal-close:hover {
+    background: var(--ginger);
+    color: white;
+}
+
+/* Cuerpo del modal - SCROLLABLE pero con altura controlada */
 .modal-body {
-    padding: 24px;
+    padding: 24px 28px;
+    overflow-y: auto;
+    flex: 1;
+    max-height: calc(85vh - 80px);
 }
 
+/* Personalización del scroll */
+.modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: var(--gray-200);
+    border-radius: 10px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: var(--ginger);
+    border-radius: 10px;
+}
+
+/* Aviso informativo más compacto */
+.info-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    background: rgba(217, 122, 43, 0.08);
+    border-radius: 14px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(217, 122, 43, 0.15);
+}
+
+.info-notice i {
+    font-size: 18px;
+    color: var(--ginger);
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.info-notice-content strong {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ginger);
+    margin-bottom: 3px;
+}
+
+.info-notice-content p {
+    font-size: 11px;
+    color: var(--bark-light);
+    opacity: 0.8;
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* Formulario dentro del modal - más compacto */
+.modal-body .form-group {
+    margin-bottom: 16px;
+}
+
+.modal-body .form-group label {
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+
+.modal-body .form-group input,
+.modal-body .form-group select {
+    padding: 10px 14px;
+    font-size: 13px;
+}
+
+.modal-body .form-row {
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.modal-body .form-hint {
+    font-size: 10px;
+    margin-top: 4px;
+}
+
+/* Botón de guardar */
 .btn-save-address {
     width: 100%;
     padding: 12px;
-    background: linear-gradient(135deg, #D97A2B, #B85E1A);
+    background: linear-gradient(135deg, var(--ginger), var(--ginger-deep));
     border: none;
     border-radius: 40px;
     color: white;
     font-weight: 600;
+    font-size: 14px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
+    transition: all 0.2s ease;
+    margin-top: 8px;
 }
 
 .btn-save-address:hover {
@@ -757,21 +858,48 @@
     box-shadow: 0 8px 20px rgba(217, 122, 43, 0.3);
 }
 
-/* Checkbox */
+/* Checkbox más compacto */
 .checkbox-label {
     display: flex;
     align-items: center;
     gap: 8px;
     cursor: pointer;
-    font-size: 13px;
-    color: var(--gray-700);
+    font-size: 12px;
+    color: var(--bark-light);
+    margin: 8px 0;
 }
 
-.checkbox-label input {
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-    accent-color: #D97A2B;
+/* Delivery warning más compacto */
+.delivery-warning {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: rgba(244, 67, 54, 0.1);
+    border-radius: 10px;
+    margin: 12px 0;
+    font-size: 11px;
+    color: #F44336;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .modal-content {
+        max-width: 95%;
+        border-radius: 20px;
+    }
+    
+    .modal-header {
+        padding: 16px 20px;
+    }
+    
+    .modal-body {
+        padding: 20px;
+    }
+    
+    .modal-header h3 {
+        font-size: 18px;
+    }
 }
 
 /* ============================================
@@ -930,4 +1058,110 @@
     .profile-form, .orders-list, .addresses-list {
         padding: 20px;
     }
+}
+
+/* Aviso informativo */
+.info-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    background: rgba(217, 122, 43, 0.08);
+    border-radius: 16px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(217, 122, 43, 0.15);
+}
+
+.info-notice i {
+    font-size: 20px;
+    color: var(--ginger);
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.info-notice-content strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ginger);
+    margin-bottom: 4px;
+}
+
+.info-notice-content p {
+    font-size: 12px;
+    color: var(--bark-light);
+    opacity: 0.8;
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* Password strength indicator */
+.password-strength {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.strength-bar {
+    flex: 1;
+    height: 4px;
+    background: var(--gray-300);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.strength-bar.active {
+    background: #F44336;
+}
+
+.strength-text {
+    font-size: 11px;
+    margin-top: 6px;
+}
+
+.strength-weak {
+    color: #F44336;
+}
+
+.strength-medium {
+    color: #FF9800;
+}
+
+.strength-strong {
+    color: #2196F3;
+}
+
+.strength-very-strong {
+    color: #4CAF50;
+}
+
+/* Password requirements list */
+.password-requirements {
+    list-style: none;
+    margin-top: 12px;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.password-requirements li {
+    font-size: 11px;
+    color: var(--gray-600);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.password-requirements li i {
+    font-size: 8px;
+    color: var(--gray-400);
+}
+
+.password-requirements li.valid {
+    color: #4CAF50;
+}
+
+.password-requirements li.valid i {
+    color: #4CAF50;
 }

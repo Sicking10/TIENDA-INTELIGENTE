@@ -44,7 +44,7 @@ export default class OrderTrackingView {
                             <i class="fas fa-search"></i>
                         </div>
                         <h2>Pedido no encontrado</h2>
-                        <p>No pudimos encontrar el pedido #${this.orderId}</p>
+                        <p class = "empty-text">No pudimos encontrar el pedido #${this.orderId}</p>
                         <a href="/mis-pedidos" class="btn-shop" data-link>
                             Ver mis pedidos
                         </a>

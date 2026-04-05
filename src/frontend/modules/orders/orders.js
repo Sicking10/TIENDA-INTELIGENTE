@@ -7,6 +7,7 @@ import { store } from '../../store.js';
 import { authGuard } from '../../authGuard.js';
 import { formatPrice } from '../../utils/cartUtils.js';
 import { showNotification } from '../notifications/notifications.js';
+import { showConfirmModal } from '../../utils/confirmModal.js'; // ← IMPORTAR
 
 export default class OrdersView {
     constructor(container, params = {}) {
@@ -24,7 +25,6 @@ export default class OrdersView {
             return;
         }
 
-        // Mostrar loading
         this.container.innerHTML = `
             <div class="orders-page">
                 <div class="orders-hero">
@@ -46,9 +46,7 @@ export default class OrdersView {
             </div>
         `;
 
-        // Cargar pedidos
         await this.loadOrdersData();
-
         this.renderOrdersPage();
         this.initFilters();
         this.initOrderActions();
@@ -92,19 +90,19 @@ export default class OrdersView {
 
                 <div class="container">
                     <div class="orders-filters">
-                        <button class="filter-btn active" data-filter="all">
+                        <button class="filter-btn ${this.currentFilter === 'all' ? 'active' : ''}" data-filter="all">
                             <i class="fas fa-list"></i> Todos
                         </button>
-                        <button class="filter-btn" data-filter="pending">
+                        <button class="filter-btn ${this.currentFilter === 'pending' ? 'active' : ''}" data-filter="pending">
                             <i class="fas fa-clock"></i> Pendientes
                         </button>
-                        <button class="filter-btn" data-filter="processing">
+                        <button class="filter-btn ${this.currentFilter === 'processing' ? 'active' : ''}" data-filter="processing">
                             <i class="fas fa-cog"></i> Procesando
                         </button>
-                        <button class="filter-btn" data-filter="shipped">
+                        <button class="filter-btn ${this.currentFilter === 'shipped' ? 'active' : ''}" data-filter="shipped">
                             <i class="fas fa-truck"></i> Enviados
                         </button>
-                        <button class="filter-btn" data-filter="delivered">
+                        <button class="filter-btn ${this.currentFilter === 'delivered' ? 'active' : ''}" data-filter="delivered">
                             <i class="fas fa-check-circle"></i> Entregados
                         </button>
                     </div>
@@ -128,7 +126,6 @@ export default class OrdersView {
     async loadOrdersData() {
         try {
             const token = store.get('auth.token');
-            console.log('🔑 Token:', token ? 'Presente' : 'No hay token');
             
             const response = await fetch('/api/orders', {
                 headers: {
@@ -136,40 +133,39 @@ export default class OrdersView {
                 }
             });
 
-            console.log('📡 Respuesta API:', response.status);
-
             if (!response.ok) {
                 throw new Error('Error al cargar pedidos');
             }
 
             const data = await response.json();
-            console.log('📦 Pedidos recibidos:', data.orders?.length || 0);
             
-            this.orders = (data.orders || []).map(order => ({
-                id: order.orderNumber,
-                _id: order._id,
-                date: new Date(order.createdAt).toLocaleDateString('es-MX', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                }),
-                dateObj: new Date(order.createdAt),
-                total: order.total,
-                status: order.status,
-                items: order.items || [],
-                tracking: order.shipping?.trackingNumber ? {
-                    number: order.shipping.trackingNumber,
-                    carrier: order.shipping.carrier,
-                    estimatedDelivery: order.shipping.estimatedDelivery
-                } : null,
-                shipping: {
-                    address: order.shipping?.address ?
-                        `${order.shipping.address.street || ''}, ${order.shipping.address.city || ''}, ${order.shipping.address.state || ''}, ${order.shipping.address.zipCode || ''}` :
-                        'Recoger en tienda',
-                    name: order.shipping?.recipientName || 'Cliente',
-                    phone: order.shipping?.phone || ''
-                }
-            }));
+            this.orders = (data.orders || [])
+                .filter(order => order.status !== 'cancelled')
+                .map(order => ({
+                    id: order.orderNumber,
+                    _id: order._id,
+                    date: new Date(order.createdAt).toLocaleDateString('es-MX', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    }),
+                    dateObj: new Date(order.createdAt),
+                    total: order.total,
+                    status: order.status,
+                    items: order.items || [],
+                    tracking: order.shipping?.trackingNumber ? {
+                        number: order.shipping.trackingNumber,
+                        carrier: order.shipping.carrier,
+                        estimatedDelivery: order.shipping.estimatedDelivery
+                    } : null,
+                    shipping: {
+                        address: order.shipping?.address ?
+                            `${order.shipping.address.street || ''}, ${order.shipping.address.city || ''}, ${order.shipping.address.state || ''}, ${order.shipping.address.zipCode || ''}` :
+                            'Recoger en tienda',
+                        name: order.shipping?.recipientName || 'Cliente',
+                        phone: order.shipping?.phone || ''
+                    }
+                }));
 
         } catch (error) {
             console.error('Error loading orders:', error);
@@ -309,49 +305,62 @@ export default class OrdersView {
     }
 
     initOrderActions() {
-    // Seguir pedido - REDIRIGE A TRACKING
-    document.querySelectorAll('.btn-track').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const orderId = btn.dataset.orderId;
-            window.location.href = `/pedido/${orderId}`;
+        // Seguir pedido
+        document.querySelectorAll('.btn-track').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const orderId = btn.dataset.orderId;
+                window.location.href = `/pedido/${orderId}`;
+            });
         });
-    });
 
-    // Ver detalles - TAMBIÉN REDIRIGE A TRACKING
-    document.querySelectorAll('.btn-details').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const orderId = btn.dataset.orderId;
-            window.location.href = `/pedido/${orderId}`;
+        // Ver detalles
+        document.querySelectorAll('.btn-details').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const orderId = btn.dataset.orderId;
+                window.location.href = `/pedido/${orderId}`;
+            });
         });
-    });
 
-    // Comprar de nuevo (sin cambios)
-    document.querySelectorAll('.btn-reorder').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const orderId = btn.dataset.orderId;
-            const order = this.orders.find(o => o.id === orderId);
-            if (order && order.items) {
-                order.items.forEach(item => {
-                    store.addToCart({
-                        id: item.productId || item.id,
-                        name: item.name,
-                        price: item.price,
-                        image: item.image,
-                        concentration: item.concentration
+        // Comprar de nuevo
+        document.querySelectorAll('.btn-reorder').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const orderId = btn.dataset.orderId;
+                const order = this.orders.find(o => o.id === orderId);
+                if (order && order.items) {
+                    order.items.forEach(item => {
+                        store.addToCart({
+                            id: item.productId || item.id,
+                            name: item.name,
+                            price: item.price,
+                            image: item.image,
+                            concentration: item.concentration
+                        });
                     });
-                });
-                showNotification('Productos agregados al carrito', 'success');
-                window.location.href = '/carrito';
-            }
+                    showNotification('Productos agregados al carrito', 'success');
+                    window.location.href = '/carrito';
+                }
+            });
         });
-    });
 
-    // Cancelar pedido (sin cambios)
-    document.querySelectorAll('.btn-cancel').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
-            const orderNumber = btn.dataset.orderId;
+        // Cancelar pedido - CON MODAL PERSONALIZADO
+        document.querySelectorAll('.btn-cancel').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const orderNumber = btn.dataset.orderId;
 
-            if (confirm('¿Estás seguro de que deseas cancelar este pedido?')) {
+                // 🔥 MODAL PERSONALIZADO en lugar de confirm()
+                const confirmed = await showConfirmModal({
+                    title: 'Cancelar pedido',
+                    message: '¿Estás seguro de que deseas cancelar este pedido? Esta acción no se puede deshacer.',
+                    confirmText: 'Sí, cancelar',
+                    cancelText: 'No, regresar'
+                });
+
+                if (!confirmed) return;
+
+                // Deshabilitar botón
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cancelando...';
+                
                 try {
                     const token = store.get('auth.token');
                     const response = await fetch(`/api/orders/${orderNumber}/cancel`, {
@@ -374,11 +383,12 @@ export default class OrdersView {
                     }
                 } catch (error) {
                     showNotification(error.message, 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-times"></i> Cancelar pedido';
                 }
-            }
+            });
         });
-    });
-}
+    }
 
     getStatusText(status) {
         const statusMap = {

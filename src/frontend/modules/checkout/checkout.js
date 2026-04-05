@@ -42,26 +42,21 @@ export default class CheckoutView {
         this.user = store.get('auth.user');
     }
 
-    // Validar que la dirección sea de Mazatlán, Sinaloa, México
     validarDireccionMazatlan(street, city, state, zipCode, country) {
         const errors = [];
         
-        // Validar país (solo México)
         if (country && country.toLowerCase().trim() !== 'méxico' && country.toLowerCase().trim() !== 'mexico') {
             errors.push('Solo realizamos envíos dentro de México');
         }
         
-        // Validar estado (solo Sinaloa)
         if (state && state.toLowerCase().trim() !== 'sinaloa') {
             errors.push('Solo realizamos envíos dentro de Sinaloa');
         }
         
-        // Validar ciudad (solo Mazatlán)
         if (city && !city.toLowerCase().includes('mazatlán') && !city.toLowerCase().includes('mazatlan')) {
             errors.push('Solo realizamos envíos dentro de Mazatlán, Sinaloa');
         }
         
-        // Validar código postal
         if (zipCode) {
             const zip = String(zipCode).trim();
             if (!ZONAS_ENVIO_MAZATLAN.includes(zip)) {
@@ -74,7 +69,6 @@ export default class CheckoutView {
         return errors;
     }
 
-    // Calcular costo de envío basado en cantidad de productos y método seleccionado
     calcularCostoEnvio() {
         const shippingMethod = document.querySelector('input[name="shipping"]:checked')?.value || 'delivery';
         
@@ -92,7 +86,6 @@ export default class CheckoutView {
         return COSTO_ENVIO;
     }
 
-    // Actualizar el resumen del pedido
     actualizarResumen() {
         const subtotal = calculateCartTotal();
         const shippingCost = this.calcularCostoEnvio();
@@ -205,6 +198,15 @@ export default class CheckoutView {
                                         </button>
                                     </div>
                                 </div>
+                                
+                                <div class="info-notice">
+                                    <i class="fas fa-info-circle"></i>
+                                    <div class="info-notice-content">
+                                        <strong>📍 Solo realizamos envíos en Mazatlán, Sinaloa</strong>
+                                        <p>Por el momento, nuestras entregas están disponibles únicamente en Mazatlán y sus alrededores. Asegúrate de que tu código postal sea válido.</p>
+                                    </div>
+                                </div>
+                                
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label>Calle</label>
@@ -223,22 +225,24 @@ export default class CheckoutView {
                                     <div class="form-group">
                                         <label>Código Postal</label>
                                         <input type="text" id="zipCode" placeholder="82110" maxlength="5" required>
-                                        <small class="form-hint">Solo envíos dentro de Mazatlán</small>
+                                        <small class="form-hint">Códigos postales válidos en Mazatlán</small>
                                     </div>
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label>Ciudad</label>
-                                        <input type="text" id="city" value="Mazatlán" readonly disabled style="background: var(--gray-100);">
+                                        <input type="text" id="city" value="Mazatlán" placeholder="Mazatlán" required>
+                                        <small class="form-hint">Actualmente solo disponible Mazatlán</small>
                                     </div>
                                     <div class="form-group">
                                         <label>Estado</label>
-                                        <input type="text" id="state" value="Sinaloa" readonly disabled style="background: var(--gray-100);">
+                                        <input type="text" id="state" value="Sinaloa" placeholder="Sinaloa" required>
+                                        <small class="form-hint">Actualmente solo disponible Sinaloa</small>
                                     </div>
                                 </div>
                                 <div id="delivery-warning" class="delivery-warning" style="display: none;">
                                     <i class="fas fa-exclamation-triangle"></i>
-                                    <span>Lo sentimos, solo realizamos envíos dentro de Mazatlán, Sinaloa.</span>
+                                    <span>Lo sentimos, solo realizamos envíos dentro de Mazatlán, Sinaloa. Por favor verifica tu código postal.</span>
                                 </div>
                             </div>
                             
@@ -457,64 +461,61 @@ export default class CheckoutView {
     }
 
     async reverseGeocode(lat, lng) {
-    const locationBtn = document.getElementById('use-location-btn');
-    
-    try {
-        locationBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Obteniendo dirección...';
-        locationBtn.disabled = true;
+        const locationBtn = document.getElementById('use-location-btn');
         
-        const token = store.get('auth.token');
-        
-        const response = await fetch('/api/geocode/reverse', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ lat, lng })
-        });
-        
-        const data = await response.json();
-        
-        if (data.success && data.address) {
-            const addr = data.address;
+        try {
+            locationBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Obteniendo dirección...';
+            locationBtn.disabled = true;
             
-            // Llenar formulario
-            document.getElementById('street').value = addr.street;
-            document.getElementById('street-number').value = addr.streetNumber;
-            document.getElementById('neighborhood').value = addr.neighborhood;
-            document.getElementById('zipCode').value = addr.zipCode;
-            document.getElementById('city').value = 'Mazatlán';
-            document.getElementById('state').value = 'Sinaloa';
+            const token = store.get('auth.token');
             
-            showNotification('¡Dirección cargada correctamente!', 'success');
+            const response = await fetch('/api/geocode/reverse', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ lat, lng })
+            });
             
-            // Validar código postal
-            const zipCode = addr.zipCode;
-            if (zipCode && ZONAS_ENVIO_MAZATLAN.includes(zipCode)) {
-                const warning = document.getElementById('delivery-warning');
-                if (warning) warning.style.display = 'none';
-            } else if (zipCode) {
-                const warning = document.getElementById('delivery-warning');
-                if (warning) warning.style.display = 'flex';
-                showNotification('El código postal no corresponde a Mazatlán', 'warning');
+            const data = await response.json();
+            
+            if (data.success && data.address) {
+                const addr = data.address;
+                
+                document.getElementById('street').value = addr.street;
+                document.getElementById('street-number').value = addr.streetNumber;
+                document.getElementById('neighborhood').value = addr.neighborhood;
+                document.getElementById('zipCode').value = addr.zipCode;
+                document.getElementById('city').value = 'Mazatlán';
+                document.getElementById('state').value = 'Sinaloa';
+                
+                showNotification('¡Dirección cargada correctamente!', 'success');
+                
+                const zipCode = addr.zipCode;
+                if (zipCode && ZONAS_ENVIO_MAZATLAN.includes(zipCode)) {
+                    const warning = document.getElementById('delivery-warning');
+                    if (warning) warning.style.display = 'none';
+                } else if (zipCode) {
+                    const warning = document.getElementById('delivery-warning');
+                    if (warning) warning.style.display = 'flex';
+                    showNotification('El código postal no corresponde a Mazatlán', 'warning');
+                }
+                
+            } else {
+                showNotification(data.message || 'No se pudo obtener tu dirección', 'error');
             }
             
-        } else {
-            showNotification(data.message || 'No se pudo obtener tu dirección', 'error');
+        } catch (error) {
+            console.error('Error:', error);
+            showNotification('Error al obtener la ubicación', 'error');
+        } finally {
+            locationBtn.innerHTML = '<i class="fas fa-location-dot"></i> Usar mi ubicación';
+            locationBtn.disabled = false;
         }
-        
-    } catch (error) {
-        console.error('Error:', error);
-        showNotification('Error al obtener la ubicación', 'error');
-    } finally {
-        locationBtn.innerHTML = '<i class="fas fa-location-dot"></i> Usar mi ubicación';
-        locationBtn.disabled = false;
     }
-}
 
     async showSavedAddresses() {
-        // Cargar direcciones desde localStorage
         let addresses = [];
         const savedAddresses = localStorage.getItem('user_addresses');
         if (savedAddresses) {
@@ -526,7 +527,6 @@ export default class CheckoutView {
             return;
         }
         
-        // Filtrar solo direcciones de Mazatlán
         const mazatlanAddresses = addresses.filter(addr => {
             const errors = this.validarDireccionMazatlan(addr.street, addr.city, addr.state, addr.zipCode, addr.country);
             return errors.length === 0;
@@ -543,10 +543,18 @@ export default class CheckoutView {
             <div class="modal-overlay"></div>
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3><i class="fas fa-map-marker-alt"></i> Mis direcciones (Mazatlán)</h3>
+                    <h3><i class="fas fa-map-marker-alt"></i> Mis direcciones</h3>
                     <button class="modal-close">&times;</button>
                 </div>
                 <div class="modal-body">
+                    <div class="info-notice">
+                        <i class="fas fa-info-circle"></i>
+                        <div class="info-notice-content">
+                            <strong>📍 Solo envíos en Mazatlán, Sinaloa</strong>
+                            <p>Actualmente solo realizamos entregas en Mazatlán y sus alrededores. Las direcciones que no estén en esta zona no se mostrarán.</p>
+                        </div>
+                    </div>
+                    
                     <div class="addresses-list-modal">
                         ${mazatlanAddresses.map(addr => `
                             <div class="address-item ${addr.isDefault ? 'default' : ''}">
@@ -556,8 +564,9 @@ export default class CheckoutView {
                                 </div>
                                 <div class="address-item-content">
                                     <p><strong>${this.escapeHtml(addr.street)}</strong></p>
+                                    <p>${this.escapeHtml(addr.neighborhood || '')}</p>
                                     <p>${this.escapeHtml(addr.city)}, ${this.escapeHtml(addr.state)}</p>
-                                    <p>CP ${addr.zipCode}, ${this.escapeHtml(addr.country)}</p>
+                                    <p>CP ${addr.zipCode}</p>
                                 </div>
                                 <button class="btn-use-address" data-address='${JSON.stringify(addr)}'>
                                     <i class="fas fa-check"></i> Usar esta dirección
@@ -585,13 +594,12 @@ export default class CheckoutView {
                 const addr = JSON.parse(btn.dataset.address);
                 this.fillAddressFromSaved(addr);
                 closeModal();
-                showNotification('Dirección cargada correctamente', 'success');
+                // ✅ SOLO UNA NOTIFICACIÓN (la de fillAddressFromSaved ya la muestra)
             });
         });
     }
 
     fillAddressFromSaved(addr) {
-        // Validar que la dirección sea de Mazatlán
         const errors = this.validarDireccionMazatlan(addr.street, addr.city, addr.state, addr.zipCode, addr.country);
         
         if (errors.length > 0) {
@@ -600,12 +608,14 @@ export default class CheckoutView {
         }
         
         let street = addr.street;
-        let streetNumber = '';
+        let streetNumber = addr.number || '';
         
-        const match = addr.street.match(/^(.+?)\s+(\d+)$/);
-        if (match) {
-            street = match[1];
-            streetNumber = match[2];
+        if (!streetNumber) {
+            const match = addr.street.match(/^(.+?)\s+(\d+)$/);
+            if (match) {
+                street = match[1];
+                streetNumber = match[2];
+            }
         }
         
         document.getElementById('street').value = street;
@@ -617,6 +627,9 @@ export default class CheckoutView {
         
         const warning = document.getElementById('delivery-warning');
         if (warning) warning.style.display = 'none';
+        
+        // ✅ SOLO UNA NOTIFICACIÓN AQUÍ
+        showNotification('Dirección cargada correctamente', 'success');
     }
 
     async processOrder() {
@@ -645,17 +658,18 @@ export default class CheckoutView {
             const streetNumber = document.getElementById('street-number')?.value.trim();
             const neighborhood = document.getElementById('neighborhood')?.value.trim();
             const zipCode = document.getElementById('zipCode')?.value.trim();
+            const city = document.getElementById('city')?.value.trim();
+            const state = document.getElementById('state')?.value.trim();
 
-            if (!street || !neighborhood || !zipCode) {
+            if (!street || !neighborhood || !zipCode || !city || !state) {
                 showNotification('Completa la dirección de envío', 'error');
                 return;
             }
 
-            // Validación geográfica completa
             const errors = this.validarDireccionMazatlan(
                 street + ' ' + streetNumber, 
-                'Mazatlán', 
-                'Sinaloa', 
+                city, 
+                state, 
                 zipCode, 
                 'México'
             );
@@ -671,7 +685,7 @@ export default class CheckoutView {
 
             shippingData = {
                 method: 'delivery',
-                address: { street: fullStreet, neighborhood, city: 'Mazatlán', state: 'Sinaloa', zipCode, country: 'México' },
+                address: { street: fullStreet, neighborhood, city, state, zipCode, country: 'México' },
                 recipientName: fullName,
                 phone: phone
             };

@@ -38,4 +38,7 @@ router.post('/register', registerValidation, authController.register);
 router.post('/login', loginValidation, authController.login);
 router.get('/me', protect, authController.getMe);
 
+// Cambiar contraseña
+router.put('/password', protect, authController.changePassword);
+
 module.exports = router;
