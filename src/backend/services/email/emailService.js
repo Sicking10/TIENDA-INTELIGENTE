@@ -26,6 +26,10 @@ const EMAIL_CONFIG = {
 // Correo de la tienda
 const STORE_EMAIL = process.env.STORE_EMAIL || 'atencionalcliente.ginger@gmail.com';
 
+// 🔥 REMITENTE VERIFICADO (el mismo que usas en test-brevo.js)
+const SENDER_EMAIL = 'atencionalcliente.ginger@gmail.com';
+const SENDER_NAME = 'GINGERcaps';
+
 const TIENDA_UBICACION = {
     nombre: 'GINGERcaps Boutique',
     direccion: 'Av. del Mar 1235, Zona Dorada',
@@ -37,7 +41,7 @@ const TIENDA_UBICACION = {
     horario: 'Lun - Sab: 10:00 AM - 8:00 PM'
 };
 
-// Crear transporter con opciones optimizadas para Render
+// Crear transporter con opciones optimizadas
 const transporter = nodemailer.createTransport({
     host: EMAIL_CONFIG.host,
     port: EMAIL_CONFIG.port,
@@ -46,14 +50,14 @@ const transporter = nodemailer.createTransport({
     tls: {
         rejectUnauthorized: false
     },
-    connectionTimeout: 15000,  // 15 segundos (reducido)
+    connectionTimeout: 15000,
     greetingTimeout: 15000,
     socketTimeout: 15000,
-    debug: false  // Desactivar debug en producción
+    debug: false
 });
 
 /**
- * Verificar conexión (no bloqueante)
+ * Verificar conexión
  */
 function verifyConnection() {
     transporter.verify((error, success) => {
@@ -65,7 +69,6 @@ function verifyConnection() {
     });
 }
 
-// Verificar conexión al iniciar (sin bloquear)
 setTimeout(verifyConnection, 1000);
 
 /**
@@ -141,12 +144,14 @@ th{background:#F5E6D3;padding:10px;text-align:left}
 <div style="text-align:center"><div class="order-number">Pedido #${order.orderNumber}</div><div class="status">Confirmado</div></div>
 <p>Hola <strong>${escapeHtml(user.name)}</strong>,<br>¡Gracias por tu compra! Hemos recibido tu pedido.</p>
 <div class="card"><h3>📦 Detalles del pedido</h3>
-<table><thead><tr><th>Producto</th><th>Cant.</th><th>Precio</th><th>Subtotal</th></tr></thead>
+<table>
+<thead><tr><th>Producto</th><th>Cant.</th><th>Precio</th><th>Subtotal</th></tr></thead>
 <tbody>${itemsHtml}
 <tr class="total-row"><td colspan="3">Subtotal:</td><td>$${subtotal.toFixed(2)}</td></tr>
 <tr><td colspan="3">Envío:</td><td>${shippingCost === 0 ? 'GRATIS' : `$${shippingCost.toFixed(2)}`}</td></tr>
 <tr class="total-row"><td colspan="3">TOTAL:</td><td><strong>$${total.toFixed(2)}</strong></td></tr>
-</tbody></table></div>
+</tbody>
+</table></div>
 <div class="card"><h3>📍 Envío</h3><p><strong>Método:</strong> ${order.shipping?.method === 'pickup' ? 'Recoger en tienda' : 'Envío a domicilio'}</p>
 <p><strong>Dirección:</strong> ${formatAddress(order.shipping)}</p>
 <p><strong>Destinatario:</strong> ${order.shipping?.recipientName}</p></div>
@@ -193,10 +198,12 @@ th{background:#F5E6D3;padding:10px;text-align:left}
 <div class="info-row"><div class="info-label">Teléfono:</div><div>${escapeHtml(order.shipping?.phone)}</div></div>
 </div>
 <div class="card"><h3>📦 Pedido #${order.orderNumber}</h3>
-<table><thead><tr><th>Producto</th><th>Cant.</th><th>Precio</th></tr></thead>
+<table>
+<thead><tr><th>Producto</th><th>Cant.</th><th>Precio</th></tr></thead>
 <tbody>${itemsHtml}
 <tr class="total-row"><td colspan="2">TOTAL:</td><td><strong>$${total.toFixed(2)}</strong></td></tr>
-</tbody></table></div>
+</tbody>
+</table></div>
 <div class="card"><h3>📍 Envío</h3><p>${order.shipping?.method === 'pickup' ? 'Recoger en tienda' : 'Envío a domicilio'}<br>${formatAddress(order.shipping)}</p></div>
 <div class="footer"><p>© ${new Date().getFullYear()} GINGERcaps</p></div>
 </div>
@@ -212,11 +219,14 @@ async function sendOrderEmails(order, user) {
     
     const results = { customer: { success: false }, store: { success: false } };
 
+    // 🔥 USAR EL REMITENTE VERIFICADO 🔥
+    const fromEmail = `"${SENDER_NAME}" <${SENDER_EMAIL}>`;
+
     // Correo al cliente
     if (user?.email) {
         try {
             await transporter.sendMail({
-                from: `"GINGERcaps" <${EMAIL_CONFIG.auth.user}>`,
+                from: fromEmail,
                 to: user.email,
                 subject: `✅ Pedido confirmado #${order.orderNumber}`,
                 html: generateCustomerEmailHTML(order, user)
@@ -231,7 +241,7 @@ async function sendOrderEmails(order, user) {
     // Correo a la tienda
     try {
         await transporter.sendMail({
-            from: `"GINGERcaps" <${EMAIL_CONFIG.auth.user}>`,
+            from: fromEmail,
             to: STORE_EMAIL,
             subject: `🛍️ NUEVO PEDIDO #${order.orderNumber}`,
             html: generateAdminEmailHTML(order, user)
@@ -251,12 +261,13 @@ async function sendOrderEmails(order, user) {
 async function sendCancellationEmails(order, user) {
     console.log('📧 Enviando cancelación para pedido:', order?.orderNumber);
     
+    const fromEmail = `"${SENDER_NAME}" <${SENDER_EMAIL}>`;
     const results = { customer: { success: false }, store: { success: false } };
 
     if (user?.email) {
         try {
             await transporter.sendMail({
-                from: `"GINGERcaps" <${EMAIL_CONFIG.auth.user}>`,
+                from: fromEmail,
                 to: user.email,
                 subject: `❌ Pedido #${order.orderNumber} cancelado`,
                 html: `<h2>Pedido #${order.orderNumber} cancelado</h2><p>Tu pedido ha sido cancelado.</p>`
@@ -270,7 +281,7 @@ async function sendCancellationEmails(order, user) {
 
     try {
         await transporter.sendMail({
-            from: `"GINGERcaps" <${EMAIL_CONFIG.auth.user}>`,
+            from: fromEmail,
             to: STORE_EMAIL,
             subject: `❌ PEDIDO CANCELADO #${order.orderNumber}`,
             html: `<h2>PEDIDO CANCELADO</h2><p>Cliente: ${user?.name}</p><p>Pedido: #${order.orderNumber}</p>`
@@ -290,9 +301,11 @@ async function sendCancellationEmails(order, user) {
 async function sendOrderStatusEmail(order, user, oldStatus, newStatus) {
     console.log('📧 Enviando cambio de estado:', oldStatus, '→', newStatus);
     
+    const fromEmail = `"${SENDER_NAME}" <${SENDER_EMAIL}>`;
+    
     try {
         await transporter.sendMail({
-            from: `"GINGERcaps" <${EMAIL_CONFIG.auth.user}>`,
+            from: fromEmail,
             to: user.email,
             subject: `📦 Pedido #${order.orderNumber} - ${newStatus}`,
             html: `<h2>Tu pedido #${order.orderNumber} ha sido ${newStatus}</h2><p>${newStatus === 'shipped' ? 'Tu pedido está en camino.' : newStatus === 'delivered' ? 'Tu pedido ha sido entregado.' : ''}</p>`
