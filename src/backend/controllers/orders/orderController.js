@@ -1,5 +1,6 @@
 const Order = require('../../models/Order');
 const User = require('../../models/User');
+const { sendOrderEmails, sendOrderStatusEmail } = require('../../services/email/emailService');
 
 // @desc    Crear un nuevo pedido
 // @route   POST /api/orders
@@ -35,11 +36,21 @@ exports.createOrder = async (req, res) => {
             });
         }
 
-        // Crear el pedido - productId ahora es String, no ObjectId
+        // Obtener el usuario completo para el correo
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            console.error('❌ Usuario no encontrado:', req.user.id);
+            return res.status(404).json({
+                success: false,
+                message: 'Usuario no encontrado'
+            });
+        }
+
+        // Crear el pedido
         const order = await Order.create({
             userId: req.user.id,
             items: items.map(item => ({
-                productId: String(item.productId), // Asegurar que sea string
+                productId: String(item.productId),
                 name: item.name,
                 price: item.price,
                 quantity: item.quantity,
@@ -62,6 +73,39 @@ exports.createOrder = async (req, res) => {
 
         console.log('✅ Pedido creado:', order.orderNumber);
 
+        // Preparar datos para el correo
+        const orderForEmail = {
+            orderNumber: order.orderNumber,
+            items: order.items,
+            subtotal: order.subtotal,
+            discount: order.discount,
+            discountCode: order.discountCode,
+            shippingCost: order.shippingCost,
+            total: order.total,
+            paymentMethod: order.paymentMethod,
+            shipping: order.shipping,
+            status: order.status,
+            createdAt: order.createdAt
+        };
+
+        const userForEmail = {
+            name: user.name,
+            email: user.email,
+            phone: user.phone || shipping?.phone || 'No especificado'
+        };
+
+        // Enviar correos
+        sendOrderEmails(orderForEmail, userForEmail)
+            .then(result => {
+                console.log('📧 Resultado envío de correos:', {
+                    customer: result.customer.success ? '✅ Enviado' : `❌ ${result.customer.error}`,
+                    store: result.store.success ? '✅ Enviado' : `❌ ${result.store.error}`
+                });
+            })
+            .catch(emailError => {
+                console.error('❌ Error en envío de correos:', emailError);
+            });
+
         res.status(201).json({
             success: true,
             message: 'Pedido creado exitosamente',
@@ -77,7 +121,6 @@ exports.createOrder = async (req, res) => {
     } catch (error) {
         console.error('❌ Error al crear pedido:', error);
         
-        // Enviar error detallado en desarrollo
         res.status(500).json({
             success: false,
             message: 'Error al crear el pedido',
@@ -116,7 +159,7 @@ exports.getUserOrders = async (req, res) => {
 exports.getOrderById = async (req, res) => {
     try {
         const order = await Order.findOne({
-            orderNumber: req.params.id,  // Buscar por orderNumber en lugar de _id
+            orderNumber: req.params.id,
             userId: req.user.id
         });
 
@@ -141,7 +184,7 @@ exports.getOrderById = async (req, res) => {
     }
 };
 
-// @desc    Cancelar un pedido
+// @desc    Cancelar un pedido (notifica a cliente Y tienda)
 // @route   PUT /api/orders/:id/cancel
 // @access  Private
 exports.cancelOrder = async (req, res) => {
@@ -165,9 +208,49 @@ exports.cancelOrder = async (req, res) => {
             });
         }
 
+        const oldStatus = order.status;
         order.status = 'cancelled';
         order.cancelledAt = new Date();
         await order.save();
+
+        // Obtener el usuario
+        const user = await User.findById(req.user.id);
+        
+        // 🔥 ENVIAR CORREO DE CANCELACIÓN A CLIENTE Y TIENDA 🔥
+        if (user && user.email) {
+            const { sendCancellationEmails } = require('../../services/email/emailService');
+            
+            const orderForEmail = {
+                orderNumber: order.orderNumber,
+                items: order.items,
+                subtotal: order.subtotal,
+                discount: order.discount,
+                discountCode: order.discountCode,
+                shippingCost: order.shippingCost,
+                total: order.total,
+                paymentMethod: order.paymentMethod,
+                shipping: order.shipping,
+                status: order.status,
+                createdAt: order.createdAt
+            };
+
+            const userForEmail = {
+                name: user.name,
+                email: user.email,
+                phone: user.phone || order.shipping?.phone || 'No especificado'
+            };
+
+            sendCancellationEmails(orderForEmail, userForEmail)
+                .then(result => {
+                    console.log('📧 Cancelación - Resultado:', {
+                        customer: result.customer.success ? '✅ Enviado' : `❌ ${result.customer.error}`,
+                        store: result.store.success ? '✅ Enviado' : `❌ ${result.store.error}`
+                    });
+                })
+                .catch(emailError => {
+                    console.error('❌ Error en cancelación de correos:', emailError);
+                });
+        }
 
         res.json({
             success: true,
@@ -180,6 +263,63 @@ exports.cancelOrder = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error al cancelar el pedido'
+        });
+    }
+};
+
+// @desc    Actualizar estado de un pedido (Admin)
+// @route   PUT /api/orders/:id/status
+// @access  Private/Admin
+exports.updateOrderStatus = async (req, res) => {
+    try {
+        const { status } = req.body;
+        const validStatuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
+
+        if (!validStatuses.includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Estado inválido'
+            });
+        }
+
+        const order = await Order.findOne({ orderNumber: req.params.id });
+
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: 'Pedido no encontrado'
+            });
+        }
+
+        const oldStatus = order.status;
+        order.status = status;
+        
+        if (status === 'shipped') {
+            order.shippedAt = new Date();
+        }
+        if (status === 'delivered') {
+            order.deliveredAt = new Date();
+        }
+        
+        await order.save();
+
+        // 🔥 ENVIAR CORREO DE ACTUALIZACIÓN DE ESTADO AL CLIENTE
+        const user = await User.findById(order.userId);
+        if (user && user.email && oldStatus !== status) {
+            sendOrderStatusEmail(order, user, oldStatus, status).catch(console.error);
+        }
+
+        res.json({
+            success: true,
+            message: 'Estado del pedido actualizado',
+            order
+        });
+
+    } catch (error) {
+        console.error('Error al actualizar estado:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error al actualizar el estado del pedido'
         });
     }
 };

@@ -12,12 +12,12 @@ import { formatPrice, getCartItemCount, calculateCartTotal, updateCartBadge } fr
 // Ubicación de la tienda física
 const TIENDA_UBICACION = {
     nombre: 'GINGERcaps Boutique',
-    direccion: 'Av. del Mar 1235, Zona Dorada',
-    colonia: 'Marina Mazatlán',
+    direccion: 'Av. del Mar 1235, Zona Dorada', // Av. Bosques del Arroyo, La Campiña
+    colonia: 'Marina Mazatlán', // La Campiña, Calle Bosques del Arroyo
     ciudad: 'Mazatlán',
     estado: 'Sinaloa',
     cp: '82110',
-    telefono: '+52 669 123 4567',
+    telefono: '+52 1 669 102 4050',
     horario: 'Lun - Sab: 10:00 AM - 8:00 PM',
     coordenadas: { lat: 23.2428, lng: -106.4206 },
     mapsUrl: 'https://maps.google.com/?q=23.2428,-106.4206'
