@@ -70,3 +70,6 @@ coverage/
 *.zip
 *.rar
 *.7z
+
+.VSCodeCounter
+VSCodeCounter

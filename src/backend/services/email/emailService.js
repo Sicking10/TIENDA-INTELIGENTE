@@ -5,6 +5,12 @@
 
 const nodemailer = require('nodemailer');
 
+console.log('📧 [EMAIL SERVICE] Inicializando...');
+console.log('EMAIL_HOST:', process.env.EMAIL_HOST);
+console.log('EMAIL_USER:', process.env.EMAIL_USER);
+console.log('STORE_EMAIL:', process.env.STORE_EMAIL);
+console.log('EMAIL_PASS existe:', !!process.env.EMAIL_PASS);
+
 // Configuración de email (usar variables de entorno)
 const EMAIL_CONFIG = {
     host: process.env.EMAIL_HOST || 'smtp.gmail.com',
@@ -40,8 +46,17 @@ let transporter = null;
  * Inicializa el transporter de nodemailer
  */
 function initTransporter() {
+    console.log('🔧 Inicializando transporter...');
+    console.log('EMAIL_CONFIG:', {
+        host: EMAIL_CONFIG.host,
+        port: EMAIL_CONFIG.port,
+        secure: EMAIL_CONFIG.secure,
+        user: EMAIL_CONFIG.auth.user,
+        hasPass: !!EMAIL_CONFIG.auth.pass
+    });
+    
     if (!EMAIL_CONFIG.auth.user || !EMAIL_CONFIG.auth.pass) {
-        console.warn('⚠️ Credenciales de email no configuradas. Los correos no se enviarán.');
+        console.error('❌ Credenciales de email faltantes');
         return null;
     }
 
@@ -51,7 +66,8 @@ function initTransporter() {
         // Verificar conexión
         transporter.verify((error, success) => {
             if (error) {
-                console.error('❌ Error de conexión con servidor de correo:', error);
+                console.error('❌ Error de conexión con servidor de correo:', error.message);
+                console.error('Detalles:', error);
             } else {
                 console.log('✅ Servicio de correo listo');
             }
@@ -59,7 +75,7 @@ function initTransporter() {
         
         return transporter;
     } catch (error) {
-        console.error('❌ Error al crear transporter:', error);
+        console.error('❌ Error al crear transporter:', error.message);
         return null;
     }
 }
@@ -332,7 +348,12 @@ function generateAdminEmailHTML(order, user) {
  * @returns {Promise<Object>} Resultado del envío
  */
 async function sendOrderEmails(order, user) {
+    console.log('📧 sendOrderEmails llamado');
+    console.log('Order:', order?.orderNumber);
+    console.log('User email:', user?.email);
+    
     if (!transporter) {
+        console.log('⚠️ Transporter no inicializado, inicializando...');
         const initialized = initTransporter();
         if (!initialized) {
             console.error('❌ No se pudo inicializar el servicio de correo');
@@ -348,6 +369,7 @@ async function sendOrderEmails(order, user) {
     // Correo para el cliente
     if (user?.email) {
         try {
+            console.log(`📧 Enviando correo a cliente: ${user.email}`);
             const customerMailOptions = {
                 from: `"GINGERcaps" <${EMAIL_CONFIG.auth.user}>`,
                 to: user.email,
@@ -355,19 +377,21 @@ async function sendOrderEmails(order, user) {
                 html: generateCustomerEmailHTML(order, user)
             };
 
-            const customerInfo = await transporter.sendMail(customerMailOptions);
-            console.log(`✅ Correo enviado a cliente: ${user.email}`);
+            const info = await transporter.sendMail(customerMailOptions);
+            console.log(`✅ Correo enviado a cliente: ${user.email}`, info.messageId);
             results.customer.success = true;
         } catch (error) {
-            console.error('❌ Error enviando correo al cliente:', error);
+            console.error('❌ Error enviando correo al cliente:', error.message);
             results.customer.error = error.message;
         }
     } else {
+        console.log('⚠️ No hay email de cliente');
         results.customer.error = 'Cliente sin email';
     }
 
-    // Correo para la tienda (siempre se envía)
+    // Correo para la tienda
     try {
+        console.log(`📧 Enviando correo a tienda: ${STORE_EMAIL}`);
         const storeMailOptions = {
             from: `"GINGERcaps Pedidos" <${EMAIL_CONFIG.auth.user}>`,
             to: STORE_EMAIL,
@@ -375,11 +399,11 @@ async function sendOrderEmails(order, user) {
             html: generateAdminEmailHTML(order, user)
         };
 
-        const storeInfo = await transporter.sendMail(storeMailOptions);
-        console.log(`✅ Correo enviado a tienda: ${STORE_EMAIL}`);
+        const info = await transporter.sendMail(storeMailOptions);
+        console.log(`✅ Correo enviado a tienda: ${STORE_EMAIL}`, info.messageId);
         results.store.success = true;
     } catch (error) {
-        console.error('❌ Error enviando correo a la tienda:', error);
+        console.error('❌ Error enviando correo a la tienda:', error.message);
         results.store.error = error.message;
     }
 
