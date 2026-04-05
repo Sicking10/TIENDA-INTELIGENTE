@@ -1,6 +1,6 @@
 const Order = require('../../models/Order');
 const User = require('../../models/User');
-const { sendOrderEmails, sendOrderStatusEmail } = require('../../services/email/emailService');
+const { sendOrderEmails } = require('../../services/email/emailServiceBrevo');
 
 // @desc    Crear un nuevo pedido
 // @route   POST /api/orders
