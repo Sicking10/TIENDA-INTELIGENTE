@@ -1,7 +1,7 @@
 /**
  * Admin Products - Gestión de productos con API
- * + RESPONSIVE: tabla con scroll horizontal, modal bottom-sheet en mobile,
- *   form-row se colapsa a 1 columna en mobile
+ * + RESPONSIVE: tabla con scroll horizontal, modal bottom-sheet en mobile
+ * + Cloudinary: imágenes en la nube
  */
 
 import { store } from '../../../store.js';
@@ -65,7 +65,6 @@ export default class AdminProductsView {
                         </aside>
 
                         <main class="admin-main">
-                            <!-- Wrapper scrollable para tabla en mobile -->
                             <div class="products-list">
                                 ${this.renderProductsTable()}
                             </div>
@@ -76,7 +75,6 @@ export default class AdminProductsView {
         `;
 
         this.initEvents();
-
         return this;
     }
 
@@ -99,74 +97,74 @@ export default class AdminProductsView {
     }
 
     renderProductsTable() {
-    if (this.products.length === 0) {
+        if (this.products.length === 0) {
+            return `
+                <div class="empty-state">
+                    <i class="fas fa-box-open"></i>
+                    <h3>No hay productos</h3>
+                    <p>Agrega tu primer producto usando el botón "Nuevo Producto"</p>
+                </div>
+            `;
+        }
+
         return `
-            <div class="empty-state">
-                <i class="fas fa-box-open"></i>
-                <h3>No hay productos</h3>
-                <p>Agrega tu primer producto usando el botón "Nuevo Producto"</p>
+            <div class="table-wrapper products-list">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Imagen</th>
+                            <th>Nombre</th>
+                            <th>Concentración</th>
+                            <th>Precio</th>
+                            <th>Stock</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${this.products.map(product => `
+                            <tr data-product-id="${product._id}">
+                                <td class="product-image-cell">
+                                    <img src="${product.imageUrl || `/assets/images/products/${product.image || 'placeholder.jpg'}`}"
+                                         class="product-table-img"
+                                         onerror="this.src='/assets/images/products/placeholder.jpg'">
+                                </td>
+                                <td class="product-name-cell">
+                                    <strong>${this.escapeHtml(product.name)}</strong>
+                                </td>
+                                <td class="product-concentration-cell">
+                                    ${this.escapeHtml(product.concentration)}
+                                </td>
+                                <td class="product-price-cell">
+                                    $${product.price.toLocaleString()}
+                                </td>
+                                <td class="product-stock-cell">
+                                    <span class="stock-badge ${product.stock <= 5 ? 'low-stock' : ''}">
+                                        ${product.stock || 0} uds
+                                    </span>
+                                </td>
+                                <td class="product-status-cell">
+                                    <span class="status-badge ${product.isActive !== false ? 'active' : 'inactive'}">
+                                        ${product.isActive !== false ? 'Activo' : 'Inactivo'}
+                                    </span>
+                                </td>
+                                <td class="product-actions-cell">
+                                    <div class="action-buttons">
+                                        <button class="action-btn edit" data-id="${product._id}" title="Editar" data-no-router>
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="action-btn delete" data-id="${product._id}" title="Eliminar" data-no-router>
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
             </div>
         `;
     }
-
-    return `
-        <div class="table-wrapper products-list">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Imagen</th>
-                        <th>Nombre</th>
-                        <th>Concentración</th>
-                        <th>Precio</th>
-                        <th>Stock</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${this.products.map(product => `
-                        <tr data-product-id="${product._id}">
-                            <td class="product-image-cell">
-                                <img src="/assets/images/products/${product.image || 'placeholder.jpg'}"
-                                     class="product-table-img"
-                                     onerror="this.src='/assets/images/products/placeholder.jpg'">
-                            </td>
-                            <td class="product-name-cell">
-                                <strong>${this.escapeHtml(product.name)}</strong>
-                            </td>
-                            <td class="product-concentration-cell">
-                                ${this.escapeHtml(product.concentration)}
-                            </td>
-                            <td class="product-price-cell">
-                                $${product.price.toLocaleString()}
-                            </td>
-                            <td class="product-stock-cell">
-                                <span class="stock-badge ${product.stock <= 5 ? 'low-stock' : ''}">
-                                    ${product.stock || 0} uds
-                                </span>
-                            </td>
-                            <td class="product-status-cell">
-                                <span class="status-badge ${product.isActive !== false ? 'active' : 'inactive'}">
-                                    ${product.isActive !== false ? 'Activo' : 'Inactivo'}
-                                </span>
-                            </td>
-                            <td class="product-actions-cell">
-                                <div class="action-buttons">
-                                    <button class="action-btn edit" data-id="${product._id}" title="Editar" data-no-router>
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="action-btn delete" data-id="${product._id}" title="Eliminar" data-no-router>
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        </div>
-    `;
-}
 
     initEvents() {
         const addBtn = document.getElementById('add-product-btn');
@@ -242,7 +240,7 @@ export default class AdminProductsView {
 
         const data = await response.json();
         if (!response.ok) throw new Error(data.message);
-        return data;
+        return data; // { filename, url }
     }
 
     showProductModal(product = null) {
@@ -272,14 +270,15 @@ export default class AdminProductsView {
                             <div class="image-upload-area" data-no-router>
                                 <input type="file" id="product-image-input" accept="image/jpeg,image/png,image/webp" style="display: none;">
                                 <div id="image-preview" class="image-preview">
-                                    ${product?.image
-                                        ? `<img src="/assets/images/products/${product.image}" alt="${product.name}">`
+                                    ${product?.imageUrl 
+                                        ? `<img src="${product.imageUrl}" alt="${product.name}">`
                                         : '<i class="fas fa-cloud-upload-alt"></i>'}
                                 </div>
-                                <p class="upload-text">${product?.image ? 'Click para cambiar imagen' : 'Haz clic para seleccionar una imagen'}</p>
+                                <p class="upload-text">${product?.imageUrl ? 'Click para cambiar imagen' : 'Haz clic para seleccionar una imagen'}</p>
                                 <small>Formatos: JPG, PNG, WEBP (máx. 2MB)</small>
                             </div>
                             <input type="hidden" id="product-image-name" value="${product?.image || ''}">
+                            <input type="hidden" id="product-image-url" value="${product?.imageUrl || ''}">
                         </div>
 
                         <div class="form-row">
@@ -376,6 +375,7 @@ export default class AdminProductsView {
         const fileInput = modal.querySelector('#product-image-input');
         const imagePreview = modal.querySelector('#image-preview');
         const imageNameInput = modal.querySelector('#product-image-name');
+        const imageUrlInput = modal.querySelector('#product-image-url');
 
         if (uploadArea) uploadArea.addEventListener('click', () => fileInput.click());
 
@@ -393,11 +393,12 @@ export default class AdminProductsView {
                 try {
                     const result = await this.uploadImage(file);
                     imageNameInput.value = result.filename;
+                    if (imageUrlInput) imageUrlInput.value = result.url;
                     showNotification('Imagen subida correctamente', 'success');
                 } catch (error) {
                     showNotification(error.message, 'error');
-                    if (product?.image) {
-                        imagePreview.innerHTML = `<img src="/assets/images/products/${product.image}" alt="${product.name}">`;
+                    if (product?.imageUrl) {
+                        imagePreview.innerHTML = `<img src="${product.imageUrl}" alt="${product.name}">`;
                     } else {
                         imagePreview.innerHTML = '<i class="fas fa-cloud-upload-alt"></i>';
                     }
@@ -426,6 +427,7 @@ export default class AdminProductsView {
                 const benefitsStr = document.getElementById('product-benefits').value;
                 const benefits = benefitsStr.split(',').map(b => b.trim()).filter(b => b);
                 const imageName = document.getElementById('product-image-name').value;
+                const imageUrl = document.getElementById('product-image-url').value;
 
                 const productData = {
                     name: document.getElementById('product-name').value,
@@ -435,6 +437,7 @@ export default class AdminProductsView {
                     oldPrice: parseFloat(document.getElementById('product-old-price').value) || null,
                     stock: parseInt(document.getElementById('product-stock').value) || 0,
                     image: imageName || (isEditing ? product.image : 'placeholder.jpg'),
+                    imageUrl: imageUrl,
                     tag: document.getElementById('product-badge').value || null,
                     tagType: document.getElementById('product-tag-type').value,
                     desc: document.getElementById('product-desc').value,

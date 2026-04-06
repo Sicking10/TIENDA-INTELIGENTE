@@ -221,98 +221,90 @@ export default class OrdersView {
     }
 
     renderOrderCard(order) {
-        // 🔥 CONFIGURACIÓN DE ESTADOS ACTUALIZADA
-        const statusConfig = {
-            pending: { icon: 'fa-clock', text: 'Pendiente', class: 'pending' },
-            processing: { icon: 'fa-cog', text: 'Procesando', class: 'processing' },
-            shipped: { icon: 'fa-truck', text: 'Enviado', class: 'shipped' },
-            delivered: { icon: 'fa-check-circle', text: 'Entregado', class: 'delivered' },
-            ready_for_pickup: { icon: 'fa-store', text: 'Listo para recoger', class: 'ready' },
-            picked_up: { icon: 'fa-check-double', text: 'Recogido', class: 'picked' }
-        };
+    const statusConfig = {
+        pending: { icon: 'fa-clock', text: 'Pendiente', class: 'pending' },
+        processing: { icon: 'fa-cog', text: 'Procesando', class: 'processing' },
+        shipped: { icon: 'fa-truck', text: 'Enviado', class: 'shipped' },
+        delivered: { icon: 'fa-check-circle', text: 'Entregado', class: 'delivered' },
+        ready_for_pickup: { icon: 'fa-store', text: 'Listo para recoger', class: 'ready' },
+        picked_up: { icon: 'fa-check-double', text: 'Recogido', class: 'picked' }
+    };
 
-        const config = statusConfig[order.status] || statusConfig.pending;
-        const isPickup = order.shippingMethod === 'pickup';
+    const config = statusConfig[order.status] || statusConfig.pending;
+    const isPickup = order.shippingMethod === 'pickup';
 
-        return `
-            <div class="order-card" data-order-id="${order.id}">
-                <div class="order-card-header">
-                    <div class="order-info">
-                        <span class="order-number">${order.id}</span>
-                        <span class="order-date">
-                            <i class="far fa-calendar-alt"></i> ${order.date}
-                        </span>
-                    </div>
-                    <div class="order-status ${config.class}">
-                        <i class="fas ${config.icon}"></i> ${config.text}
-                    </div>
+    return `
+        <div class="order-card" data-order-id="${order.id}">
+            <div class="order-card-header">
+                <div class="order-info">
+                    <span class="order-number">${order.id}</span>
+                    <span class="order-date">
+                        <i class="far fa-calendar-alt"></i> ${order.date}
+                    </span>
+                </div>
+                <div class="order-status ${config.class}">
+                    <i class="fas ${config.icon}"></i> ${config.text}
+                </div>
+            </div>
+            
+            <div class="order-card-body">
+                <div class="order-items">
+                    ${order.items.map(item => `
+                        <div class="order-item">
+                            <div class="item-image">
+                                <img src="${item.imageUrl || `/assets/images/products/${item.image || 'placeholder'}`}" 
+                                     alt="${item.name}"
+                                     class="order-item-img"
+                                     loading="lazy"
+                                     onerror="this.src='/assets/images/products/placeholder.jpg'">
+                            </div>
+                            <div class="item-details">
+                                <h4>${item.name}</h4>
+                                <p class="item-meta">
+                                    <span class="concentration">${item.concentration || ''}</span>
+                                    <span class="quantity">Cantidad: ${item.quantity}</span>
+                                </p>
+                            </div>
+                            <div class="item-price">${formatPrice(item.price * item.quantity)}</div>
+                        </div>
+                    `).join('')}
                 </div>
                 
-                <div class="order-card-body">
-                    <div class="order-items">
-                        ${order.items.map(item => `
-                            <div class="order-item">
-                                <div class="item-image">
-                                    <img src="/assets/images/products/${item.image || 'placeholder'}" 
-                                         alt="${item.name}"
-                                         class="order-item-img"
-                                         loading="lazy">
-                                </div>
-                                <div class="item-details">
-                                    <h4>${item.name}</h4>
-                                    <p class="item-meta">
-                                        <span class="concentration">${item.concentration || ''}</span>
-                                        <span class="quantity">Cantidad: ${item.quantity}</span>
-                                    </p>
-                                </div>
-                                <div class="item-price">${formatPrice(item.price * item.quantity)}</div>
-                            </div>
-                        `).join('')}
+                <div class="order-card-footer">
+                    <div class="order-total">
+                        <span>Total:</span>
+                        <strong>${formatPrice(order.total)}</strong>
                     </div>
-                    
-                    <div class="order-card-footer">
-                        <div class="order-total">
-                            <span>Total:</span>
-                            <strong>${formatPrice(order.total)}</strong>
-                        </div>
-                        <div class="order-actions">
-                            <!-- 🔥 ACCIONES PARA ENVÍO A DOMICILIO -->
-                            ${order.status === 'shipped' ? `
-                                <button class="btn-track" data-order-id="${order.id}">
-                                    <i class="fas fa-truck"></i> Seguir pedido
-                                </button>
-                            ` : ''}
-                            
-                            <!-- 🔥 ACCIONES PARA RECOGER EN TIENDA -->
-                            ${order.status === 'ready_for_pickup' ? `
-                                <button class="btn-pickup" data-order-id="${order.id}">
-                                    <i class="fas fa-store"></i> Ver tienda
-                                </button>
-                            ` : ''}
-                            
-                            <!-- 🔥 PEDIDOS COMPLETADOS (ambos tipos) -->
-                            ${order.status === 'delivered' || order.status === 'picked_up' ? `
-                                <button class="btn-reorder" data-order-id="${order.id}">
-                                    <i class="fas fa-redo"></i> Comprar de nuevo
-                                </button>
-                            ` : ''}
-                            
-                            <!-- 🔥 CANCELAR (solo pendientes o procesando) -->
-                            ${order.status === 'pending' || order.status === 'processing' ? `
-                                <button class="btn-cancel" data-order-id="${order.id}">
-                                    <i class="fas fa-times"></i> Cancelar pedido
-                                </button>
-                            ` : ''}
-                            
-                            <button class="btn-details" data-order-id="${order.id}">
-                                <i class="fas fa-info-circle"></i> Ver detalles
+                    <div class="order-actions">
+                        ${order.status === 'shipped' ? `
+                            <button class="btn-track" data-order-id="${order.id}">
+                                <i class="fas fa-truck"></i> Seguir pedido
                             </button>
-                        </div>
+                        ` : ''}
+                        ${order.status === 'ready_for_pickup' ? `
+                            <button class="btn-pickup" data-order-id="${order.id}">
+                                <i class="fas fa-store"></i> Ver tienda
+                            </button>
+                        ` : ''}
+                        ${order.status === 'delivered' || order.status === 'picked_up' ? `
+                            <button class="btn-reorder" data-order-id="${order.id}">
+                                <i class="fas fa-redo"></i> Comprar de nuevo
+                            </button>
+                        ` : ''}
+                        ${order.status === 'pending' || order.status === 'processing' ? `
+                            <button class="btn-cancel" data-order-id="${order.id}">
+                                <i class="fas fa-times"></i> Cancelar pedido
+                            </button>
+                        ` : ''}
+                        <button class="btn-details" data-order-id="${order.id}">
+                            <i class="fas fa-info-circle"></i> Ver detalles
+                        </button>
                     </div>
                 </div>
             </div>
-        `;
-    }
+        </div>
+    `;
+}
 
     initFilters() {
         const filters = document.querySelectorAll('.filter-btn');

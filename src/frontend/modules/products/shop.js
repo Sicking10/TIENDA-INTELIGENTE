@@ -1,7 +1,6 @@
 /* ============================================
    SHOP.JS - Botanical Apothecary Style
-   Layout adaptativo: 1, 2, 3–4, 5–6, 7+ productos
-   Imagen prominente tipo editorial / packaging
+   Con Cloudinary
 ============================================ */
 
 import { store } from '../../store.js';
@@ -79,7 +78,6 @@ function renderProductCard(p, index) {
     const badgeClass = p.tagType === 'gold' ? 'badge-gold' : 'badge-crimson';
     const delay = index * 80;
 
-    // INDICADOR DE STOCK
     const stockStatus = getStockStatus(p.stock);
     const stockHtml = `
         <div class="pcard-stock ${stockStatus.class}">
@@ -87,6 +85,9 @@ function renderProductCard(p, index) {
             <span>${stockStatus.text}</span>
         </div>
     `;
+
+    // 🔥 IMAGEN CON CLOUDINARY
+    const imageSrc = p.imageUrl || `/assets/images/products/${p.image || 'placeholder.jpg'}`;
 
     return `
         <article
@@ -98,11 +99,12 @@ function renderProductCard(p, index) {
             <div class="pcard-image-wrap">
                 ${p.tag ? `<div class="pcard-badge ${badgeClass}">${p.tagType === 'gold' ? '⭐' : '✦'} ${p.tag}</div>` : ''}
                 <img
-                    src="/assets/images/products/${p.image || 'placeholder.jpg'}"
+                    src="${imageSrc}"
                     alt="${p.imageAlt || p.name}"
                     class="pcard-img"
                     loading="lazy"
                     draggable="false"
+                    onerror="this.src='/assets/images/products/placeholder.jpg'"
                 >
                 <div class="pcard-image-overlay">
                     <button
@@ -115,7 +117,7 @@ function renderProductCard(p, index) {
                     </button>
                 </div>
                 ${saving > 0 ? `<div class="pcard-discount">−${saving}%</div>` : ''}
-                ${stockHtml} <!-- STOCK AQUÍ -->
+                ${stockHtml}
             </div>
 
             <div class="pcard-body">
@@ -143,7 +145,8 @@ function renderProductCard(p, index) {
                 id: p._id,
                 name: p.name,
                 price: p.price,
-                image: p.image || 'placeholder.jpg'
+                image: p.image || 'placeholder.jpg',
+                imageUrl: p.imageUrl || ''
             })}'
                         ${p.stock === 0 ? 'disabled' : ''}
                         aria-label="Agregar ${p.name} al carrito"
@@ -274,7 +277,6 @@ function initAddToCart() {
             e.stopPropagation();
             const productData = JSON.parse(btn.dataset.product);
 
-            // Efecto visual en el botón
             btn.classList.add('btn-bounce');
             setTimeout(() => btn.classList.remove('btn-bounce'), 300);
 
@@ -283,6 +285,7 @@ function initAddToCart() {
                 name: productData.name,
                 price: productData.price,
                 image: productData.image,
+                imageUrl: productData.imageUrl,
                 quantity: 1,
             });
 
@@ -307,6 +310,9 @@ function openProductModal(productId) {
         ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
         : 0;
     const badgeClass = product.tagType === 'gold' ? 'badge-gold' : 'badge-crimson';
+    
+    // 🔥 IMAGEN CON CLOUDINARY
+    const imageSrc = product.imageUrl || `/assets/images/products/${product.image || 'placeholder.jpg'}`;
 
     const modal = document.createElement('div');
     modal.className = 'modal-shop';
@@ -316,83 +322,59 @@ function openProductModal(productId) {
             <button class="modal-close" aria-label="Cerrar">✕</button>
 
             <div class="modal-layout">
-                <!-- Lado imagen -->
                 <div class="modal-image-side">
                     <img
-                        src="/assets/images/products/${product.image || 'placeholder.jpg'}"
+                        src="${imageSrc}"
                         alt="${product.imageAlt || product.name}"
                         class="modal-img"
                         loading="lazy"
+                        onerror="this.src='/assets/images/products/placeholder.jpg'"
                     >
-                    ${saving > 0
-            ? `<div class="modal-discount-badge">−${saving}% OFF</div>`
-            : ''}
+                    ${saving > 0 ? `<div class="modal-discount-badge">−${saving}% OFF</div>` : ''}
                 </div>
 
-                <!-- Lado info -->
                 <div class="modal-info-side">
-                    ${product.tag
-            ? `<div class="pcard-badge ${badgeClass}" style="margin-bottom:18px;">
-                               ${product.tagType === 'gold' ? '⭐' : '✦'} ${product.tag}
-                           </div>`
-            : ''}
-
+                    ${product.tag ? `<div class="pcard-badge ${badgeClass}" style="margin-bottom:18px;">${product.tagType === 'gold' ? '⭐' : '✦'} ${product.tag}</div>` : ''}
                     <h2 class="modal-title">${product.name}</h2>
-
-                    ${product.concentration
-            ? `<span class="pcard-concentration" style="margin-bottom:16px;">${product.concentration}</span>`
-            : ''}
-
+                    ${product.concentration ? `<span class="pcard-concentration" style="margin-bottom:16px;">${product.concentration}</span>` : ''}
                     <div class="modal-rating">
                         <span class="stars">★★★★★</span>
                         <span class="rating-val">${product.rating || 4.5}</span>
                         <span class="rating-count">(${product.reviews || 0} reseñas)</span>
                     </div>
-
                     <p class="modal-description">${product.longDesc || product.desc}</p>
-
                     ${product.benefits && product.benefits.length > 0 ? `
                     <div class="modal-benefits">
-                        ${product.benefits.map(b => `
-                            <span class="modal-benefit-tag">${b}</span>
-                        `).join('')}
+                        ${product.benefits.map(b => `<span class="modal-benefit-tag">${b}</span>`).join('')}
                     </div>` : ''}
-
                     ${product.ritual ? `
                     <div class="modal-ritual">
                         <span class="ritual-label"><i class="fas fa-feather-alt"></i> Ritual de consumo</span>
                         <p class="ritual-desc">${product.ritual}</p>
                     </div>` : ''}
-
                     <div class="modal-stock">
-    <div class="stock-status ${getStockStatus(product.stock).class}">
-        <span class="stock-indicator"></span>
-        <span>${getStockStatus(product.stock).text}</span>
-    </div>
-</div>
-
+                        <div class="stock-status ${getStockStatus(product.stock).class}">
+                            <span class="stock-indicator"></span>
+                            <span>${getStockStatus(product.stock).text}</span>
+                        </div>
+                    </div>
                     <div class="modal-footer">
                         <div class="modal-price-group">
                             <span class="modal-price-current">$${product.price}</span>
-                            ${product.oldPrice && product.oldPrice > product.price
-            ? `<span class="modal-price-old">$${product.oldPrice}</span>`
-            : ''}
+                            ${product.oldPrice && product.oldPrice > product.price ? `<span class="modal-price-old">$${product.oldPrice}</span>` : ''}
                         </div>
-                        <button
-                            class="btn-add-cart btn-add-cart-modal"
-                            data-product='${JSON.stringify({
-                id: product._id,
-                name: product.name,
-                price: product.price,
-                image: product.image || 'placeholder.jpg'
-            })}'
-                        >
+                        <button class="btn-add-cart btn-add-cart-modal" data-product='${JSON.stringify({
+                            id: product._id,
+                            name: product.name,
+                            price: product.price,
+                            image: product.image || 'placeholder.jpg',
+                            imageUrl: product.imageUrl || ''
+                        })}'>
                             <span>🛍️</span>
                             Agregar al carrito
                         </button>
                     </div>
                 </div>
-
             </div>
         </div>
     `;
@@ -400,10 +382,8 @@ function openProductModal(productId) {
     document.body.appendChild(modal);
     activeModal = modal;
     document.body.style.overflow = 'hidden';
-
     requestAnimationFrame(() => modal.classList.add('active'));
 
-    // Fallback imagen modal
     const modalImg = modal.querySelector('.modal-img');
     if (modalImg) {
         modalImg.addEventListener('error', function () {
@@ -435,7 +415,6 @@ function openProductModal(productId) {
     };
     document.addEventListener('keydown', handleEscape);
 
-    // Botón agregar dentro del modal
     const addBtn = modal.querySelector('.btn-add-cart-modal');
     if (addBtn) {
         addBtn.addEventListener('click', (e) => {
@@ -446,6 +425,7 @@ function openProductModal(productId) {
                 name: productData.name,
                 price: productData.price,
                 image: productData.image,
+                imageUrl: productData.imageUrl,
                 quantity: 1,
             });
             showNotification(`🫚 ${productData.name} agregado al carrito`, 'success');
@@ -458,7 +438,6 @@ function openProductModal(productId) {
 
 // ─── Inicializar clicks en tarjetas ──────────────────────────────────────────
 function initProductCards() {
-    // Quick-view buttons
     document.querySelectorAll('.btn-quick-view').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -466,7 +445,6 @@ function initProductCards() {
         });
     });
 
-    // Click en la imagen también abre el modal
     document.querySelectorAll('.pcard-image-wrap').forEach(wrap => {
         wrap.addEventListener('click', (e) => {
             if (e.target.closest('.btn-quick-view')) return;
@@ -486,22 +464,17 @@ export default class ShopView {
 
     async render() {
         this.container.innerHTML = getShopHTML();
-
         await loadProductsFromAPI();
-
         const grid = document.getElementById('products-grid');
         if (grid) {
             grid.innerHTML = renderProducts();
         }
-
         await new Promise(r => requestAnimationFrame(r));
-
         initScrollAnimations();
         initAddToCart();
         initProductCards();
         setupImageErrorHandlers();
         updateCartBadge();
-
         return this;
     }
 

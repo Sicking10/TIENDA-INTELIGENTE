@@ -46,7 +46,11 @@ const postSchema = new mongoose.Schema({
     image: {
         type: String,
         default: 'placeholder.jpg'
-    }
+    },
+    imageUrl: {
+    type: String,
+    default: ''
+}
 }, {
     timestamps: true
 });

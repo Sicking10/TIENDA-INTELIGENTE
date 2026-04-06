@@ -27,6 +27,14 @@ const contactRoutes = require('./src/backend/routes/api/contactRoutes');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Configurar Cloudinary al inicio
+const cloudinary = require('cloudinary').v2;
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
 // ==================== MIDDLEWARES ====================
 
 // Seguridad
@@ -40,6 +48,7 @@ app.use(helmet({
             styleSrcElem: ["'self'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
             fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
             imgSrc: ["'self'", "data:", "https://*.googleapis.com", "https://*.google.com", "https://*.openstreetmap.org"],
+            imgSrc: ["'self'", "data:", "https://*.googleapis.com", "https://*.google.com", "https://*.openstreetmap.org", "https://res.cloudinary.com"],
             frameSrc: ["'self'", "https://maps.google.com", "https://www.google.com"],
             connectSrc: ["'self'", "https://nominatim.openstreetmap.org"],
             scriptSrcAttr: ["'unsafe-inline'"]
@@ -80,13 +89,13 @@ mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
-.then(() => {
-    console.log('✅ MongoDB conectado correctamente');
-    console.log(`📁 Base de datos: ${mongoose.connection.name}`);
-})
-.catch((error) => {
-    console.error('❌ Error conectando a MongoDB:', error.message);
-});
+    .then(() => {
+        console.log('✅ MongoDB conectado correctamente');
+        console.log(`📁 Base de datos: ${mongoose.connection.name}`);
+    })
+    .catch((error) => {
+        console.error('❌ Error conectando a MongoDB:', error.message);
+    });
 
 // Escuchar eventos de conexión
 mongoose.connection.on('error', (err) => {
@@ -170,7 +179,7 @@ app.use('/api/*', (req, res) => {
 // Middleware de errores global
 app.use((err, req, res, next) => {
     console.error('❌ Error:', err.stack);
-    
+
     res.status(err.status || 500).json({
         success: false,
         message: err.message || 'Error interno del servidor',

@@ -1,6 +1,6 @@
 /**
  * Módulo Blog - GINGERcaps
- * Artículos desde API (MongoDB)
+ * Artículos desde API (MongoDB) con Cloudinary
  */
 
 export default class BlogView {
@@ -27,7 +27,7 @@ export default class BlogView {
             const data = await response.json();
             if (data.success) {
                 this.posts = data.posts.filter(p => p.status === 'published');
-                console.log('📸 Posts cargados:', this.posts.map(p => ({ title: p.title, image: p.image })));
+                console.log('📸 Posts cargados:', this.posts.map(p => ({ title: p.title, imageUrl: p.imageUrl })));
             } else {
                 this.posts = [];
             }
@@ -145,12 +145,12 @@ export default class BlogView {
         const noResults = document.getElementById('no-results');
         if (noResults) noResults.style.display = 'none';
         
-        // 🔥 CORREGIDO: Mostrar imagen real del post
+        // 🔥 IMAGEN CON CLOUDINARY
         grid.innerHTML = filteredPosts.map(post => `
             <article class="blog-card" data-id="${post._id}">
                 <div class="blog-card-image">
-                    ${post.image && post.image !== 'placeholder.jpg' ? 
-                        `<img src="/assets/images/blog/${post.image}" alt="${this.escapeHtml(post.title)}" class="blog-card-img" onerror="this.src='/assets/images/blog/placeholder.jpg'">` :
+                    ${post.imageUrl ? 
+                        `<img src="${post.imageUrl}" alt="${this.escapeHtml(post.title)}" class="blog-card-img" onerror="this.src='/assets/images/blog/placeholder.jpg'">` :
                         `<div class="image-placeholder">
                             <i class="fas fa-leaf"></i>
                         </div>`
@@ -262,12 +262,12 @@ export default class BlogView {
             if (grid) grid.style.display = 'grid';
             if (noResults) noResults.style.display = 'none';
             if (grid) {
-                // 🔥 CORREGIDO: Mostrar imagen real también en búsqueda filtrada
+                // 🔥 IMAGEN CON CLOUDINARY también en búsqueda filtrada
                 grid.innerHTML = filtered.map(post => `
                     <article class="blog-card" data-id="${post._id}">
                         <div class="blog-card-image">
-                            ${post.image && post.image !== 'placeholder.jpg' ? 
-                                `<img src="/assets/images/blog/${post.image}" alt="${this.escapeHtml(post.title)}" class="blog-card-img" onerror="this.src='/assets/images/blog/placeholder.jpg'">` :
+                            ${post.imageUrl ? 
+                                `<img src="${post.imageUrl}" alt="${this.escapeHtml(post.title)}" class="blog-card-img" onerror="this.src='/assets/images/blog/placeholder.jpg'">` :
                                 `<div class="image-placeholder">
                                     <i class="fas fa-leaf"></i>
                                 </div>`
@@ -345,9 +345,9 @@ export default class BlogView {
                         </div>
                     </div>
                     <div class="post-modal-body">
-                        ${post.image && post.image !== 'placeholder.jpg' ? 
+                        ${post.imageUrl ? 
                             `<div class="post-image">
-                                <img src="/assets/images/blog/${post.image}" alt="${this.escapeHtml(post.title)}" class="post-modal-img">
+                                <img src="${post.imageUrl}" alt="${this.escapeHtml(post.title)}" class="post-modal-img" onerror="this.src='/assets/images/blog/placeholder.jpg'">
                             </div>` :
                             `<div class="post-image-placeholder">
                                 <i class="fas fa-leaf"></i>

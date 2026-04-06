@@ -34,7 +34,12 @@ exports.getProductById = async (req, res) => {
 // @access  Private/Admin
 exports.createProduct = async (req, res) => {
     try {
-        const product = await Product.create(req.body);
+        const productData = {
+            ...req.body,
+            image: req.body.image || 'placeholder.jpg',
+            imageUrl: req.body.imageUrl || ''
+        };
+        const product = await Product.create(productData);
         res.status(201).json({ success: true, product });
     } catch (error) {
         res.status(400).json({ success: false, message: error.message });
@@ -46,9 +51,14 @@ exports.createProduct = async (req, res) => {
 // @access  Private/Admin
 exports.updateProduct = async (req, res) => {
     try {
+        const updateData = {
+            ...req.body,
+            imageUrl: req.body.imageUrl || ''
+        };
+        
         const product = await Product.findByIdAndUpdate(
             req.params.id,
-            req.body,
+            updateData,
             { new: true, runValidators: true }
         );
         if (!product) {
@@ -69,6 +79,14 @@ exports.deleteProduct = async (req, res) => {
         if (!product) {
             return res.status(404).json({ success: false, message: 'Producto no encontrado' });
         }
+        
+        // Opcional: Eliminar imagen de Cloudinary también
+        // if (product.imageUrl && product.imageUrl.includes('cloudinary')) {
+        //     const cloudinary = require('cloudinary').v2;
+        //     const publicId = product.imageUrl.split('/').slice(-2).join('/').split('.')[0];
+        //     await cloudinary.uploader.destroy(publicId);
+        // }
+        
         res.json({ success: true, message: 'Producto eliminado' });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });

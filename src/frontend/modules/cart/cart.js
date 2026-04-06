@@ -1,7 +1,7 @@
 /**
  * Módulo Cart - Carrito de compras
  * cart.js
- * VERSIÓN DEFINITIVA - Con addEventListener que el router no puede interceptar
+ * VERSIÓN DEFINITIVA - Con Cloudinary
  */
 
 import { store } from '../../store.js';
@@ -32,16 +32,21 @@ export default class CartView {
         
         this.initEvents();
         this.setupImageErrorHandlers();
-        this.initCheckoutButton(); // ← Nueva función
+        this.initCheckoutButton();
         
         return this;
     }
     
     loadCartData() {
-        this.cartItems = store.get('cart.items') || [];
-        this.cartTotal = store.get('cart.total') || 0;
-        this.cartItemCount = store.get('cart.itemCount') || 0;
-    }
+    this.cartItems = store.get('cart.items') || [];
+    console.log('🛒 Items en carrito:', this.cartItems.map(i => ({ 
+        id: i.id, 
+        name: i.name, 
+        imageUrl: i.imageUrl 
+    })));
+    this.cartTotal = store.get('cart.total') || 0;
+    this.cartItemCount = store.get('cart.itemCount') || 0;
+}
     
     setupImageErrorHandlers() {
         document.querySelectorAll('.cart-item-image img, .suggestion-image img').forEach(img => {
@@ -154,7 +159,6 @@ export default class CartView {
                                 <div id="coupon-message" class="coupon-message"></div>
                             </div>
                             
-                            <!-- Botón sin onclick inline -->
                             <button type="button" id="checkout-btn" class="btn-checkout">
                                 <i class="fas fa-lock"></i> Proceder al pago
                             </button>
@@ -167,23 +171,18 @@ export default class CartView {
     
     renderCartItems() {
         return this.cartItems.map(item => {
-            let imageName = 'placeholder';
-            if (item.id === 'ginger-origin' || item.name.includes('ORIGIN')) {
-                imageName = 'original';
-            } else if (item.id === 'ginger-elixir' || item.name.includes('ELIXIR')) {
-                imageName = 'pro';
-            } else if (item.image) {
-                imageName = item.image;
-            }
+            // 🔥 IMAGEN CON CLOUDINARY
+            const imageSrc = item.imageUrl || (item.image ? `/assets/images/products/${item.image}` : '/assets/images/products/placeholder.jpg');
             
             return `
             <div class="cart-item" data-id="${item.id}">
                 <div class="cart-item-product">
                     <div class="cart-item-image">
-                        <img src="/assets/images/products/${imageName}" 
+                        <img src="${imageSrc}" 
                              alt="${item.name}"
                              class="cart-item-img"
-                             loading="lazy">
+                             loading="lazy"
+                             onerror="this.src='/assets/images/products/placeholder.jpg'">
                     </div>
                     <div class="cart-item-info">
                         <h4>${item.name}</h4>
@@ -279,7 +278,7 @@ export default class CartView {
             newCouponBtn.addEventListener('click', () => this.applyCoupon());
         }
         
-        // Sugerencias
+        // Sugerencias (si existen)
         document.querySelectorAll('.btn-add-suggestion').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const product = JSON.parse(btn.dataset.product);
@@ -288,6 +287,7 @@ export default class CartView {
                     name: product.name,
                     price: product.price,
                     image: product.image,
+                    imageUrl: product.imageUrl,
                     concentration: '500mg',
                     quantity: 1
                 });
@@ -299,59 +299,53 @@ export default class CartView {
     }
     
     initCheckoutButton() {
-    const checkoutBtn = document.getElementById('checkout-btn');
-    if (!checkoutBtn) {
-        console.warn('⚠️ Botón checkout no encontrado');
-        return;
-    }
-
-    // Eliminar atributos que el router podría interceptar
-    checkoutBtn.removeAttribute('data-link');
-    checkoutBtn.removeAttribute('href');
-    checkoutBtn.setAttribute('type', 'button');
-
-    // Guardar referencia al handler para poder removerlo en destroy()
-    this.checkoutHandler = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-
-        console.log('🛒 Procesando checkout...');
-
-        const isAuthenticated = store.get('auth.isAuthenticated');
-        if (!isAuthenticated) {
-            showNotification('Debes iniciar sesión para continuar', 'warning');
-            sessionStorage.setItem('redirectAfterLogin', '/checkout');
-            window.location.href = '/login';
-            return;
-        }
-
-        const cartItems = store.get('cart.items') || [];
-        if (cartItems.length === 0) {
-            showNotification('Tu carrito está vacío', 'warning');
-            return;
-        }
-
-        window.location.href = '/checkout';
-    };
-
-    // Registrar en fase de CAPTURA directamente en el botón (no en document)
-    // Fase de captura garantiza que se ejecuta antes que el router
-    checkoutBtn.addEventListener('click', this.checkoutHandler, true);
-
-    console.log('✅ Botón checkout configurado');
-}
-
-destroy() {
-    // Limpiar el listener del botón si existe
-    if (this.checkoutHandler) {
         const checkoutBtn = document.getElementById('checkout-btn');
-        if (checkoutBtn) {
-            checkoutBtn.removeEventListener('click', this.checkoutHandler, true);
+        if (!checkoutBtn) {
+            console.warn('⚠️ Botón checkout no encontrado');
+            return;
         }
-        this.checkoutHandler = null;
+
+        checkoutBtn.removeAttribute('data-link');
+        checkoutBtn.removeAttribute('href');
+        checkoutBtn.setAttribute('type', 'button');
+
+        this.checkoutHandler = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+
+            console.log('🛒 Procesando checkout...');
+
+            const isAuthenticated = store.get('auth.isAuthenticated');
+            if (!isAuthenticated) {
+                showNotification('Debes iniciar sesión para continuar', 'warning');
+                sessionStorage.setItem('redirectAfterLogin', '/checkout');
+                window.location.href = '/login';
+                return;
+            }
+
+            const cartItems = store.get('cart.items') || [];
+            if (cartItems.length === 0) {
+                showNotification('Tu carrito está vacío', 'warning');
+                return;
+            }
+
+            window.location.href = '/checkout';
+        };
+
+        checkoutBtn.addEventListener('click', this.checkoutHandler, true);
+        console.log('✅ Botón checkout configurado');
     }
-}
+
+    destroy() {
+        if (this.checkoutHandler) {
+            const checkoutBtn = document.getElementById('checkout-btn');
+            if (checkoutBtn) {
+                checkoutBtn.removeEventListener('click', this.checkoutHandler, true);
+            }
+            this.checkoutHandler = null;
+        }
+    }
     
     updateQuantity(productId, newQuantity) {
         store.updateCartItemQuantity(productId, newQuantity);

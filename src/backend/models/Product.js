@@ -10,6 +10,10 @@ const productSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
+    imageUrl: {
+    type: String,
+    default: ''
+},
     concentration: {
         type: String,
         required: [true, 'La concentración es requerida']

@@ -37,7 +37,13 @@ exports.getPostById = async (req, res) => {
 // @access  Private/Admin
 exports.createPost = async (req, res) => {
     try {
-        const post = await Post.create(req.body);
+        const postData = {
+            ...req.body,
+            image: req.body.image || 'placeholder.jpg',
+            imageUrl: req.body.imageUrl || '',
+            views: 0
+        };
+        const post = await Post.create(postData);
         res.status(201).json({ success: true, post });
     } catch (error) {
         res.status(400).json({ success: false, message: error.message });
@@ -49,9 +55,14 @@ exports.createPost = async (req, res) => {
 // @access  Private/Admin
 exports.updatePost = async (req, res) => {
     try {
+        const updateData = {
+            ...req.body,
+            imageUrl: req.body.imageUrl || ''
+        };
+        
         const post = await Post.findByIdAndUpdate(
             req.params.id,
-            req.body,
+            updateData,
             { new: true, runValidators: true }
         );
         if (!post) {
@@ -72,6 +83,14 @@ exports.deletePost = async (req, res) => {
         if (!post) {
             return res.status(404).json({ success: false, message: 'Artículo no encontrado' });
         }
+        
+        // Opcional: Eliminar imagen de Cloudinary también
+        // if (post.imageUrl && post.imageUrl.includes('cloudinary')) {
+        //     const cloudinary = require('cloudinary').v2;
+        //     const publicId = post.imageUrl.split('/').slice(-2).join('/').split('.')[0];
+        //     await cloudinary.uploader.destroy(publicId);
+        // }
+        
         res.json({ success: true, message: 'Artículo eliminado' });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });

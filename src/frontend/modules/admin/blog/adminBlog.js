@@ -1,12 +1,12 @@
 /**
  * Admin Blog - Gestión de artículos con API y subida de imágenes
- * + RESPONSIVE: tabla con scroll horizontal, modal bottom-sheet en mobile,
- *   form-row en columna única en pantallas pequeñas
+ * + Cloudinary: imágenes en la nube
  */
 
 import { store } from '../../../store.js';
 import { authGuard } from '../../../authGuard.js';
 import { showNotification } from '../../notifications/notifications.js';
+import { showConfirmModal } from '../../../utils/confirmModal.js';
 
 export default class AdminBlogView {
     constructor(container, params = {}) {
@@ -32,7 +32,7 @@ export default class AdminBlogView {
                             <h1><i class="fas fa-newspaper"></i> Gestionar Blog</h1>
                             <p>Administra los artículos del blog</p>
                         </div>
-                        <button class="btn-primary" id="add-post-btn">
+                        <button class="btn-primary" id="add-post-btn" data-no-router>
                             <i class="fas fa-plus"></i> Nuevo Artículo
                         </button>
                     </div>
@@ -64,7 +64,6 @@ export default class AdminBlogView {
                         </aside>
 
                         <main class="admin-main">
-                            <!-- Wrapper scrollable para tabla -->
                             <div class="posts-list">
                                 ${this.renderPostsTable()}
                             </div>
@@ -75,7 +74,6 @@ export default class AdminBlogView {
         `;
 
         this.initEvents();
-
         return this;
     }
 
@@ -109,8 +107,8 @@ export default class AdminBlogView {
         }
 
         return `
-            <div style="overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 12px;">
-                <table class="data-table" style="min-width: 580px;">
+            <div class="table-wrapper posts-list">
+                <table class="data-table">
                     <thead>
                         <tr>
                             <th>Imagen</th>
@@ -125,7 +123,7 @@ export default class AdminBlogView {
                         ${this.posts.map(post => `
                             <tr data-post-id="${post._id}">
                                 <td>
-                                    <img src="/assets/images/blog/${post.image || 'placeholder.jpg'}"
+                                    <img src="${post.imageUrl || `/assets/images/blog/${post.image || 'placeholder.jpg'}`}"
                                          style="width: 40px; height: 40px; object-fit: cover; border-radius: 8px; display: block;">
                                 </td>
                                 <td>
@@ -146,10 +144,10 @@ export default class AdminBlogView {
                                 </td>
                                 <td>
                                     <div class="action-buttons">
-                                        <button class="action-btn edit" data-id="${post._id}" title="Editar">
+                                        <button class="action-btn edit" data-id="${post._id}" title="Editar" data-no-router>
                                             <i class="fas fa-edit"></i>
                                         </button>
-                                        <button class="action-btn delete" data-id="${post._id}" title="Eliminar">
+                                        <button class="action-btn delete" data-id="${post._id}" title="Eliminar" data-no-router>
                                             <i class="fas fa-trash-alt"></i>
                                         </button>
                                     </div>
@@ -198,7 +196,7 @@ export default class AdminBlogView {
 
         const data = await response.json();
         if (!response.ok) throw new Error(data.message);
-        return data;
+        return data; // { filename, url }
     }
 
     initEvents() {
@@ -223,7 +221,6 @@ export default class AdminBlogView {
                 const id = btn.dataset.id;
                 const post = this.posts.find(p => p._id === id);
 
-                const { showConfirmModal } = await import('../../../utils/confirmModal.js');
                 const confirmed = await showConfirmModal({
                     title: 'Eliminar artículo del blog',
                     message: `¿Estás seguro de que deseas eliminar el artículo "${post.title}"? Esta acción no se puede deshacer.`,
@@ -265,7 +262,6 @@ export default class AdminBlogView {
     showPostModal(post = null) {
         const isEditing = !!post;
 
-        // Eliminar modal previo si existe
         const existing = document.querySelector('.admin-modal');
         if (existing) existing.remove();
 
@@ -289,14 +285,15 @@ export default class AdminBlogView {
                             <div class="image-upload-area" data-no-router>
                                 <input type="file" id="post-image-input" accept="image/jpeg,image/png,image/webp" style="display: none;">
                                 <div id="image-preview" style="margin-bottom: 12px;">
-                                    ${post?.image
-                                        ? `<img src="/assets/images/blog/${post.image}" style="max-width: 100px; max-height: 100px; border-radius: 12px; display: block; margin: 0 auto;">`
+                                    ${post?.imageUrl 
+                                        ? `<img src="${post.imageUrl}" style="max-width: 100px; max-height: 100px; border-radius: 12px; display: block; margin: 0 auto;">`
                                         : '<i class="fas fa-cloud-upload-alt" style="font-size: 48px; color: var(--ginger);"></i>'}
                                 </div>
-                                <p class="image-preview-text">${post?.image ? 'Click para cambiar imagen' : 'Haz clic para seleccionar una imagen'}</p>
+                                <p class="image-preview-text">${post?.imageUrl ? 'Click para cambiar imagen' : 'Haz clic para seleccionar una imagen'}</p>
                                 <small style="color: var(--bark-light); font-size: 12px;">Formatos: JPG, PNG, WEBP (máx. 2MB)</small>
                             </div>
                             <input type="hidden" id="post-image-name" value="${post?.image || ''}">
+                            <input type="hidden" id="post-image-url" value="${post?.imageUrl || ''}">
                         </div>
 
                         <!-- Título -->
@@ -372,6 +369,7 @@ export default class AdminBlogView {
         const fileInput = modal.querySelector('#post-image-input');
         const imagePreview = modal.querySelector('#image-preview');
         const imageNameInput = modal.querySelector('#post-image-name');
+        const imageUrlInput = modal.querySelector('#post-image-url');
 
         if (uploadArea) uploadArea.addEventListener('click', () => fileInput.click());
 
@@ -389,6 +387,7 @@ export default class AdminBlogView {
                 try {
                     const result = await this.uploadImage(file);
                     imageNameInput.value = result.filename;
+                    if (imageUrlInput) imageUrlInput.value = result.url;
                     showNotification('Imagen subida correctamente', 'success');
                 } catch (error) {
                     showNotification(error.message, 'error');
@@ -417,6 +416,7 @@ export default class AdminBlogView {
                 const tagsStr = document.getElementById('post-tags').value;
                 const tags = tagsStr.split(',').map(t => t.trim().toLowerCase()).filter(t => t);
                 const imageName = document.getElementById('post-image-name').value;
+                const imageUrl = document.getElementById('post-image-url').value;
 
                 const postData = {
                     title: document.getElementById('post-title').value,
@@ -428,6 +428,7 @@ export default class AdminBlogView {
                     authorAvatar: (document.getElementById('post-author').value || 'AD').substring(0, 2).toUpperCase(),
                     tags: tags,
                     image: imageName || (isEditing ? post.image : 'placeholder.jpg'),
+                    imageUrl: imageUrl,
                     readTime: Math.ceil(document.getElementById('post-content').value.split(' ').length / 200) || 5
                 };
 

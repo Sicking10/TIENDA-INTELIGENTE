@@ -172,7 +172,7 @@ function setActiveLink() {
     
     // Lista de rutas que NO deben activar el enlace de Inicio
     const excludeFromHome = [
-        '/tienda', '/beneficios', '/blog', '/admin', 
+        '/tienda', '/beneficios', '/blog', 
         '/login', '/registro', '/carrito', '/checkout', 
         '/mis-pedidos', '/mi-cuenta', '/faq', '/contacto', 
         '/terminos', '/privacidad', '/garantia'
@@ -181,7 +181,7 @@ function setActiveLink() {
     // Verificar si es una sub-ruta dinámica
     const isProductDetail = path.startsWith('/producto/');
     const isOrderDetail = path.startsWith('/pedido/');
-    const isAdminDetail = path.startsWith('/admin/') && path !== '/admin';
+    const isAdminRoute = path.startsWith('/admin');
     
     // Actualizar enlaces de escritorio y móvil
     document.querySelectorAll('.nav-link, .mobile-nav-link, .dropdown-item').forEach(link => {
@@ -195,9 +195,8 @@ function setActiveLink() {
         }
         // Manejar enlace de Inicio
         else if (href === '/') {
-            // Solo activar si la ruta es exactamente '/' o no está en la lista de exclusión
-            const isExcluded = excludeFromHome.some(ex => path === ex);
-            const isActive = path === '/' || (!isExcluded && !isProductDetail && !isOrderDetail);
+            // NO activar Inicio si estamos en rutas de admin
+            const isActive = path === '/' || (!isAdminRoute && !isProductDetail && !isOrderDetail && !excludeFromHome.includes(path));
             link.classList.toggle('active', isActive);
         }
         // Manejar otros enlaces

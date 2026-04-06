@@ -275,25 +275,21 @@ export default class OrderTrackingView {
                     <div class="tracking-grid">
                         <div class="order-details-card">
                             <h3><i class="fas fa-box"></i> Detalles del pedido</h3>
-                            <div class="order-items">
-                                ${this.order.items.map(item => `
-                                    <div class="order-item">
-                                        <div class="item-image">
-                                            <img src="/assets/images/products/${item.image || 'placeholder'}" 
-                                                 alt="${item.name}"
-                                                 onerror="this.src='/assets/images/products/placeholder.jpg'">
-                                        </div>
-                                        <div class="item-details">
-                                            <h4>${item.name}</h4>
-                                            <div class="item-meta">
-                                                <span class="concentration">${item.concentration || ''}</span>
-                                                <span class="quantity">Cantidad: ${item.quantity}</span>
-                                            </div>
-                                        </div>
-                                        <div class="item-price">${formatPrice(item.price * item.quantity)}</div>
-                                    </div>
-                                `).join('')}
-                            </div>
+                            <div class="order-item">
+    <div class="item-image">
+        <img src="${item.imageUrl || `/assets/images/products/${item.image || 'placeholder'}`}" 
+             alt="${item.name}"
+             onerror="this.src='/assets/images/products/placeholder.jpg'">
+    </div>
+    <div class="item-details">
+        <h4>${item.name}</h4>
+        <div class="item-meta">
+            <span class="concentration">${item.concentration || ''}</span>
+            <span class="quantity">Cantidad: ${item.quantity}</span>
+        </div>
+    </div>
+    <div class="item-price">${formatPrice(item.price * item.quantity)}</div>
+</div>
                             <div class="order-total">
                                 <span>Total</span>
                                 <strong>${formatPrice(this.order.total)}</strong>
