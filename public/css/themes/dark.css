@@ -3786,3 +3786,48 @@
 [data-theme="dark"] .stock-badge.low-stock {
     background: rgba(239, 68, 68, 0.15);
 }
+
+/* ============================================
+   MODO OSCURO - ADMIN (CORREGIDO)
+=========================================== */
+[data-theme="dark"] .admin-page {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+[data-theme="dark"] .admin-main {
+    background: var(--chamomile);
+    border-color: rgba(232, 168, 56, 0.15);
+}
+
+[data-theme="dark"] .users-list .data-table,
+[data-theme="dark"] .products-list .data-table,
+[data-theme="dark"] .orders-list .data-table,
+[data-theme="dark"] .posts-list .data-table {
+    background: var(--chamomile);
+}
+
+[data-theme="dark"] .data-table td {
+    background: var(--chamomile);
+    color: #F0D9B0;
+    border-bottom-color: rgba(232, 168, 56, 0.1);
+}
+
+[data-theme="dark"] .data-table tr:hover td {
+    background: rgba(232, 168, 56, 0.08);
+}
+
+[data-theme="dark"] .empty-state {
+    background: rgba(232, 168, 56, 0.05);
+}
+
+[data-theme="dark"] .empty-state h3 {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .empty-state p {
+    color: #C8A882;
+}
+
+[data-theme="dark"] .empty-state i {
+    color: #B89A7A;
+}
