@@ -1,5 +1,7 @@
 /**
  * Admin Products - Gestión de productos con API
+ * + RESPONSIVE: tabla con scroll horizontal, modal bottom-sheet en mobile,
+ *   form-row se colapsa a 1 columna en mobile
  */
 
 import { store } from '../../../store.js';
@@ -40,24 +42,30 @@ export default class AdminProductsView {
                         <aside class="admin-sidebar">
                             <nav class="admin-nav">
                                 <a href="/admin" class="admin-nav-item" data-link>
-                                    <i class="fas fa-chart-line"></i> Dashboard
+                                    <i class="fas fa-chart-line"></i>
+                                    <span>Dashboard</span>
                                 </a>
                                 <a href="/admin/productos" class="admin-nav-item active" data-link>
-                                    <i class="fas fa-box"></i> Productos
+                                    <i class="fas fa-box"></i>
+                                    <span>Productos</span>
                                 </a>
                                 <a href="/admin/blog" class="admin-nav-item" data-link>
-                                    <i class="fas fa-newspaper"></i> Blog
+                                    <i class="fas fa-newspaper"></i>
+                                    <span>Blog</span>
                                 </a>
                                 <a href="/admin/usuarios" class="admin-nav-item" data-link>
-                                    <i class="fas fa-users"></i> Usuarios
+                                    <i class="fas fa-users"></i>
+                                    <span>Usuarios</span>
                                 </a>
                                 <a href="/admin/pedidos" class="admin-nav-item" data-link>
-                                    <i class="fas fa-shopping-cart"></i> Pedidos
+                                    <i class="fas fa-shopping-cart"></i>
+                                    <span>Pedidos</span>
                                 </a>
                             </nav>
                         </aside>
 
                         <main class="admin-main">
+                            <!-- Wrapper scrollable para tabla en mobile -->
                             <div class="products-list">
                                 ${this.renderProductsTable()}
                             </div>
@@ -91,20 +99,21 @@ export default class AdminProductsView {
     }
 
     renderProductsTable() {
-        if (this.products.length === 0) {
-            return `
-                <div class="empty-state">
-                    <i class="fas fa-box-open"></i>
-                    <h3>No hay productos</h3>
-                    <p>Agrega tu primer producto usando el botón "Nuevo Producto"</p>
-                    <button class="btn-primary" id="empty-add-product-btn" data-no-router>
-                        <i class="fas fa-plus"></i> Crear primer producto
-                    </button>
-                </div>
-            `;
-        }
-
+    if (this.products.length === 0) {
         return `
+            <div class="empty-state">
+                <i class="fas fa-box-open"></i>
+                <h3>No hay productos</h3>
+                <p>Agrega tu primer producto usando el botón "Nuevo Producto"</p>
+                <button class="btn-primary" id="empty-add-product-btn" data-no-router>
+                    <i class="fas fa-plus"></i> Crear primer producto
+                </button>
+            </div>
+        `;
+    }
+
+    return `
+        <div class="table-wrapper products-list">
             <table class="data-table">
                 <thead>
                     <tr>
@@ -120,25 +129,31 @@ export default class AdminProductsView {
                 <tbody>
                     ${this.products.map(product => `
                         <tr data-product-id="${product._id}">
-                            <td>
-                                <img src="/assets/images/products/${product.image || 'placeholder.jpg'}" 
-                                     style="width: 40px; height: 40px; object-fit: cover; border-radius: 8px;"
+                            <td class="product-image-cell">
+                                <img src="/assets/images/products/${product.image || 'placeholder.jpg'}"
+                                     class="product-table-img"
                                      onerror="this.src='/assets/images/products/placeholder.jpg'">
                             </td>
-                            <td><strong>${this.escapeHtml(product.name)}</strong></td>
-                            <td>${product.concentration}</td>
-                            <td>$${product.price.toLocaleString()}</td>
-                            <td>
+                            <td class="product-name-cell">
+                                <strong>${this.escapeHtml(product.name)}</strong>
+                            </td>
+                            <td class="product-concentration-cell">
+                                ${this.escapeHtml(product.concentration)}
+                            </td>
+                            <td class="product-price-cell">
+                                $${product.price.toLocaleString()}
+                            </td>
+                            <td class="product-stock-cell">
                                 <span class="stock-badge ${product.stock <= 5 ? 'low-stock' : ''}">
-                                    ${product.stock || 0} unidades
+                                    ${product.stock || 0} uds
                                 </span>
                             </td>
-                            <td>
+                            <td class="product-status-cell">
                                 <span class="status-badge ${product.isActive !== false ? 'active' : 'inactive'}">
                                     ${product.isActive !== false ? 'Activo' : 'Inactivo'}
                                 </span>
                             </td>
-                            <td>
+                            <td class="product-actions-cell">
                                 <div class="action-buttons">
                                     <button class="action-btn edit" data-id="${product._id}" title="Editar" data-no-router>
                                         <i class="fas fa-edit"></i>
@@ -152,13 +167,14 @@ export default class AdminProductsView {
                     `).join('')}
                 </tbody>
             </table>
-        `;
-    }
+        </div>
+    `;
+}
 
     initEvents() {
         const addBtn = document.getElementById('add-product-btn');
         if (addBtn) addBtn.addEventListener('click', () => this.showProductModal());
-        
+
         const emptyAddBtn = document.getElementById('empty-add-product-btn');
         if (emptyAddBtn) emptyAddBtn.addEventListener('click', () => this.showProductModal());
 
@@ -176,8 +192,7 @@ export default class AdminProductsView {
                 e.stopPropagation();
                 const id = btn.dataset.id;
                 const product = this.products.find(p => p._id === id);
-                
-                // 🔥 MODAL PERSONALIZADO en lugar de confirm()
+
                 const confirmed = await showConfirmModal({
                     title: 'Eliminar producto de la tienda',
                     message: `¿Estás seguro de que deseas eliminar el producto "${product.name}"? Esta acción no se puede deshacer.`,
@@ -188,7 +203,6 @@ export default class AdminProductsView {
 
                 if (!confirmed) return;
 
-                // Mostrar loading en el botón
                 const originalText = btn.innerHTML;
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
                 btn.disabled = true;
@@ -199,7 +213,7 @@ export default class AdminProductsView {
                         method: 'DELETE',
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
-                    
+
                     if (response.ok) {
                         await this.loadProducts();
                         this.render();
@@ -221,16 +235,14 @@ export default class AdminProductsView {
         const formData = new FormData();
         formData.append('image', file);
         formData.append('type', 'products');
-        
+
         const token = store.get('auth.token');
         const response = await fetch('/api/upload', {
             method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
+            headers: { 'Authorization': `Bearer ${token}` },
             body: formData
         });
-        
+
         const data = await response.json();
         if (!response.ok) throw new Error(data.message);
         return data;
@@ -238,11 +250,10 @@ export default class AdminProductsView {
 
     showProductModal(product = null) {
         const isEditing = !!product;
-        
-        // Eliminar modal existente si hay
+
         const existingModal = document.querySelector('.admin-modal');
         if (existingModal) existingModal.remove();
-        
+
         const modal = document.createElement('div');
         modal.className = 'admin-modal product-modal';
         modal.innerHTML = `
@@ -255,7 +266,7 @@ export default class AdminProductsView {
                     </div>
                     <button class="modal-close" data-no-router>&times;</button>
                 </div>
-                
+
                 <div class="modal-body">
                     <form id="product-form">
                         <!-- Imagen -->
@@ -264,14 +275,16 @@ export default class AdminProductsView {
                             <div class="image-upload-area" data-no-router>
                                 <input type="file" id="product-image-input" accept="image/jpeg,image/png,image/webp" style="display: none;">
                                 <div id="image-preview" class="image-preview">
-                                    ${product?.image ? `<img src="/assets/images/products/${product.image}" alt="${product.name}">` : '<i class="fas fa-cloud-upload-alt"></i>'}
+                                    ${product?.image
+                                        ? `<img src="/assets/images/products/${product.image}" alt="${product.name}">`
+                                        : '<i class="fas fa-cloud-upload-alt"></i>'}
                                 </div>
                                 <p class="upload-text">${product?.image ? 'Click para cambiar imagen' : 'Haz clic para seleccionar una imagen'}</p>
                                 <small>Formatos: JPG, PNG, WEBP (máx. 2MB)</small>
                             </div>
                             <input type="hidden" id="product-image-name" value="${product?.image || ''}">
                         </div>
-                        
+
                         <div class="form-row">
                             <div class="form-group">
                                 <label><i class="fas fa-tag"></i> Nombre *</label>
@@ -282,7 +295,7 @@ export default class AdminProductsView {
                                 <input type="text" id="product-short-name" value="${isEditing ? this.escapeHtml(product.shortName || '') : ''}" placeholder="Ej: Jengibre">
                             </div>
                         </div>
-                        
+
                         <div class="form-row">
                             <div class="form-group">
                                 <label><i class="fas fa-flask"></i> Concentración *</label>
@@ -292,17 +305,20 @@ export default class AdminProductsView {
                                 <label><i class="fas fa-dollar-sign"></i> Precio *</label>
                                 <input type="number" id="product-price" value="${isEditing ? product.price : ''}" placeholder="0" required>
                             </div>
+                        </div>
+
+                        <div class="form-row">
                             <div class="form-group">
                                 <label><i class="fas fa-dollar-sign"></i> Precio anterior</label>
                                 <input type="number" id="product-old-price" value="${isEditing ? product.oldPrice || '' : ''}" placeholder="Opcional">
                             </div>
-                        </div>
-                        
-                        <div class="form-row">
                             <div class="form-group">
                                 <label><i class="fas fa-boxes"></i> Stock *</label>
                                 <input type="number" id="product-stock" value="${isEditing ? product.stock || 0 : 0}" min="0" required>
                             </div>
+                        </div>
+
+                        <div class="form-row">
                             <div class="form-group">
                                 <label><i class="fas fa-medal"></i> Badge</label>
                                 <select id="product-badge">
@@ -320,28 +336,28 @@ export default class AdminProductsView {
                                 </select>
                             </div>
                         </div>
-                        
+
                         <div class="form-group">
                             <label><i class="fas fa-align-left"></i> Descripción corta *</label>
                             <textarea id="product-desc" rows="2" placeholder="Breve descripción del producto..." required>${isEditing ? this.escapeHtml(product.desc) : ''}</textarea>
                         </div>
-                        
+
                         <div class="form-group">
                             <label><i class="fas fa-align-justify"></i> Descripción larga</label>
-                            <textarea id="product-long-desc" rows="3" placeholder="Descripción detallada del producto...">${isEditing ? this.escapeHtml(product.longDesc || '') : ''}</textarea>
+                            <textarea id="product-long-desc" rows="3" placeholder="Descripción detallada...">${isEditing ? this.escapeHtml(product.longDesc || '') : ''}</textarea>
                         </div>
-                        
+
                         <div class="form-group">
                             <label><i class="fas fa-check-circle"></i> Beneficios</label>
                             <input type="text" id="product-benefits" value="${isEditing ? (product.benefits || []).join(', ') : ''}" placeholder="Beneficio 1, Beneficio 2, Beneficio 3">
-                            <small>Separa cada beneficio con una coma</small>
+                            <small style="color: var(--bark-light); font-size: 12px; margin-top: 4px; display: block;">Separa cada beneficio con una coma</small>
                         </div>
-                        
+
                         <div class="form-group">
                             <label><i class="fas fa-mortar-board"></i> Ritual de consumo</label>
                             <textarea id="product-ritual" rows="2" placeholder="Instrucciones de uso...">${isEditing ? this.escapeHtml(product.ritual || '') : ''}</textarea>
                         </div>
-                        
+
                         <div class="form-actions">
                             <button type="submit" class="btn-save" data-no-router>
                                 <i class="fas fa-save"></i> ${isEditing ? 'Actualizar' : 'Crear'} Producto
@@ -358,36 +374,31 @@ export default class AdminProductsView {
         document.body.appendChild(modal);
         setTimeout(() => modal.classList.add('active'), 10);
 
-        // Configurar selector de imagen
+        // Image upload
         const uploadArea = modal.querySelector('.image-upload-area');
         const fileInput = modal.querySelector('#product-image-input');
         const imagePreview = modal.querySelector('#image-preview');
         const imageNameInput = modal.querySelector('#product-image-name');
-        
-        if (uploadArea) {
-            uploadArea.addEventListener('click', () => fileInput.click());
-        }
-        
+
+        if (uploadArea) uploadArea.addEventListener('click', () => fileInput.click());
+
         if (fileInput) {
             fileInput.addEventListener('change', async (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
-                
-                // Mostrar preview
+
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     imagePreview.innerHTML = `<img src="${event.target.result}" alt="Preview">`;
                 };
                 reader.readAsDataURL(file);
-                
-                // Subir imagen
+
                 try {
                     const result = await this.uploadImage(file);
                     imageNameInput.value = result.filename;
                     showNotification('Imagen subida correctamente', 'success');
                 } catch (error) {
                     showNotification(error.message, 'error');
-                    // Restaurar preview anterior
                     if (product?.image) {
                         imagePreview.innerHTML = `<img src="/assets/images/products/${product.image}" alt="${product.name}">`;
                     } else {
@@ -405,7 +416,7 @@ export default class AdminProductsView {
         const closeBtn = modal.querySelector('.modal-close');
         const overlay = modal.querySelector('.modal-overlay');
         const cancelBtn = modal.querySelector('.btn-cancel');
-        
+
         if (closeBtn) closeBtn.addEventListener('click', closeModal);
         if (overlay) overlay.addEventListener('click', closeModal);
         if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
@@ -447,12 +458,12 @@ export default class AdminProductsView {
                     const token = store.get('auth.token');
                     let url = '/api/admin/products';
                     let method = 'POST';
-                    
+
                     if (isEditing) {
                         url = `/api/admin/products/${product._id}`;
                         method = 'PUT';
                     }
-                    
+
                     const response = await fetch(url, {
                         method: method,
                         headers: {
@@ -461,9 +472,9 @@ export default class AdminProductsView {
                         },
                         body: JSON.stringify(productData)
                     });
-                    
+
                     const data = await response.json();
-                    
+
                     if (response.ok) {
                         await this.loadProducts();
                         this.render();

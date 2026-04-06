@@ -1,5 +1,6 @@
 /**
  * Admin Dashboard - Panel de administración
+ * + Responsive: tabla envuelta en div scrollable
  */
 
 import { store } from '../../../store.js';
@@ -48,19 +49,24 @@ export default class AdminDashboardView {
                         <aside class="admin-sidebar">
                             <nav class="admin-nav">
                                 <a href="/admin" class="admin-nav-item active" data-link>
-                                    <i class="fas fa-chart-line"></i> Dashboard
+                                    <i class="fas fa-chart-line"></i>
+                                    <span>Dashboard</span>
                                 </a>
                                 <a href="/admin/productos" class="admin-nav-item" data-link>
-                                    <i class="fas fa-box"></i> Productos
+                                    <i class="fas fa-box"></i>
+                                    <span>Productos</span>
                                 </a>
                                 <a href="/admin/blog" class="admin-nav-item" data-link>
-                                    <i class="fas fa-newspaper"></i> Blog
+                                    <i class="fas fa-newspaper"></i>
+                                    <span>Blog</span>
                                 </a>
                                 <a href="/admin/usuarios" class="admin-nav-item" data-link>
-                                    <i class="fas fa-users"></i> Usuarios
+                                    <i class="fas fa-users"></i>
+                                    <span>Usuarios</span>
                                 </a>
                                 <a href="/admin/pedidos" class="admin-nav-item" data-link>
-                                    <i class="fas fa-shopping-cart"></i> Pedidos
+                                    <i class="fas fa-shopping-cart"></i>
+                                    <span>Pedidos</span>
                                 </a>
                             </nav>
                         </aside>
@@ -110,7 +116,8 @@ export default class AdminDashboardView {
                                 <h3 class="recent-orders-title">
                                     <i class="fas fa-clock"></i> Pedidos Recientes
                                 </h3>
-                                <div class="recent-orders">
+                                <!-- Wrapper con scroll horizontal para responsive -->
+                                <div class="recent-orders" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
                                     ${this.renderRecentOrders()}
                                 </div>
                             </div>
@@ -126,7 +133,7 @@ export default class AdminDashboardView {
     async loadStats() {
         try {
             const token = store.get('auth.token');
-            
+
             const usersRes = await fetch('/api/admin/users/stats', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -152,7 +159,7 @@ export default class AdminDashboardView {
             const productsRes = await fetch('/api/admin/products/stats', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-            
+
             if (productsRes.ok) {
                 const productsData = await productsRes.json();
                 this.stats.totalProducts = productsData.count || 0;
@@ -160,7 +167,7 @@ export default class AdminDashboardView {
                 const allProductsRes = await fetch('/api/products?limit=1000', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                
+
                 if (allProductsRes.ok) {
                     const allProducts = await allProductsRes.json();
                     const products = allProducts.products || allProducts.data || allProducts;
@@ -227,7 +234,7 @@ export default class AdminDashboardView {
         }
 
         return `
-            <table class="data-table">
+            <table class="data-table" style="min-width: 560px;">
                 <thead>
                     <tr>
                         <th>Pedido</th>

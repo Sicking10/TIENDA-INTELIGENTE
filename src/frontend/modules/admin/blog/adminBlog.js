@@ -1,5 +1,7 @@
 /**
  * Admin Blog - Gestión de artículos con API y subida de imágenes
+ * + RESPONSIVE: tabla con scroll horizontal, modal bottom-sheet en mobile,
+ *   form-row en columna única en pantallas pequeñas
  */
 
 import { store } from '../../../store.js';
@@ -39,24 +41,30 @@ export default class AdminBlogView {
                         <aside class="admin-sidebar">
                             <nav class="admin-nav">
                                 <a href="/admin" class="admin-nav-item" data-link>
-                                    <i class="fas fa-chart-line"></i> Dashboard
+                                    <i class="fas fa-chart-line"></i>
+                                    <span>Dashboard</span>
                                 </a>
                                 <a href="/admin/productos" class="admin-nav-item" data-link>
-                                    <i class="fas fa-box"></i> Productos
+                                    <i class="fas fa-box"></i>
+                                    <span>Productos</span>
                                 </a>
                                 <a href="/admin/blog" class="admin-nav-item active" data-link>
-                                    <i class="fas fa-newspaper"></i> Blog
+                                    <i class="fas fa-newspaper"></i>
+                                    <span>Blog</span>
                                 </a>
                                 <a href="/admin/usuarios" class="admin-nav-item" data-link>
-                                    <i class="fas fa-users"></i> Usuarios
+                                    <i class="fas fa-users"></i>
+                                    <span>Usuarios</span>
                                 </a>
                                 <a href="/admin/pedidos" class="admin-nav-item" data-link>
-                                    <i class="fas fa-shopping-cart"></i> Pedidos
+                                    <i class="fas fa-shopping-cart"></i>
+                                    <span>Pedidos</span>
                                 </a>
                             </nav>
                         </aside>
 
                         <main class="admin-main">
+                            <!-- Wrapper scrollable para tabla -->
                             <div class="posts-list">
                                 ${this.renderPostsTable()}
                             </div>
@@ -101,44 +109,56 @@ export default class AdminBlogView {
         }
 
         return `
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Imagen</th>
-                        <th>Título</th>
-                        <th>Categoría</th>
-                        <th>Fecha</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${this.posts.map(post => `
-                        <tr data-post-id="${post._id}">
-                            <td>
-                                <img src="/assets/images/blog/${post.image || 'placeholder.jpg'}" 
-                                     style="width: 40px; height: 40px; object-fit: cover; border-radius: 8px;">
-                            </td>
-                            <td><strong>${this.escapeHtml(post.title)}</strong></td>
-                            <td>${this.getCategoryIcon(post.category)} ${this.getCategoryName(post.category)}</td>
-                            <td>${new Date(post.createdAt).toLocaleDateString('es-MX')}</td>
-                            <td>
-                                <span class="status-badge ${post.status === 'published' ? 'active' : 'inactive'}">
-                                    ${post.status === 'published' ? 'Publicado' : 'Borrador'}
-                                </span>
-                            </td>
-                            <td>
-                                <button class="action-btn edit" data-id="${post._id}" title="Editar">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="action-btn delete" data-id="${post._id}" title="Eliminar">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
-                            </td>
+            <div style="overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 12px;">
+                <table class="data-table" style="min-width: 580px;">
+                    <thead>
+                        <tr>
+                            <th>Imagen</th>
+                            <th>Título</th>
+                            <th>Categoría</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
                         </tr>
-                    `).join('')}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        ${this.posts.map(post => `
+                            <tr data-post-id="${post._id}">
+                                <td>
+                                    <img src="/assets/images/blog/${post.image || 'placeholder.jpg'}"
+                                         style="width: 40px; height: 40px; object-fit: cover; border-radius: 8px; display: block;">
+                                </td>
+                                <td>
+                                    <strong style="display: block; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                        ${this.escapeHtml(post.title)}
+                                    </strong>
+                                </td>
+                                <td style="white-space: nowrap;">
+                                    ${this.getCategoryIcon(post.category)} ${this.getCategoryName(post.category)}
+                                </td>
+                                <td style="white-space: nowrap;">
+                                    ${new Date(post.createdAt).toLocaleDateString('es-MX')}
+                                </td>
+                                <td>
+                                    <span class="status-badge ${post.status === 'published' ? 'active' : 'inactive'}">
+                                        ${post.status === 'published' ? 'Publicado' : 'Borrador'}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="action-btn edit" data-id="${post._id}" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="action-btn delete" data-id="${post._id}" title="Eliminar">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
         `;
     }
 
@@ -168,270 +188,291 @@ export default class AdminBlogView {
         const formData = new FormData();
         formData.append('image', file);
         formData.append('type', 'blog');
-        
+
         const token = store.get('auth.token');
         const response = await fetch('/api/upload', {
             method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
+            headers: { 'Authorization': `Bearer ${token}` },
             body: formData
         });
-        
+
         const data = await response.json();
         if (!response.ok) throw new Error(data.message);
         return data;
     }
 
     initEvents() {
-    const addBtn = document.getElementById('add-post-btn');
-    if (addBtn) addBtn.addEventListener('click', () => this.showPostModal());
-    
-    const emptyAddBtn = document.getElementById('empty-add-post-btn');
-    if (emptyAddBtn) emptyAddBtn.addEventListener('click', () => this.showPostModal());
+        const addBtn = document.getElementById('add-post-btn');
+        if (addBtn) addBtn.addEventListener('click', () => this.showPostModal());
 
-    document.querySelectorAll('.action-btn.edit').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const id = btn.dataset.id;
-            const post = this.posts.find(p => p._id === id);
-            if (post) this.showPostModal(post);
-        });
-    });
+        const emptyAddBtn = document.getElementById('empty-add-post-btn');
+        if (emptyAddBtn) emptyAddBtn.addEventListener('click', () => this.showPostModal());
 
-    document.querySelectorAll('.action-btn.delete').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
-            e.stopPropagation();
-            const id = btn.dataset.id;
-            const post = this.posts.find(p => p._id === id);
-            
-            // 🔥 MODAL PERSONALIZADO en lugar de confirm()
-            const { showConfirmModal } = await import('../../../utils/confirmModal.js');
-            const confirmed = await showConfirmModal({
-                title: 'Eliminar artículo del blog',
-                message: `¿Estás seguro de que deseas eliminar el artículo "${post.title}"? Esta acción no se puede deshacer.`,
-                confirmText: 'Sí, eliminar',
-                cancelText: 'Cancelar',
-                type: 'danger'
+        document.querySelectorAll('.action-btn.edit').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const id = btn.dataset.id;
+                const post = this.posts.find(p => p._id === id);
+                if (post) this.showPostModal(post);
             });
-
-            if (!confirmed) return;
-
-            // Mostrar loading en el botón
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-            btn.disabled = true;
-
-            try {
-                const token = store.get('auth.token');
-                const response = await fetch(`/api/admin/blog/${id}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                
-                if (response.ok) {
-                    await this.loadPosts();
-                    this.render();
-                    showNotification('Artículo eliminado correctamente', 'success');
-                } else {
-                    const error = await response.json();
-                    throw new Error(error.message || 'Error al eliminar');
-                }
-            } catch (error) {
-                showNotification(error.message, 'error');
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
         });
-    });
-}
+
+        document.querySelectorAll('.action-btn.delete').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const id = btn.dataset.id;
+                const post = this.posts.find(p => p._id === id);
+
+                const { showConfirmModal } = await import('../../../utils/confirmModal.js');
+                const confirmed = await showConfirmModal({
+                    title: 'Eliminar artículo del blog',
+                    message: `¿Estás seguro de que deseas eliminar el artículo "${post.title}"? Esta acción no se puede deshacer.`,
+                    confirmText: 'Sí, eliminar',
+                    cancelText: 'Cancelar',
+                    type: 'danger'
+                });
+
+                if (!confirmed) return;
+
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                btn.disabled = true;
+
+                try {
+                    const token = store.get('auth.token');
+                    const response = await fetch(`/api/admin/blog/${id}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+
+                    if (response.ok) {
+                        await this.loadPosts();
+                        this.render();
+                        showNotification('Artículo eliminado correctamente', 'success');
+                    } else {
+                        const error = await response.json();
+                        throw new Error(error.message || 'Error al eliminar');
+                    }
+                } catch (error) {
+                    showNotification(error.message, 'error');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            });
+        });
+    }
 
     showPostModal(post = null) {
-    const isEditing = !!post;
-    const modal = document.createElement('div');
-    modal.className = 'admin-modal';
-    modal.innerHTML = `
-        <div class="modal-overlay" data-no-router></div>
-        <div class="modal-content" style="max-width: 650px;">
-            <div class="modal-header">
-                <h3>${isEditing ? 'Editar Artículo' : 'Nuevo Artículo'}</h3>
-                <button class="modal-close" data-no-router>&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="post-form">
-                    <div class="form-group">
-                        <label>Imagen destacada</label>
-                        <div class="image-upload-area" style="border: 2px dashed rgba(200,101,27,0.2); border-radius: 16px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.2s;">
-                            <input type="file" id="post-image-input" accept="image/jpeg,image/png,image/webp" style="display: none;">
-                            <div id="image-preview" style="margin-bottom: 12px;">
-                                ${post?.image ? `<img src="/assets/images/blog/${post.image}" style="max-width: 100px; max-height: 100px; border-radius: 12px;">` : '<i class="fas fa-cloud-upload-alt" style="font-size: 48px; color: var(--ginger);"></i>'}
+        const isEditing = !!post;
+
+        // Eliminar modal previo si existe
+        const existing = document.querySelector('.admin-modal');
+        if (existing) existing.remove();
+
+        const modal = document.createElement('div');
+        modal.className = 'admin-modal blog-modal';
+        modal.innerHTML = `
+            <div class="modal-overlay" data-no-router></div>
+            <div class="modal-content" style="max-width: 650px;">
+                <div class="modal-header">
+                    <div class="header-info">
+                        <i class="fas ${isEditing ? 'fa-edit' : 'fa-plus-circle'}"></i>
+                        <h3>${isEditing ? 'Editar Artículo' : 'Nuevo Artículo'}</h3>
+                    </div>
+                    <button class="modal-close" data-no-router>&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="post-form">
+                        <!-- Imagen -->
+                        <div class="form-group">
+                            <label>Imagen destacada</label>
+                            <div class="image-upload-area" data-no-router>
+                                <input type="file" id="post-image-input" accept="image/jpeg,image/png,image/webp" style="display: none;">
+                                <div id="image-preview" style="margin-bottom: 12px;">
+                                    ${post?.image
+                                        ? `<img src="/assets/images/blog/${post.image}" style="max-width: 100px; max-height: 100px; border-radius: 12px; display: block; margin: 0 auto;">`
+                                        : '<i class="fas fa-cloud-upload-alt" style="font-size: 48px; color: var(--ginger);"></i>'}
+                                </div>
+                                <p class="image-preview-text">${post?.image ? 'Click para cambiar imagen' : 'Haz clic para seleccionar una imagen'}</p>
+                                <small style="color: var(--bark-light); font-size: 12px;">Formatos: JPG, PNG, WEBP (máx. 2MB)</small>
                             </div>
-                            <p class="image-preview-text">${post?.image ? 'Click para cambiar imagen' : 'Haz clic para seleccionar una imagen'}</p>
-                            <small style="color: var(--gray-500);">Formatos: JPG, PNG, WEBP (máx. 2MB)</small>
+                            <input type="hidden" id="post-image-name" value="${post?.image || ''}">
                         </div>
-                        <input type="hidden" id="post-image-name" value="${post?.image || ''}">
-                    </div>
-                    <div class="form-group">
-                        <label>Título *</label>
-                        <input type="text" id="post-title" value="${isEditing ? this.escapeHtml(post.title) : ''}" required>
-                    </div>
-                    <div class="form-row">
+
+                        <!-- Título -->
                         <div class="form-group">
-                            <label>Categoría *</label>
-                            <select id="post-category" required>
-                                <option value="bienestar" ${isEditing && post.category === 'bienestar' ? 'selected' : ''}>🌿 Bienestar</option>
-                                <option value="recetas" ${isEditing && post.category === 'recetas' ? 'selected' : ''}>🍳 Recetas</option>
-                                <option value="rendimiento" ${isEditing && post.category === 'rendimiento' ? 'selected' : ''}>⚡ Rendimiento</option>
-                                <option value="ciencia" ${isEditing && post.category === 'ciencia' ? 'selected' : ''}>🔬 Ciencia</option>
-                                <option value="consejos" ${isEditing && post.category === 'consejos' ? 'selected' : ''}>💡 Consejos</option>
-                            </select>
+                            <label>Título *</label>
+                            <input type="text" id="post-title" value="${isEditing ? this.escapeHtml(post.title) : ''}" placeholder="Escribe el título del artículo" required>
                         </div>
+
+                        <!-- Categoría y Estado -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Categoría *</label>
+                                <select id="post-category" required>
+                                    <option value="bienestar" ${isEditing && post.category === 'bienestar' ? 'selected' : ''}>🌿 Bienestar</option>
+                                    <option value="recetas" ${isEditing && post.category === 'recetas' ? 'selected' : ''}>🍳 Recetas</option>
+                                    <option value="rendimiento" ${isEditing && post.category === 'rendimiento' ? 'selected' : ''}>⚡ Rendimiento</option>
+                                    <option value="ciencia" ${isEditing && post.category === 'ciencia' ? 'selected' : ''}>🔬 Ciencia</option>
+                                    <option value="consejos" ${isEditing && post.category === 'consejos' ? 'selected' : ''}>💡 Consejos</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Estado</label>
+                                <select id="post-status">
+                                    <option value="draft" ${isEditing && post.status === 'draft' ? 'selected' : ''}>Borrador</option>
+                                    <option value="published" ${isEditing && post.status === 'published' ? 'selected' : ''}>Publicar</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Extracto -->
                         <div class="form-group">
-                            <label>Estado</label>
-                            <select id="post-status">
-                                <option value="draft" ${isEditing && post.status === 'draft' ? 'selected' : ''}>Borrador</option>
-                                <option value="published" ${isEditing && post.status === 'published' ? 'selected' : ''}>Publicar</option>
-                            </select>
+                            <label>Resumen / Extracto *</label>
+                            <textarea id="post-excerpt" rows="3" placeholder="Breve resumen del artículo..." required>${isEditing ? this.escapeHtml(post.excerpt) : ''}</textarea>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Resumen / Extracto *</label>
-                        <textarea id="post-excerpt" rows="3" required>${isEditing ? this.escapeHtml(post.excerpt) : ''}</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Contenido completo</label>
-                        <textarea id="post-content" rows="8">${isEditing ? this.escapeHtml(post.content || '') : ''}</textarea>
-                    </div>
-                    <div class="form-row">
+
+                        <!-- Contenido -->
                         <div class="form-group">
-                            <label>Autor</label>
-                            <input type="text" id="post-author" value="${isEditing ? this.escapeHtml(post.author || 'Administrador') : 'Administrador'}">
+                            <label>Contenido completo</label>
+                            <textarea id="post-content" rows="6" placeholder="Escribe el contenido aquí...">${isEditing ? this.escapeHtml(post.content || '') : ''}</textarea>
                         </div>
-                        <div class="form-group">
-                            <label>Tags (separados por coma)</label>
-                            <input type="text" id="post-tags" value="${isEditing ? (post.tags || []).join(', ') : ''}" placeholder="jengibre, bienestar, salud">
+
+                        <!-- Autor y Tags -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Autor</label>
+                                <input type="text" id="post-author" value="${isEditing ? this.escapeHtml(post.author || 'Administrador') : 'Administrador'}">
+                            </div>
+                            <div class="form-group">
+                                <label>Tags</label>
+                                <input type="text" id="post-tags" value="${isEditing ? (post.tags || []).join(', ') : ''}" placeholder="jengibre, bienestar, salud">
+                                <small style="color: var(--bark-light); font-size: 11px; display: block; margin-top: 4px;">Separados por coma</small>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-actions">
-                        <button type="submit" class="btn-save" data-no-router>${isEditing ? 'Actualizar' : 'Publicar'} Artículo</button>
-                        <button type="button" class="btn-cancel" data-no-router>Cancelar</button>
-                    </div>
-                </form>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-save" data-no-router>
+                                <i class="fas fa-save"></i> ${isEditing ? 'Actualizar' : 'Publicar'} Artículo
+                            </button>
+                            <button type="button" class="btn-cancel" data-no-router>
+                                <i class="fas fa-times"></i> Cancelar
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </div>
-    `;
+        `;
 
-    document.body.appendChild(modal);
-    setTimeout(() => modal.classList.add('active'), 10);
+        document.body.appendChild(modal);
+        setTimeout(() => modal.classList.add('active'), 10);
 
-    // Configurar selector de imagen
-    const uploadArea = modal.querySelector('.image-upload-area');
-    const fileInput = modal.querySelector('#post-image-input');
-    const imagePreview = modal.querySelector('#image-preview');
-    const imageNameInput = modal.querySelector('#post-image-name');
-    
-    if (uploadArea) {
-        uploadArea.addEventListener('click', () => fileInput.click());
-    }
-    
-    if (fileInput) {
-        fileInput.addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                imagePreview.innerHTML = `<img src="${event.target.result}" style="max-width: 100px; max-height: 100px; border-radius: 12px;">`;
-            };
-            reader.readAsDataURL(file);
-            
-            try {
-                const result = await this.uploadImage(file);
-                imageNameInput.value = result.filename;
-                showNotification('Imagen subida correctamente', 'success');
-            } catch (error) {
-                showNotification(error.message, 'error');
-            }
-        });
-    }
+        // Image upload setup
+        const uploadArea = modal.querySelector('.image-upload-area');
+        const fileInput = modal.querySelector('#post-image-input');
+        const imagePreview = modal.querySelector('#image-preview');
+        const imageNameInput = modal.querySelector('#post-image-name');
 
-    const closeModal = () => {
-        modal.classList.remove('active');
-        setTimeout(() => modal.remove(), 300);
-    };
+        if (uploadArea) uploadArea.addEventListener('click', () => fileInput.click());
 
-    const closeBtn = modal.querySelector('.modal-close');
-    const overlay = modal.querySelector('.modal-overlay');
-    const cancelBtn = modal.querySelector('.btn-cancel');
-    
-    if (closeBtn) closeBtn.addEventListener('click', closeModal);
-    if (overlay) overlay.addEventListener('click', closeModal);
-    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+        if (fileInput) {
+            fileInput.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
 
-    const form = modal.querySelector('#post-form');
-    if (form) {
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    imagePreview.innerHTML = `<img src="${event.target.result}" style="max-width: 100px; max-height: 100px; border-radius: 12px; display: block; margin: 0 auto;">`;
+                };
+                reader.readAsDataURL(file);
 
-            const tagsStr = document.getElementById('post-tags').value;
-            const tags = tagsStr.split(',').map(t => t.trim().toLowerCase()).filter(t => t);
-            const imageName = document.getElementById('post-image-name').value;
-
-            const postData = {
-                title: document.getElementById('post-title').value,
-                excerpt: document.getElementById('post-excerpt').value,
-                content: document.getElementById('post-content').value,
-                category: document.getElementById('post-category').value,
-                status: document.getElementById('post-status').value,
-                author: document.getElementById('post-author').value || 'Administrador',
-                authorAvatar: (document.getElementById('post-author').value || 'AD').substring(0, 2).toUpperCase(),
-                tags: tags,
-                image: imageName || (isEditing ? post.image : 'placeholder.jpg'),
-                readTime: Math.ceil(document.getElementById('post-content').value.split(' ').length / 200) || 5
-            };
-
-            const submitBtn = form.querySelector('.btn-save');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
-
-            try {
-                const token = store.get('auth.token');
-                let url = '/api/admin/blog';
-                let method = 'POST';
-                
-                if (isEditing) {
-                    url = `/api/admin/blog/${post._id}`;
-                    method = 'PUT';
+                try {
+                    const result = await this.uploadImage(file);
+                    imageNameInput.value = result.filename;
+                    showNotification('Imagen subida correctamente', 'success');
+                } catch (error) {
+                    showNotification(error.message, 'error');
                 }
-                
-                const response = await fetch(url, {
-                    method: method,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify(postData)
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok) {
-                    await this.loadPosts();
-                    this.render();
-                    closeModal();
-                    showNotification(isEditing ? 'Artículo actualizado' : 'Artículo creado', 'success');
-                } else {
-                    throw new Error(data.message || 'Error al guardar');
+            });
+        }
+
+        const closeModal = () => {
+            modal.classList.remove('active');
+            setTimeout(() => modal.remove(), 300);
+        };
+
+        const closeBtn = modal.querySelector('.modal-close');
+        const overlay = modal.querySelector('.modal-overlay');
+        const cancelBtn = modal.querySelector('.btn-cancel');
+
+        if (closeBtn) closeBtn.addEventListener('click', closeModal);
+        if (overlay) overlay.addEventListener('click', closeModal);
+        if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+
+        const form = modal.querySelector('#post-form');
+        if (form) {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const tagsStr = document.getElementById('post-tags').value;
+                const tags = tagsStr.split(',').map(t => t.trim().toLowerCase()).filter(t => t);
+                const imageName = document.getElementById('post-image-name').value;
+
+                const postData = {
+                    title: document.getElementById('post-title').value,
+                    excerpt: document.getElementById('post-excerpt').value,
+                    content: document.getElementById('post-content').value,
+                    category: document.getElementById('post-category').value,
+                    status: document.getElementById('post-status').value,
+                    author: document.getElementById('post-author').value || 'Administrador',
+                    authorAvatar: (document.getElementById('post-author').value || 'AD').substring(0, 2).toUpperCase(),
+                    tags: tags,
+                    image: imageName || (isEditing ? post.image : 'placeholder.jpg'),
+                    readTime: Math.ceil(document.getElementById('post-content').value.split(' ').length / 200) || 5
+                };
+
+                const submitBtn = form.querySelector('.btn-save');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+
+                try {
+                    const token = store.get('auth.token');
+                    let url = '/api/admin/blog';
+                    let method = 'POST';
+
+                    if (isEditing) {
+                        url = `/api/admin/blog/${post._id}`;
+                        method = 'PUT';
+                    }
+
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(postData)
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        await this.loadPosts();
+                        this.render();
+                        closeModal();
+                        showNotification(isEditing ? 'Artículo actualizado' : 'Artículo creado', 'success');
+                    } else {
+                        throw new Error(data.message || 'Error al guardar');
+                    }
+                } catch (error) {
+                    showNotification(error.message, 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
                 }
-            } catch (error) {
-                showNotification(error.message, 'error');
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalText;
-            }
-        });
+            });
+        }
     }
-}
 
     escapeHtml(str) {
         if (!str) return '';

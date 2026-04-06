@@ -1,6 +1,7 @@
 /**
  * Admin Orders - Gestión de pedidos
  * Soporta: Envío a domicilio y Recoger en tienda
+ * + RESPONSIVE: tabla en wrapper scrollable, modal bottom-sheet en mobile
  */
 
 import { store } from '../../../store.js';
@@ -37,19 +38,24 @@ export default class AdminOrdersView {
                         <aside class="admin-sidebar">
                             <nav class="admin-nav">
                                 <a href="/admin" class="admin-nav-item" data-link>
-                                    <i class="fas fa-chart-line"></i> Dashboard
+                                    <i class="fas fa-chart-line"></i>
+                                    <span>Dashboard</span>
                                 </a>
                                 <a href="/admin/productos" class="admin-nav-item" data-link>
-                                    <i class="fas fa-box"></i> Productos
+                                    <i class="fas fa-box"></i>
+                                    <span>Productos</span>
                                 </a>
                                 <a href="/admin/blog" class="admin-nav-item" data-link>
-                                    <i class="fas fa-newspaper"></i> Blog
+                                    <i class="fas fa-newspaper"></i>
+                                    <span>Blog</span>
                                 </a>
                                 <a href="/admin/usuarios" class="admin-nav-item" data-link>
-                                    <i class="fas fa-users"></i> Usuarios
+                                    <i class="fas fa-users"></i>
+                                    <span>Usuarios</span>
                                 </a>
                                 <a href="/admin/pedidos" class="admin-nav-item active" data-link>
-                                    <i class="fas fa-shopping-cart"></i> Pedidos
+                                    <i class="fas fa-shopping-cart"></i>
+                                    <span>Pedidos</span>
                                 </a>
                             </nav>
                         </aside>
@@ -75,6 +81,7 @@ export default class AdminOrdersView {
                                     </select>
                                 </div>
                             </div>
+                            <!-- Wrapper con scroll horizontal para tablas en mobile -->
                             <div class="orders-list">
                                 ${this.renderOrdersTable()}
                             </div>
@@ -113,7 +120,7 @@ export default class AdminOrdersView {
 
     getStatusOptions(order) {
         const isPickup = this.isPickup(order);
-        
+
         if (isPickup) {
             return {
                 pending: 'Pendiente',
@@ -139,7 +146,7 @@ export default class AdminOrdersView {
             processing: 'Procesando',
             shipped: 'Enviado',
             delivered: 'Entregado',
-            ready_for_pickup: 'Listo para recoger',
+            ready_for_pickup: 'Listo',
             picked_up: 'Recogido',
             cancelled: 'Cancelado'
         };
@@ -172,15 +179,15 @@ export default class AdminOrdersView {
 
         const typeFilter = document.getElementById('type-filter')?.value || 'all';
         const statusFilter = document.getElementById('status-filter')?.value || 'all';
-        
+
         let filteredOrders = [...this.orders];
-        
+
         if (typeFilter !== 'all') {
-            filteredOrders = filteredOrders.filter(o => 
+            filteredOrders = filteredOrders.filter(o =>
                 typeFilter === 'pickup' ? this.isPickup(o) : !this.isPickup(o)
             );
         }
-        
+
         if (statusFilter !== 'all') {
             filteredOrders = filteredOrders.filter(o => o.status === statusFilter);
         }
@@ -195,11 +202,12 @@ export default class AdminOrdersView {
             `;
         }
 
-        return `
+ return `
+        <div class="table-wrapper orders-list">
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>Pedido</th>
+                        <th>Pedido #</th>
                         <th>Tipo</th>
                         <th>Cliente</th>
                         <th>Fecha</th>
@@ -211,14 +219,10 @@ export default class AdminOrdersView {
                 <tbody>
                     ${filteredOrders.map(order => {
                         const isPickup = this.isPickup(order);
-                        const statusOptions = this.getStatusOptions(order);
-                        const statusIcon = this.getStatusIcon(order.status);
-                        const statusText = this.getStatusText(order.status);
-                        
                         return `
                             <tr>
-                                <td>#${order.orderNumber}</td>
-                                <td>
+                                <td class="order-number-cell">#${order.orderNumber}</td>
+                                <td class="order-type-cell">
                                     <span class="type-badge ${isPickup ? 'pickup' : 'delivery'}">
                                         <i class="fas ${isPickup ? 'fa-store' : 'fa-truck'}"></i>
                                         ${isPickup ? 'Recoger en tienda' : 'Envío a domicilio'}
@@ -229,7 +233,7 @@ export default class AdminOrdersView {
                                 <td>${formatPrice(order.total)}</td>
                                 <td>
                                     <span class="status-badge ${order.status}">
-                                        <i class="fas ${statusIcon}"></i> ${statusText}
+                                        <i class="fas ${this.getStatusIcon(order.status)}"></i> ${this.getStatusText(order.status)}
                                     </span>
                                 </td>
                                 <td>
@@ -247,8 +251,9 @@ export default class AdminOrdersView {
                     }).join('')}
                 </tbody>
             </table>
-        `;
-    }
+        </div>
+    `;
+}
 
     initEvents() {
         const typeFilter = document.getElementById('type-filter');
@@ -276,8 +281,6 @@ export default class AdminOrdersView {
                 const row = btn.closest('tr');
                 const statusBadge = row.querySelector('.status-badge');
                 const currentStatus = statusBadge.classList[1];
-                
-                // Crear select flotante para cambiar estado
                 this.showStatusChangeModal(orderId, currentStatus);
             });
         });
@@ -294,10 +297,9 @@ export default class AdminOrdersView {
     async showStatusChangeModal(orderId, currentStatus) {
         const order = this.orders.find(o => o._id === orderId);
         if (!order) return;
-        
-        const isPickup = this.isPickup(order);
+
         const statusOptions = this.getStatusOptions(order);
-        
+
         const modal = document.createElement('div');
         modal.className = 'admin-modal small';
         modal.innerHTML = `
@@ -318,29 +320,31 @@ export default class AdminOrdersView {
                         </select>
                     </div>
                     <div class="form-actions">
-                        <button id="confirm-status-change" class="btn-save">Actualizar</button>
+                        <button id="confirm-status-change" class="btn-save">
+                            <i class="fas fa-save"></i> Actualizar
+                        </button>
                         <button class="btn-cancel">Cancelar</button>
                     </div>
                 </div>
             </div>
         `;
-        
+
         document.body.appendChild(modal);
         setTimeout(() => modal.classList.add('active'), 10);
-        
+
         const closeModal = () => {
             modal.classList.remove('active');
             setTimeout(() => modal.remove(), 300);
         };
-        
+
         modal.querySelector('.modal-close').addEventListener('click', closeModal);
         modal.querySelector('.modal-overlay').addEventListener('click', closeModal);
         modal.querySelector('.btn-cancel').addEventListener('click', closeModal);
-        
+
         const confirmBtn = modal.querySelector('#confirm-status-change');
         confirmBtn.addEventListener('click', async () => {
             const newStatus = modal.querySelector('#status-change-select').value;
-            
+
             try {
                 const token = store.get('auth.token');
                 const response = await fetch(`/api/admin/orders/${orderId}/status`, {
@@ -351,7 +355,7 @@ export default class AdminOrdersView {
                     },
                     body: JSON.stringify({ status: newStatus })
                 });
-                
+
                 if (response.ok) {
                     showNotification('Estado actualizado correctamente', 'success');
                     closeModal();
@@ -376,14 +380,14 @@ export default class AdminOrdersView {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await response.json();
-            
+
             if (data.success) {
                 const order = data.order;
                 const isPickup = this.isPickup(order);
                 const statusOptions = this.getStatusOptions(order);
                 const statusIcon = this.getStatusIcon(order.status);
                 const statusText = this.getStatusText(order.status);
-                
+
                 const modal = document.createElement('div');
                 modal.className = 'admin-modal order-details-modal';
                 modal.innerHTML = `
@@ -399,8 +403,15 @@ export default class AdminOrdersView {
                             </div>
                             <button class="modal-close" data-no-router>&times;</button>
                         </div>
-                        
+
                         <div class="modal-body">
+                            <!-- Estado actual visible en mobile -->
+                            <div style="text-align: center; margin-bottom: 16px; display: none;" class="mobile-status-indicator">
+                                <span class="status-badge ${order.status}" style="font-size: 13px; padding: 6px 16px;">
+                                    <i class="fas ${statusIcon}"></i> ${statusText}
+                                </span>
+                            </div>
+
                             <!-- Cliente Info -->
                             <div class="details-card">
                                 <div class="card-header">
@@ -418,13 +429,15 @@ export default class AdminOrdersView {
                                     </div>
                                     <div class="info-row">
                                         <span class="info-label"><i class="fas ${isPickup ? 'fa-store' : 'fa-truck'}"></i> Tipo:</span>
-                                        <span class="info-value type-badge ${isPickup ? 'pickup' : 'delivery'}">
-                                            ${isPickup ? '🏪 Recoger en tienda' : '🚚 Envío a domicilio'}
+                                        <span class="info-value">
+                                            <span class="type-badge ${isPickup ? 'pickup' : 'delivery'}">
+                                                ${isPickup ? '🏪 Recoger en tienda' : '🚚 Envío a domicilio'}
+                                            </span>
                                         </span>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- Dirección / Tienda -->
                             <div class="details-card">
                                 <div class="card-header">
@@ -455,7 +468,7 @@ export default class AdminOrdersView {
                                     ` : ''}
                                 </div>
                             </div>
-                            
+
                             <!-- Productos -->
                             <div class="details-card">
                                 <div class="card-header">
@@ -480,7 +493,7 @@ export default class AdminOrdersView {
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- Fechas -->
                             <div class="details-card">
                                 <div class="card-header">
@@ -506,7 +519,7 @@ export default class AdminOrdersView {
                                     ` : ''}
                                     ${order.readyForPickupAt ? `
                                         <div class="info-row">
-                                            <span class="info-label"><i class="fas fa-store"></i> Listo para recoger:</span>
+                                            <span class="info-label"><i class="fas fa-store"></i> Listo:</span>
                                             <span class="info-value">${new Date(order.readyForPickupAt).toLocaleString('es-MX')}</span>
                                         </div>
                                     ` : ''}
@@ -518,7 +531,7 @@ export default class AdminOrdersView {
                                     ` : ''}
                                 </div>
                             </div>
-                            
+
                             <!-- Cambiar estado -->
                             <div class="details-card">
                                 <div class="card-header">
@@ -539,26 +552,32 @@ export default class AdminOrdersView {
                         </div>
                     </div>
                 `;
-                
+
                 document.body.appendChild(modal);
                 setTimeout(() => modal.classList.add('active'), 10);
-                
+
+                // Mostrar el indicador de estado en mobile
+                const mobileStatus = modal.querySelector('.mobile-status-indicator');
+                if (window.innerWidth <= 480 && mobileStatus) {
+                    mobileStatus.style.display = 'block';
+                }
+
                 const closeModal = () => {
                     modal.classList.remove('active');
                     setTimeout(() => modal.remove(), 300);
                 };
-                
+
                 modal.querySelector('.modal-close').addEventListener('click', closeModal);
                 modal.querySelector('.modal-overlay').addEventListener('click', closeModal);
-                
+
                 const updateBtn = modal.querySelector('#detail-update-status');
                 const statusSelect = modal.querySelector('#detail-status-select');
-                
+
                 updateBtn.addEventListener('click', async () => {
                     const newStatus = statusSelect.value;
                     updateBtn.disabled = true;
                     updateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Actualizando...';
-                    
+
                     try {
                         const token = store.get('auth.token');
                         const response = await fetch(`/api/admin/orders/${orderId}/status`, {
@@ -569,7 +588,7 @@ export default class AdminOrdersView {
                             },
                             body: JSON.stringify({ status: newStatus })
                         });
-                        
+
                         if (response.ok) {
                             showNotification('Estado actualizado correctamente', 'success');
                             closeModal();
