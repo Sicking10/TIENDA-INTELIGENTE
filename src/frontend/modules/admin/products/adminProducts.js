@@ -105,9 +105,6 @@ export default class AdminProductsView {
                 <i class="fas fa-box-open"></i>
                 <h3>No hay productos</h3>
                 <p>Agrega tu primer producto usando el botón "Nuevo Producto"</p>
-                <button class="btn-primary" id="empty-add-product-btn" data-no-router>
-                    <i class="fas fa-plus"></i> Crear primer producto
-                </button>
             </div>
         `;
     }

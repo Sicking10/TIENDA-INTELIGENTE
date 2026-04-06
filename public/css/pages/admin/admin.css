@@ -3349,3 +3349,18 @@
 .users-list .data-table th:nth-child(6) {
     padding-left: 20px;
 }
+
+/* ============================================
+   LIMITAR NOMBRE DE USUARIO - 10 LETRAS
+============================================ */
+.users-list .data-table td:nth-child(2) {
+    max-width: 150px;
+}
+
+.users-list .data-table td:nth-child(2) strong {
+    display: block;
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
