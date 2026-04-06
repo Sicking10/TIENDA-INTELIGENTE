@@ -456,20 +456,39 @@
 /* ============================================
    MOBILE DRAWER
 ============================================ */
+/* ============================================
+   MOBILE DRAWER CON SCROLL
+============================================ */
 .mobile-drawer {
     position: fixed;
     top: var(--nav-height);
     left: 0;
     right: 0;
+    bottom: 0; /* ← Cambiar de 'auto' a '0' */
     background: var(--cream);
     border-bottom: 1px solid var(--nav-border);
     padding: 24px 20px 32px;
     transform: translateY(-130%);
     transition: transform 0.35s var(--smooth);
     z-index: 999;
-    max-height: calc(100vh - var(--nav-height));
-    overflow-y: auto;
+    overflow-y: auto; /* ← Permitir scroll vertical */
+    -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Scrollbar personalizada para el drawer */
+.mobile-drawer::-webkit-scrollbar {
+    width: 4px;
+}
+
+.mobile-drawer::-webkit-scrollbar-track {
+    background: rgba(200, 101, 27, 0.1);
+    border-radius: 10px;
+}
+
+.mobile-drawer::-webkit-scrollbar-thumb {
+    background: var(--ginger);
+    border-radius: 10px;
 }
 
 .mobile-drawer.open { transform: translateY(0); }
@@ -670,4 +689,12 @@
     .mobile-drawer {
         display: none !important;
     }
+}
+
+[data-theme="dark"] .mobile-drawer::-webkit-scrollbar-track {
+    background: rgba(232, 168, 56, 0.1);
+}
+
+[data-theme="dark"] .mobile-drawer::-webkit-scrollbar-thumb {
+    background: #E8A838;
 }
