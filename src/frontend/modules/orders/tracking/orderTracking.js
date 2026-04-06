@@ -344,15 +344,44 @@ export default class OrderTrackingView {
                     </div>
                     
                     <div class="help-support-card">
-                        <i class="fas fa-headset"></i>
-                        <div class="help-support-content">
-                            <h4>¿Necesitas ayuda con tu pedido?</h4>
-                            <p>Nuestro equipo de soporte está disponible para ayudarte</p>
-                            <button class="btn-contact" id="contact-support">
-                                Contactar soporte
-                            </button>
-                        </div>
-                    </div>
+    <div class="help-support-icon">
+        <i class="fas fa-headset"></i>
+    </div>
+    <div class="help-support-content">
+        <h4>¿Necesitas ayuda con tu pedido?</h4>
+        <p>Nuestro equipo de soporte está disponible para ayudarte</p>
+        <div class="support-contact-grid">
+            <div class="support-item">
+                <i class="fas fa-phone-alt"></i>
+                <div class="support-item-info">
+                    <span class="support-label">Teléfono</span>
+                    <span class="support-value">+52 1 669 102 4050</span>
+                </div>
+            </div>
+            <div class="support-item">
+                <i class="fab fa-whatsapp"></i>
+                <div class="support-item-info">
+                    <span class="support-label">WhatsApp</span>
+                    <span class="support-value">+52 1 669 102 4050</span>
+                </div>
+            </div>
+            <div class="support-item">
+                <i class="fas fa-envelope"></i>
+                <div class="support-item-info">
+                    <span class="support-label">Email</span>
+                    <span class="support-value">soporte@gingercaps.com</span>
+                </div>
+            </div>
+            <div class="support-item">
+                <i class="fas fa-clock"></i>
+                <div class="support-item-info">
+                    <span class="support-label">Horario</span>
+                    <span class="support-value">Lun - Vie: 10AM - 6PM</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
                 </div>
             </div>
         `;

@@ -334,7 +334,7 @@ export default class BlogView {
                         <div class="post-meta">
                             <div class="post-author">
                                 <div class="author-avatar">${post.authorAvatar || post.author?.charAt(0) || 'A'}</div>
-                                <span>${this.escapeHtml(post.author || 'Administrador')}</span>
+                                <span class="post-author-name">${this.escapeHtml(post.author || 'Administrador')}</span>
                             </div>
                             <div class="post-date">
                                 <i class="far fa-calendar-alt"></i> ${new Date(post.createdAt).toLocaleDateString('es-MX')}

@@ -460,7 +460,7 @@ function getHomeHTML() {
                         <div class="step-number-wrap"><div class="step-num">1</div></div>
                         <span class="step-icon-big">🛒</span>
                         <h3 class="step-title">Elige tu fórmula</h3>
-                        <p class="step-text">Selecciona Vegana o No Vegana según tus objetivos y estilo de vida.</p>
+                        <p class="step-text">Selecciona tus objetivos y estilo de vida para encontrar la fórmula que mejor se adapte a ti.</p>
                     </div>
                     <div class="step-card animate-on-scroll animate-delay-2">
                         <div class="step-number-wrap"><div class="step-num">2</div></div>
@@ -542,16 +542,6 @@ function getHomeHTML() {
                     </div>
 
                     <div>
-                        <h4 class="footer-col-title">Productos</h4>
-                        <ul class="footer-links-list">
-                            <li><a href="/tienda" data-link>GINGERcaps Original</a></li>
-                            <li><a href="/tienda" data-link>GINGERcaps Plus</a></li>
-                            <li><a href="/tienda" data-link>GINGERcaps Pro</a></li>
-                            <li><a href="/suscripcion" data-link>Suscripciones</a></li>
-                        </ul>
-                    </div>
-
-                    <div>
                         <h4 class="footer-col-title">Información</h4>
                         <ul class="footer-links-list">
                             <li><a href="/beneficios" data-link>Beneficios</a></li>
@@ -572,7 +562,7 @@ function getHomeHTML() {
                 </div>
 
                 <div class="footer-bottom">
-                    <p class="footer-copy">© 2024 GINGERcaps — Todos los derechos reservados.</p>
+                    <p class="footer-copy">© 2026 GINGERcaps — Todos los derechos reservados.</p>
                     <p class="footer-made">Hecho con <span>❤️</span> y <span>🫚</span> en México</p>
                 </div>
             </div>

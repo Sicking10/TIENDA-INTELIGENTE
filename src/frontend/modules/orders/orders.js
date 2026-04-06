@@ -384,7 +384,7 @@ export default class OrdersView {
                 const orderNumber = btn.dataset.orderId;
 
                 const confirmed = await showConfirmModal({
-                    title: 'Cancelar pedido',
+                    title: 'Cancelar pedido de la tienda',
                     message: '¿Estás seguro de que deseas cancelar este pedido? Esta acción no se puede deshacer.',
                     confirmText: 'Sí, cancelar',
                     cancelText: 'No, regresar'

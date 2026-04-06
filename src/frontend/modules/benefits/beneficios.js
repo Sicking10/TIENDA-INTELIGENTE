@@ -271,7 +271,6 @@ export default class BeneficiosView {
                             <div class="faq-item reveal"><div class="faq-q">¿Cuánto tiempo tarda en hacer efecto? <i class="fas fa-chevron-down"></i></div><div class="faq-a">Los beneficios comienzan a sentirse desde la primera semana. Para resultados óptimos, recomendamos un consumo continuo de al menos 4 semanas.</div></div>
                             <div class="faq-item reveal"><div class="faq-q">¿Tiene efectos secundarios? <i class="fas fa-chevron-down"></i></div><div class="faq-a">GINGERcaps es 100% natural y no presenta efectos secundarios cuando se consume según las indicaciones. Consulta con tu médico si tienes condiciones preexistentes.</div></div>
                             <div class="faq-item reveal"><div class="faq-q">¿Puedo tomarlo con otras medicinas? <i class="fas fa-chevron-down"></i></div><div class="faq-a">Generalmente es seguro, pero si tomas medicamentos anticoagulantes o antihipertensivos, consulta con tu médico antes de comenzar.</div></div>
-                            <div class="faq-item reveal"><div class="faq-q">¿Es apto para veganos y celíacos? <i class="fas fa-chevron-down"></i></div><div class="faq-a">Sí. Nuestras cápsulas son 100% vegetales, no contienen gluten, lactosa, soya ni OGMs.</div></div>
                         </div>
                     </div>
                 </section>

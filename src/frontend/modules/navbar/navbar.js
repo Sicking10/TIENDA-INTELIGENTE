@@ -170,6 +170,19 @@ function initNavIndicator() {
 function setActiveLink() {
     const path = window.location.pathname;
     
+    // Lista de rutas que NO deben activar el enlace de Inicio
+    const excludeFromHome = [
+        '/tienda', '/beneficios', '/blog', '/admin', 
+        '/login', '/registro', '/carrito', '/checkout', 
+        '/mis-pedidos', '/mi-cuenta', '/faq', '/contacto', 
+        '/terminos', '/privacidad', '/garantia'
+    ];
+    
+    // Verificar si es una sub-ruta dinámica
+    const isProductDetail = path.startsWith('/producto/');
+    const isOrderDetail = path.startsWith('/pedido/');
+    const isAdminDetail = path.startsWith('/admin/') && path !== '/admin';
+    
     // Actualizar enlaces de escritorio y móvil
     document.querySelectorAll('.nav-link, .mobile-nav-link, .dropdown-item').forEach(link => {
         const href = link.getAttribute('href');
@@ -179,13 +192,22 @@ function setActiveLink() {
         if (href === '/admin') {
             const isActive = path === '/admin' || path.startsWith('/admin/');
             link.classList.toggle('active', isActive);
-        } else {
-            const isActive = href === '/' ? path === '/' : path.startsWith(href) && href !== '/admin';
+        }
+        // Manejar enlace de Inicio
+        else if (href === '/') {
+            // Solo activar si la ruta es exactamente '/' o no está en la lista de exclusión
+            const isExcluded = excludeFromHome.some(ex => path === ex);
+            const isActive = path === '/' || (!isExcluded && !isProductDetail && !isOrderDetail);
+            link.classList.toggle('active', isActive);
+        }
+        // Manejar otros enlaces
+        else {
+            const isActive = path === href || (path.startsWith(href + '/') && href !== '/');
             link.classList.toggle('active', isActive);
         }
     });
     
-    // 🔥 Forzar actualización del indicador visual
+    // Forzar actualización del indicador visual
     setTimeout(() => {
         const indicator = document.getElementById('nav-indicator');
         const container = document.getElementById('navbar-links');
@@ -197,6 +219,8 @@ function setActiveLink() {
                 indicator.style.left = `${linkRect.left - containerRect.left}px`;
                 indicator.style.width = `${linkRect.width}px`;
                 indicator.style.opacity = '1';
+            } else {
+                indicator.style.opacity = '0';
             }
         }
     }, 100);

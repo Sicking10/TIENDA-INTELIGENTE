@@ -1390,8 +1390,8 @@
 }
 
 [data-theme="dark"] .blog-category {
-    background: rgba(232, 168, 56, 0.9);
-    color: #1A0A00;
+    background: var(--ginger);
+    color: #ffe6bb;
 }
 
 [data-theme="dark"] .blog-meta {
@@ -3830,4 +3830,53 @@
 
 [data-theme="dark"] .empty-state i {
     color: #B89A7A;
+}
+
+[data-theme="dark"] .post-modal-header {
+    background: var(--chamomile);
+}
+
+[data-theme="dark"] .post-modal-footer {
+    background: var(--chamomile);
+}
+
+[data-theme="dark"] .post-modal-body {
+    background: var(--chamomile);
+}
+
+[data-theme="dark"] .post-author-name {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .post-content {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .pillar-item {    
+    background: var(--ginger);
+    color: var(--bark)
+}
+
+[data-theme="dark"] .legal-hero {
+    background: var(--chamomile);
+}
+
+[data-theme="dark"] .legal-page {
+    background: var(--chamomile);
+}
+
+[data-theme="dark"] .contact-page {
+    background: var(--chamomile);
+}
+
+[data-theme="dark"] .contact-hero {
+    background: var(--chamomile);
+}
+
+[data-theme="dark"] .faq-hero {
+    background: var(--chamomile);
+}
+
+[data-theme="dark"] .faq-page {
+    background: var(--chamomile);
 }

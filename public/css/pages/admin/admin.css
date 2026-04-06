@@ -1179,10 +1179,6 @@
     margin-bottom: 0;
 }
 
-.pickup-info i {
-    color: #8B5CF6;
-}
-
 .products-list {
     max-height: 300px;
     overflow-y: auto;

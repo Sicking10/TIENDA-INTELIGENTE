@@ -283,11 +283,145 @@ async function sendOrderStatusEmail(order, user, oldStatus, newStatus) {
     }
 }
 
+/**
+ * Envía correo de contacto usando API de Brevo
+ */
+async function sendContactEmail(formData) {
+    console.log('📧 Enviando correo de contacto...');
+    
+    if (!apiInstance && !initBrevo()) {
+        console.error('❌ Brevo no inicializado');
+        return { success: false, error: 'Brevo no inicializado' };
+    }
+
+    const { name, email, phone, subject, message } = formData;
+    
+    // Mapear subject a texto legible
+    const subjectMap = {
+        consulta: 'Consulta general',
+        pedido: 'Problema con mi pedido',
+        producto: 'Duda sobre producto',
+        devolucion: 'Devolución o garantía'
+    };
+    
+    const subjectText = subjectMap[subject] || 'Consulta general';
+    
+    // Generar HTML para el correo a la tienda
+    const adminHtml = `
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Nuevo mensaje de contacto</title>
+<style>
+body{font-family:Arial,sans-serif;background:#FDF8F0}
+.container{max-width:600px;margin:0 auto;padding:20px}
+.header{background:#D97A2B;color:#fff;padding:20px;text-align:center;border-radius:16px 16px 0 0}
+.card{background:#fff;border-radius:12px;padding:20px;margin:20px 0}
+.info-row{display:flex;margin:10px 0}
+.info-label{width:120px;font-weight:600;color:#D97A2B}
+.message-box{background:#F5E6D3;padding:15px;border-radius:12px;margin:15px 0}
+.footer{text-align:center;font-size:12px;color:#888;margin-top:20px}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header"><h2>📬 NUEVO MENSAJE DE CONTACTO</h2></div>
+<div class="card">
+<h3>📋 Información del cliente</h3>
+<div class="info-row"><div class="info-label">Nombre:</div><div>${escapeHtml(name)}</div></div>
+<div class="info-row"><div class="info-label">Email:</div><div>${escapeHtml(email)}</div></div>
+<div class="info-row"><div class="info-label">Teléfono:</div><div>${escapeHtml(phone || 'No especificado')}</div></div>
+<div class="info-row"><div class="info-label">Asunto:</div><div>${escapeHtml(subjectText)}</div></div>
+<div class="message-box">
+<p><strong>Mensaje:</strong></p>
+<p>${escapeHtml(message).replace(/\n/g, '<br>')}</p>
+</div>
+</div>
+<div class="footer"><p>GINGERcaps - Sistema de contacto</p></div>
+</div>
+</body>
+</html>`;
+
+    // Generar HTML para la confirmación al cliente
+    const clientHtml = `
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Hemos recibido tu mensaje - GINGERcaps</title>
+<style>
+body{font-family:Arial,sans-serif;background:#FDF8F0}
+.container{max-width:600px;margin:0 auto;padding:20px}
+.header{background:#D97A2B;color:#fff;padding:20px;text-align:center;border-radius:16px 16px 0 0}
+.card{background:#fff;border-radius:12px;padding:20px;margin:20px 0}
+.message-box{background:#F5E6D3;padding:15px;border-radius:12px;margin:15px 0}
+.footer{text-align:center;font-size:12px;color:#888;margin-top:20px}
+.btn{display:inline-block;background:#D97A2B;color:#fff;padding:10px 20px;border-radius:30px;text-decoration:none;margin:10px 0}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header"><h2>🌿 ¡Gracias por contactarnos!</h2></div>
+<div class="card">
+<p>Hola <strong>${escapeHtml(name)}</strong>,</p>
+<p>Hemos recibido tu mensaje y nuestro equipo lo revisará a la brevedad. Te responderemos en menos de <strong>24 horas hábiles</strong>.</p>
+<p><strong>Detalle de tu mensaje:</strong></p>
+<div class="message-box">
+<p><strong>Asunto:</strong> ${escapeHtml(subjectText)}</p>
+<p><strong>Mensaje:</strong></p>
+<p>${escapeHtml(message).replace(/\n/g, '<br>')}</p>
+</div>
+<p>Si tienes alguna urgencia, no dudes en llamarnos al <strong>+52 1 669 102 4050</strong>.</p>
+</div>
+<div class="footer">
+<p>🌿 GINGERcaps - Bienestar natural en cada cápsula</p>
+<p>Av. del Mar 1235, Zona Dorada, Mazatlán, Sinaloa</p>
+</div>
+</div>
+</body>
+</html>`;
+
+    const results = { customer: { success: false }, store: { success: false } };
+
+    // Enviar correo a la tienda
+    try {
+        const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+        sendSmtpEmail.subject = `📬 NUEVO CONTACTO: ${subjectText}`;
+        sendSmtpEmail.to = [{ email: STORE_EMAIL, name: 'Tienda GINGERcaps' }];
+        sendSmtpEmail.htmlContent = adminHtml;
+        sendSmtpEmail.sender = { name: SENDER_NAME, email: SENDER_EMAIL };
+        sendSmtpEmail.replyTo = { email: email, name: name };
+
+        const response = await apiInstance.sendTransacEmail(sendSmtpEmail);
+        console.log('✅ Correo de contacto enviado a tienda:', STORE_EMAIL, response.messageId);
+        results.store.success = true;
+    } catch (error) {
+        console.error('❌ Error correo contacto tienda:', error.message);
+        results.store.error = error.message;
+    }
+
+    // Enviar confirmación al cliente
+    try {
+        const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+        sendSmtpEmail.subject = `Hemos recibido tu mensaje - GINGERcaps`;
+        sendSmtpEmail.to = [{ email: email, name: name }];
+        sendSmtpEmail.htmlContent = clientHtml;
+        sendSmtpEmail.sender = { name: SENDER_NAME, email: SENDER_EMAIL };
+
+        const response = await apiInstance.sendTransacEmail(sendSmtpEmail);
+        console.log('✅ Confirmación enviada a cliente:', email, response.messageId);
+        results.customer.success = true;
+    } catch (error) {
+        console.error('❌ Error confirmación cliente:', error.message);
+        results.customer.error = error.message;
+    }
+
+    return results;
+}
+
 // Inicializar
 initBrevo();
 
 module.exports = {
     sendOrderEmails,
     sendOrderStatusEmail,
-    sendCancellationEmails
+    sendCancellationEmails,
+    sendContactEmail 
 };

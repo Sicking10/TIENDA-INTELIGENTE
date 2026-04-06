@@ -1,7 +1,7 @@
 const Order = require('../../models/Order');
 const User = require('../../models/User');
 const Product = require('../../models/Product'); // ✅ IMPORTAR PRODUCTO
-const { sendOrderEmails } = require('../../services/email/emailServiceBrevo');
+const { sendOrderEmails, sendCancellationEmails } = require('../../services/email/emailServiceBrevo');
 
 // @desc    Crear un nuevo pedido
 // @route   POST /api/orders
@@ -285,7 +285,6 @@ exports.cancelOrder = async (req, res) => {
         
         // 🔥 ENVIAR CORREO DE CANCELACIÓN A CLIENTE Y TIENDA 🔥
         if (user && user.email) {
-            const { sendCancellationEmails } = require('../../services/email/emailService');
             
             const orderForEmail = {
                 orderNumber: order.orderNumber,

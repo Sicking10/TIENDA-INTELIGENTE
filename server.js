@@ -22,6 +22,7 @@ const userRoutes = require('./src/backend/routes/api/userRoutes');
 const adminRoutes = require('./src/backend/routes/api/adminRoutes');
 const productRoutes = require('./src/backend/routes/api/productRoutes');
 const blogRoutes = require('./src/backend/routes/api/blogRoutes');
+const contactRoutes = require('./src/backend/routes/api/contactRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -117,6 +118,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/geocode', geocodeRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/contact', contactRoutes);
 app.use('/api/blog', blogRoutes);
 
 app.post('/api/upload', protect, uploadController.uploadImage);

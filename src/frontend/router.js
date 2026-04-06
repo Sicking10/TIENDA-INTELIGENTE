@@ -87,6 +87,31 @@ const routes = {
         public: true,
         guestOnly: true
     },
+     '/faq': {
+        title: 'Preguntas Frecuentes',
+        view: () => import('./modules/faq/faq.js'),
+        public: true
+    },
+    '/contacto': {
+        title: 'Contacto',
+        view: () => import('./modules/contacto/contacto.js'),
+        public: true
+    },
+    '/terminos': {
+        title: 'Términos y Condiciones',
+        view: () => import('./modules/legal/legal.js'),
+        public: true
+    },
+    '/privacidad': {
+        title: 'Política de Privacidad',
+        view: () => import('./modules/legal/legal.js'),
+        public: true
+    },
+    '/garantia': {
+        title: 'Garantía',
+        view: () => import('./modules/legal/legal.js'),
+        public: true
+    },
     // Rutas de administrador
     '/admin': {
         title: 'Dashboard',
