@@ -31,5 +31,7 @@
 @import url('./pages/orderTracking.css');
 @import url('./pages/login.css');
 
+@import url('./pages/admin/admin.css');
+
 /* Themes */
 @import url('./themes/dark.css');

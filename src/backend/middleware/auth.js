@@ -21,7 +21,23 @@ exports.protect = async (req, res, next) => {
         // Verificar token
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        // Buscar usuario
+        // VERIFICAR PRIMERO SI ES EL ADMIN DEL .ENV
+        const adminEmail = process.env.ADMIN_EMAIL;
+        
+        if (decoded.id === 'admin' && decoded.email === adminEmail) {
+            // Es el administrador especial del .env
+            req.user = {
+                id: 'admin',
+                email: decoded.email,
+                name: process.env.ADMIN_NAME || 'Administrador',
+                role: 'admin',
+                isActive: true,
+                isEnvAdmin: true
+            };
+            return next();
+        }
+
+        // Si no es admin del .env, buscar en la base de datos
         const user = await User.findById(decoded.id);
         
         if (!user) {

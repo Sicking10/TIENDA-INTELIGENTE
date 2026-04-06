@@ -505,7 +505,6 @@
     border-radius: 18px;
     padding: 12px 16px;
     box-shadow: 0 12px 30px rgba(44, 26, 14, 0.1);
-    animation: bubble-float 5s ease-in-out infinite alternate;
 }
 
 .stat-card-1 {

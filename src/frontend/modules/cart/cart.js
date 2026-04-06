@@ -180,7 +180,7 @@ export default class CartView {
             <div class="cart-item" data-id="${item.id}">
                 <div class="cart-item-product">
                     <div class="cart-item-image">
-                        <img src="/assets/images/products/${imageName}.jpg" 
+                        <img src="/assets/images/products/${imageName}" 
                              alt="${item.name}"
                              class="cart-item-img"
                              loading="lazy">

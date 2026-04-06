@@ -1,6 +1,6 @@
 /**
  * GINGERcaps Navbar — Botanical Apothecary
- * navbar.js v3.0 - Responsive completo
+ * navbar.js v3.0 - Responsive completo CON ADMIN
  */
 
 import { store } from '../../store.js';
@@ -37,6 +37,8 @@ function getNavbarHTML() {
                     <a href="/tienda" class="nav-link" data-link><span class="nav-link-icon">🛍️</span>Productos</a>
                     <a href="/beneficios" class="nav-link" data-link><span class="nav-link-icon">🌿</span>Beneficios</a>
                     <a href="/blog" class="nav-link" data-link><span class="nav-link-icon">📖</span>Blog</a>
+                    <!-- Enlace de ADMIN (se muestra/oculta dinámicamente) -->
+                    <a href="/admin" class="nav-link admin-link" data-link style="display: none;"><span class="nav-link-icon">⚙️</span>Admin</a>
                 </div>
             </nav>
 
@@ -103,6 +105,8 @@ function getNavbarHTML() {
                 <a href="/tienda" class="mobile-nav-link" data-link><span class="mobile-nav-icon">🛍️</span>Productos</a>
                 <a href="/beneficios" class="mobile-nav-link" data-link><span class="mobile-nav-icon">🌿</span>Beneficios</a>
                 <a href="/blog" class="mobile-nav-link" data-link><span class="mobile-nav-icon">📖</span>Blog</a>
+                <!-- Enlace de ADMIN en móvil -->
+                <a href="/admin" class="mobile-nav-link mobile-admin-link" data-link style="display: none;"><span class="mobile-nav-icon">⚙️</span>Panel Admin</a>
             </nav>
 
             <div class="mobile-ingredients">
@@ -165,12 +169,37 @@ function initNavIndicator() {
 
 function setActiveLink() {
     const path = window.location.pathname;
-    document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(link => {
+    
+    // Actualizar enlaces de escritorio y móvil
+    document.querySelectorAll('.nav-link, .mobile-nav-link, .dropdown-item').forEach(link => {
         const href = link.getAttribute('href');
-        const isActive = href === '/' ? path === '/' : path.startsWith(href);
-        link.classList.toggle('active', isActive);
+        if (!href) return;
+        
+        // Manejar enlaces de admin
+        if (href === '/admin') {
+            const isActive = path === '/admin' || path.startsWith('/admin/');
+            link.classList.toggle('active', isActive);
+        } else {
+            const isActive = href === '/' ? path === '/' : path.startsWith(href) && href !== '/admin';
+            link.classList.toggle('active', isActive);
+        }
     });
-    setTimeout(() => initNavIndicator(), 30);
+    
+    // 🔥 Forzar actualización del indicador visual
+    setTimeout(() => {
+        const indicator = document.getElementById('nav-indicator');
+        const container = document.getElementById('navbar-links');
+        if (indicator && container) {
+            const activeLink = container.querySelector('.nav-link.active');
+            if (activeLink && activeLink.style.display !== 'none') {
+                const containerRect = container.getBoundingClientRect();
+                const linkRect = activeLink.getBoundingClientRect();
+                indicator.style.left = `${linkRect.left - containerRect.left}px`;
+                indicator.style.width = `${linkRect.width}px`;
+                indicator.style.opacity = '1';
+            }
+        }
+    }, 100);
 }
 
 function initMobileMenu() {
@@ -259,6 +288,46 @@ function updateMobileCartBadge() {
     }
 }
 
+function toggleAdminLinks() {
+    const user = store.get('auth.user');
+    const isAdmin = user?.role === 'admin';
+    
+    // Enlaces en navbar escritorio
+    const adminLink = document.querySelector('.admin-link');
+    if (adminLink) {
+        adminLink.style.display = isAdmin ? 'flex' : 'none';
+    }
+    
+    // Enlace en dropdown
+    const adminDropdownLink = document.querySelector('.admin-dropdown-link');
+    if (adminDropdownLink) {
+        adminDropdownLink.style.display = isAdmin ? 'flex' : 'none';
+    }
+    
+    // Enlace en móvil
+    const mobileAdminLink = document.querySelector('.mobile-admin-link');
+    if (mobileAdminLink) {
+        mobileAdminLink.style.display = isAdmin ? 'flex' : 'none';
+    }
+    
+    // 🔥 Si es admin, forzar actualización del indicador
+    if (isAdmin) {
+        setTimeout(() => {
+            const indicator = document.getElementById('nav-indicator');
+            const container = document.getElementById('navbar-links');
+            const activeLink = container?.querySelector('.nav-link.active');
+            
+            if (indicator && container && activeLink && activeLink.style.display !== 'none') {
+                const containerRect = container.getBoundingClientRect();
+                const linkRect = activeLink.getBoundingClientRect();
+                indicator.style.left = `${linkRect.left - containerRect.left}px`;
+                indicator.style.width = `${linkRect.width}px`;
+                indicator.style.opacity = '1';
+            }
+        }, 150);
+    }
+}
+
 export function updateNavbarAuth() {
     const isAuth = store.get('auth.isAuthenticated');
     const user = store.get('auth.user');
@@ -269,8 +338,6 @@ export function updateNavbarAuth() {
     const mobileUserEmail = document.getElementById('mobile-user-email');
     const mobileAvatarInitials = document.getElementById('mobile-avatar-initials');
     const mobileAvatarContainer = document.querySelector('.mobile-user-avatar');
-    
-    console.log('🔐 updateNavbarAuth - isAuth:', isAuth, 'user:', user); // Debug
     
     if (isAuth && user) {
         if (userMenuEl) userMenuEl.style.display = 'block';
@@ -287,7 +354,6 @@ export function updateNavbarAuth() {
         if (dropdownName) dropdownName.textContent = name;
         if (dropdownEmail) dropdownEmail.textContent = user.email || '';
         
-        // Avatar en el círculo
         const savedAvatar = localStorage.getItem('user_avatar');
         const avatarCircle = document.querySelector('.avatar-circle');
         
@@ -312,7 +378,6 @@ export function updateNavbarAuth() {
             }
         }
         
-        // Mobile
         if (mobileUserSection) mobileUserSection.style.display = 'flex';
         if (mobileUserName) mobileUserName.textContent = name;
         if (mobileUserEmail) mobileUserEmail.textContent = user.email || '';
@@ -329,7 +394,6 @@ export function updateNavbarAuth() {
             mobileAvatarContainer.appendChild(img);
         }
         
-        // Mobile logout
         const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
         if (mobileLogoutBtn) mobileLogoutBtn.onclick = () => handleLogout();
         
@@ -338,6 +402,13 @@ export function updateNavbarAuth() {
         if (authBtnsEl) authBtnsEl.style.display = 'flex';
         if (mobileUserSection) mobileUserSection.style.display = 'none';
     }
+    
+    toggleAdminLinks();
+    
+    // 🔥 AÑADIR ESTO: Actualizar el link activo y el indicador
+    setTimeout(() => {
+        setActiveLink();
+    }, 100);
 }
 
 function handleLogout() {
@@ -378,13 +449,12 @@ export function renderNavbar() {
     window.addEventListener('popstate', setActiveLink);
     window.addEventListener('router-navigate', setActiveLink);
     
-    // Suscribirse a cambios en el store
     store.subscribe((path, newValue) => {
         if (path === 'cart.itemCount') {
             updateCartBadge();
             updateMobileCartBadge();
         }
-        if (path === 'auth.isAuthenticated' || path === 'auth.user') {
+        if (path === 'auth.isAuthenticated' || path === 'auth.user' || path === 'auth.role') {
             updateNavbarAuth();
         }
     });

@@ -1,6 +1,7 @@
 /**
  * Módulo Seguimiento de Pedido
  * orderTracking.js - Seguimiento detallado con datos reales
+ * Soporta: Envío a domicilio y Recoger en tienda
  */
 
 import { store } from '../../../store.js';
@@ -44,7 +45,7 @@ export default class OrderTrackingView {
                             <i class="fas fa-search"></i>
                         </div>
                         <h2>Pedido no encontrado</h2>
-                        <p class = "empty-text">No pudimos encontrar el pedido #${this.orderId}</p>
+                        <p class="empty-text">No pudimos encontrar el pedido #${this.orderId}</p>
                         <a href="/mis-pedidos" class="btn-shop" data-link>
                             Ver mis pedidos
                         </a>
@@ -82,8 +83,140 @@ export default class OrderTrackingView {
         }
     }
     
+    // Determinar si es recoger en tienda o envío a domicilio
+    isPickup() {
+        return this.order?.shipping?.method === 'pickup';
+    }
+    
+    // Obtener los pasos según el tipo de envío
+    getOrderSteps(status) {
+        const isPickup = this.isPickup();
+        const createdAt = new Date(this.order.createdAt);
+        
+        if (isPickup) {
+            // 🏪 Flujo para recoger en tienda
+            const pickupSteps = [
+                { name: 'Pedido confirmado', description: 'Hemos recibido tu pedido correctamente' },
+                { name: 'Preparando pedido', description: 'Estamos preparando tus cápsulas con mucho cuidado' },
+                { name: 'Listo para recoger', description: 'Tu pedido está listo para que pases a recogerlo a la tienda' },
+                { name: 'Recogido', description: 'Gracias por recoger tu pedido. ¡Disfruta tus cápsulas!' }
+            ];
+            
+            // Marcar fechas según el estado
+            if (status === 'pending') {
+                pickupSteps[0].date = createdAt.toLocaleDateString('es-MX');
+                return pickupSteps;
+            }
+            
+            if (status === 'processing') {
+                pickupSteps[0].date = createdAt.toLocaleDateString('es-MX');
+                return pickupSteps;
+            }
+            
+            if (status === 'ready_for_pickup') {
+                pickupSteps[0].date = createdAt.toLocaleDateString('es-MX');
+                pickupSteps[1].date = new Date(createdAt.getTime() + 86400000).toLocaleDateString('es-MX');
+                return pickupSteps;
+            }
+            
+            if (status === 'picked_up') {
+                pickupSteps[0].date = createdAt.toLocaleDateString('es-MX');
+                pickupSteps[1].date = new Date(createdAt.getTime() + 86400000).toLocaleDateString('es-MX');
+                pickupSteps[2].date = new Date(createdAt.getTime() + 172800000).toLocaleDateString('es-MX');
+                return pickupSteps;
+            }
+            
+            return pickupSteps;
+        } else {
+            // 📦 Flujo para envío a domicilio
+            const deliverySteps = [
+                { name: 'Pedido confirmado', description: 'Hemos recibido tu pedido correctamente' },
+                { name: 'Preparando pedido', description: 'Estamos preparando tus cápsulas con mucho cuidado' },
+                { name: 'En camino', description: 'Tu pedido ha sido entregado a la paquetería' },
+                { name: 'Entregado', description: 'Tu pedido ha sido entregado exitosamente' }
+            ];
+            
+            // Marcar fechas según el estado
+            if (status === 'pending') {
+                deliverySteps[0].date = createdAt.toLocaleDateString('es-MX');
+                return deliverySteps;
+            }
+            
+            if (status === 'processing') {
+                deliverySteps[0].date = createdAt.toLocaleDateString('es-MX');
+                return deliverySteps;
+            }
+            
+            if (status === 'shipped') {
+                deliverySteps[0].date = createdAt.toLocaleDateString('es-MX');
+                deliverySteps[1].date = new Date(createdAt.getTime() + 86400000).toLocaleDateString('es-MX');
+                return deliverySteps;
+            }
+            
+            if (status === 'delivered') {
+                deliverySteps[0].date = createdAt.toLocaleDateString('es-MX');
+                deliverySteps[1].date = new Date(createdAt.getTime() + 86400000).toLocaleDateString('es-MX');
+                deliverySteps[2].date = new Date(createdAt.getTime() + 172800000).toLocaleDateString('es-MX');
+                deliverySteps[3].date = new Date(createdAt.getTime() + 259200000).toLocaleDateString('es-MX');
+                return deliverySteps;
+            }
+            
+            return deliverySteps;
+        }
+    }
+    
+    getCurrentStepIndex(status) {
+        const isPickup = this.isPickup();
+        
+        if (isPickup) {
+            const statusMap = {
+                'pending': 0,
+                'processing': 1,
+                'ready_for_pickup': 2,
+                'picked_up': 3,
+                'cancelled': 0
+            };
+            return statusMap[status] || 0;
+        } else {
+            const statusMap = {
+                'pending': 0,
+                'processing': 1,
+                'shipped': 2,
+                'delivered': 3,
+                'cancelled': 0
+            };
+            return statusMap[status] || 0;
+        }
+    }
+    
+    getStatusText(status) {
+        const statusMap = {
+            pending: 'Pendiente',
+            processing: 'Procesando',
+            shipped: 'Enviado',
+            delivered: 'Entregado',
+            ready_for_pickup: 'Listo para recoger',
+            picked_up: 'Recogido',
+            cancelled: 'Cancelado'
+        };
+        return statusMap[status] || status;
+    }
+    
+    getStatusBadgeClass(status) {
+        const classMap = {
+            pending: 'pending',
+            processing: 'processing',
+            shipped: 'shipped',
+            delivered: 'delivered',
+            ready_for_pickup: 'ready',
+            picked_up: 'picked',
+            cancelled: 'cancelled'
+        };
+        return classMap[status] || 'pending';
+    }
+    
     renderOrderDetails() {
-        // Determinar los pasos basados en el estado del pedido
+        const isPickup = this.isPickup();
         const steps = this.getOrderSteps(this.order.status);
         const currentStepIndex = this.getCurrentStepIndex(this.order.status);
         
@@ -97,11 +230,11 @@ export default class OrderTrackingView {
                     <div class="container">
                         <div class="tracking-hero-content">
                             <div class="hero-icon">
-                                <i class="fas fa-truck"></i>
+                                ${isPickup ? '<i class="fas fa-store"></i>' : '<i class="fas fa-truck"></i>'}
                             </div>
-                            <h1>Seguimiento de pedido</h1>
+                            <h1>${isPickup ? 'Recoger en tienda' : 'Seguimiento de pedido'}</h1>
                             <p class="order-id">Pedido #${this.order.orderNumber}</p>
-                            <div class="order-status-badge ${this.order.status}">
+                            <div class="order-status-badge ${this.getStatusBadgeClass(this.order.status)}">
                                 ${this.getStatusText(this.order.status)}
                             </div>
                         </div>
@@ -168,28 +301,44 @@ export default class OrderTrackingView {
                         </div>
                         
                         <div class="shipping-info-card">
-                            <h3><i class="fas fa-map-marker-alt"></i> Información de envío</h3>
+                            <h3><i class="fas ${isPickup ? 'fa-store' : 'fa-map-marker-alt'}"></i> ${isPickup ? 'Información de recogida' : 'Información de envío'}</h3>
                             <div class="shipping-details">
-                                <div class="shipping-address">
-                                    <i class="fas fa-home"></i>
-                                    <div>
-                                        <strong>Dirección de entrega</strong>
-                                        ${this.order.shipping?.method === 'pickup' ? 
-                                            '<p>Recoger en tienda</p>' :
-                                            `<p>${this.order.shipping?.address?.street || ''}</p>
-                                             <p>${this.order.shipping?.address?.city || ''}, ${this.order.shipping?.address?.state || ''}</p>
-                                             <p>CP ${this.order.shipping?.address?.zipCode || ''}</p>`
-                                        }
+                                ${isPickup ? `
+                                    <div class="shipping-address">
+                                        <i class="fas fa-store"></i>
+                                        <div>
+                                            <strong>GINGERcaps Boutique</strong>
+                                            <p>Av. del Mar 1235, Zona Dorada</p>
+                                            <p>Marina Mazatlán, Mazatlán, Sinaloa</p>
+                                            <p>Horario: Lun - Sab: 10:00 AM - 8:00 PM</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="shipping-contact">
-                                    <i class="fas fa-user"></i>
-                                    <div>
-                                        <strong>Destinatario</strong>
-                                        <p>${this.order.shipping?.recipientName || 'Cliente'}</p>
-                                        <p>${this.order.shipping?.phone || ''}</p>
+                                    <div class="shipping-contact">
+                                        <i class="fas fa-phone"></i>
+                                        <div>
+                                            <strong>Contacto tienda</strong>
+                                            <p>+52 1 669 102 4050</p>
+                                        </div>
                                     </div>
-                                </div>
+                                ` : `
+                                    <div class="shipping-address">
+                                        <i class="fas fa-home"></i>
+                                        <div>
+                                            <strong>Dirección de entrega</strong>
+                                            <p>${this.order.shipping?.address?.street || ''}</p>
+                                            <p>${this.order.shipping?.address?.city || ''}, ${this.order.shipping?.address?.state || ''}</p>
+                                            <p>CP ${this.order.shipping?.address?.zipCode || ''}</p>
+                                        </div>
+                                    </div>
+                                    <div class="shipping-contact">
+                                        <i class="fas fa-user"></i>
+                                        <div>
+                                            <strong>Destinatario</strong>
+                                            <p>${this.order.shipping?.recipientName || 'Cliente'}</p>
+                                            <p>${this.order.shipping?.phone || ''}</p>
+                                        </div>
+                                    </div>
+                                `}
                             </div>
                         </div>
                     </div>
@@ -207,66 +356,6 @@ export default class OrderTrackingView {
                 </div>
             </div>
         `;
-    }
-    
-    getOrderSteps(status) {
-        const steps = [
-            { name: 'Pedido confirmado', description: 'Hemos recibido tu pedido correctamente' },
-            { name: 'Preparando pedido', description: 'Estamos preparando tus cápsulas con mucho cuidado' },
-            { name: 'En camino', description: 'Tu pedido ha sido entregado a la paquetería' },
-            { name: 'Entregado', description: 'Tu pedido ha sido entregado exitosamente' }
-        ];
-        
-        // Marcar fechas según el estado
-        const createdAt = new Date(this.order.createdAt);
-        
-        if (status === 'pending') {
-            steps[0].date = createdAt.toLocaleDateString('es-MX');
-            return steps;
-        }
-        
-        if (status === 'processing') {
-            steps[0].date = createdAt.toLocaleDateString('es-MX');
-            return steps;
-        }
-        
-        if (status === 'shipped') {
-            steps[0].date = createdAt.toLocaleDateString('es-MX');
-            steps[1].date = new Date(createdAt.getTime() + 86400000).toLocaleDateString('es-MX');
-            return steps;
-        }
-        
-        if (status === 'delivered') {
-            steps[0].date = createdAt.toLocaleDateString('es-MX');
-            steps[1].date = new Date(createdAt.getTime() + 86400000).toLocaleDateString('es-MX');
-            steps[2].date = new Date(createdAt.getTime() + 172800000).toLocaleDateString('es-MX');
-            steps[3].date = new Date(createdAt.getTime() + 259200000).toLocaleDateString('es-MX');
-            return steps;
-        }
-        
-        return steps;
-    }
-    
-    getCurrentStepIndex(status) {
-        const statusMap = {
-            'pending': 0,
-            'processing': 1,
-            'shipped': 2,
-            'delivered': 3,
-            'cancelled': 0
-        };
-        return statusMap[status] || 0;
-    }
-    
-    getStatusText(status) {
-        const statusMap = {
-            pending: 'Pendiente',
-            processing: 'Procesando',
-            shipped: 'Enviado',
-            delivered: 'Entregado',
-            cancelled: 'Cancelado'
-        };
-        return statusMap[status] || status;
     }
     
     initContactSupport() {

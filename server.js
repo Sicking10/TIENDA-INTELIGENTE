@@ -10,11 +10,18 @@ const helmet = require('helmet');
 const path = require('path');
 require('dotenv').config();
 
+const { protect, authorize } = require('./src/backend/middleware/auth');
+
+const uploadController = require('./src/backend/controllers/uploadController');
+
 // Importar rutas
 const authRoutes = require('./src/backend/routes/authRoutes');
 const orderRoutes = require('./src/backend/routes/api/orderRoutes');
 const geocodeRoutes = require('./src/backend/routes/api/geocodeRoutes');
 const userRoutes = require('./src/backend/routes/api/userRoutes');
+const adminRoutes = require('./src/backend/routes/api/adminRoutes');
+const productRoutes = require('./src/backend/routes/api/productRoutes');
+const blogRoutes = require('./src/backend/routes/api/blogRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -37,6 +44,12 @@ app.use(helmet({
             scriptSrcAttr: ["'unsafe-inline'"]
         }
     }
+}));
+
+const fileUpload = require('express-fileupload');
+app.use(fileUpload({
+    limits: { fileSize: 2 * 1024 * 1024 },
+    abortOnLimit: true
 }));
 
 // Logging
@@ -99,9 +112,15 @@ app.get('/api/health', (req, res) => {
 
 // Rutas de autenticación
 app.use('/api/auth', authRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/geocode', geocodeRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/blog', blogRoutes);
+
+app.post('/api/upload', protect, uploadController.uploadImage);
+app.delete('/api/upload', protect, uploadController.deleteImage);
 
 // Ruta base de API
 app.get('/api', (req, res) => {

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const orderItemSchema = new mongoose.Schema({
     productId: {
-        type: String,  // ← CAMBIAR de ObjectId a String
+        type: String,
         required: true
     },
     name: {
@@ -46,7 +46,6 @@ const orderSchema = new mongoose.Schema({
     orderNumber: {
         type: String,
         unique: true
-        // ← QUITAR 'required: true' porque se genera automáticamente
     },
     userId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -73,7 +72,7 @@ const orderSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
+        enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled', 'ready_for_pickup', 'picked_up'],
         default: 'pending'
     },
     paymentMethod: {
@@ -88,8 +87,29 @@ const orderSchema = new mongoose.Schema({
     },
     shipping: shippingSchema,
     notes: String,
-    deliveredAt: Date,
-    cancelledAt: Date
+    // 🔥 FECHAS PARA ENVÍO A DOMICILIO 🔥
+    shippedAt: {
+        type: Date,
+        default: null
+    },
+    deliveredAt: {
+        type: Date,
+        default: null
+    },
+    // 🔥 FECHAS PARA RECOGER EN TIENDA 🔥
+    readyForPickupAt: {
+        type: Date,
+        default: null
+    },
+    pickedUpAt: {
+        type: Date,
+        default: null
+    },
+    // 🔥 FECHA DE CANCELACIÓN 🔥
+    cancelledAt: {
+        type: Date,
+        default: null
+    }
 }, {
     timestamps: true
 });

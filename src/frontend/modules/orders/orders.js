@@ -1,13 +1,14 @@
 /**
  * Módulo Mis Pedidos
  * orders.js - Historial completo de pedidos
+ * Soporta: Envío a domicilio y Recoger en tienda
  */
 
 import { store } from '../../store.js';
 import { authGuard } from '../../authGuard.js';
 import { formatPrice } from '../../utils/cartUtils.js';
 import { showNotification } from '../notifications/notifications.js';
-import { showConfirmModal } from '../../utils/confirmModal.js'; // ← IMPORTAR
+import { showConfirmModal } from '../../utils/confirmModal.js';
 
 export default class OrdersView {
     constructor(container, params = {}) {
@@ -99,11 +100,19 @@ export default class OrdersView {
                         <button class="filter-btn ${this.currentFilter === 'processing' ? 'active' : ''}" data-filter="processing">
                             <i class="fas fa-cog"></i> Procesando
                         </button>
+                        <!-- 🔥 FILTROS PARA ENVÍO A DOMICILIO -->
                         <button class="filter-btn ${this.currentFilter === 'shipped' ? 'active' : ''}" data-filter="shipped">
                             <i class="fas fa-truck"></i> Enviados
                         </button>
                         <button class="filter-btn ${this.currentFilter === 'delivered' ? 'active' : ''}" data-filter="delivered">
                             <i class="fas fa-check-circle"></i> Entregados
+                        </button>
+                        <!-- 🔥 FILTROS PARA RECOGER EN TIENDA -->
+                        <button class="filter-btn ${this.currentFilter === 'ready_for_pickup' ? 'active' : ''}" data-filter="ready_for_pickup">
+                            <i class="fas fa-store"></i> Listos para recoger
+                        </button>
+                        <button class="filter-btn ${this.currentFilter === 'picked_up' ? 'active' : ''}" data-filter="picked_up">
+                            <i class="fas fa-check-double"></i> Recogidos
                         </button>
                     </div>
                     
@@ -153,6 +162,7 @@ export default class OrdersView {
                     total: order.total,
                     status: order.status,
                     items: order.items || [],
+                    shippingMethod: order.shipping?.method || 'delivery',
                     tracking: order.shipping?.trackingNumber ? {
                         number: order.shipping.trackingNumber,
                         carrier: order.shipping.carrier,
@@ -179,7 +189,8 @@ export default class OrdersView {
     }
 
     getCompletedOrders() {
-        return this.orders.filter(o => o.status === 'delivered').length;
+        // Para delivery: delivered | Para pickup: picked_up
+        return this.orders.filter(o => o.status === 'delivered' || o.status === 'picked_up').length;
     }
 
     renderOrders() {
@@ -210,14 +221,18 @@ export default class OrdersView {
     }
 
     renderOrderCard(order) {
+        // 🔥 CONFIGURACIÓN DE ESTADOS ACTUALIZADA
         const statusConfig = {
             pending: { icon: 'fa-clock', text: 'Pendiente', class: 'pending' },
             processing: { icon: 'fa-cog', text: 'Procesando', class: 'processing' },
             shipped: { icon: 'fa-truck', text: 'Enviado', class: 'shipped' },
-            delivered: { icon: 'fa-check-circle', text: 'Entregado', class: 'delivered' }
+            delivered: { icon: 'fa-check-circle', text: 'Entregado', class: 'delivered' },
+            ready_for_pickup: { icon: 'fa-store', text: 'Listo para recoger', class: 'ready' },
+            picked_up: { icon: 'fa-check-double', text: 'Recogido', class: 'picked' }
         };
 
         const config = statusConfig[order.status] || statusConfig.pending;
+        const isPickup = order.shippingMethod === 'pickup';
 
         return `
             <div class="order-card" data-order-id="${order.id}">
@@ -261,21 +276,34 @@ export default class OrdersView {
                             <strong>${formatPrice(order.total)}</strong>
                         </div>
                         <div class="order-actions">
+                            <!-- 🔥 ACCIONES PARA ENVÍO A DOMICILIO -->
                             ${order.status === 'shipped' ? `
                                 <button class="btn-track" data-order-id="${order.id}">
                                     <i class="fas fa-truck"></i> Seguir pedido
                                 </button>
                             ` : ''}
-                            ${order.status === 'delivered' ? `
+                            
+                            <!-- 🔥 ACCIONES PARA RECOGER EN TIENDA -->
+                            ${order.status === 'ready_for_pickup' ? `
+                                <button class="btn-pickup" data-order-id="${order.id}">
+                                    <i class="fas fa-store"></i> Ver tienda
+                                </button>
+                            ` : ''}
+                            
+                            <!-- 🔥 PEDIDOS COMPLETADOS (ambos tipos) -->
+                            ${order.status === 'delivered' || order.status === 'picked_up' ? `
                                 <button class="btn-reorder" data-order-id="${order.id}">
                                     <i class="fas fa-redo"></i> Comprar de nuevo
                                 </button>
                             ` : ''}
+                            
+                            <!-- 🔥 CANCELAR (solo pendientes o procesando) -->
                             ${order.status === 'pending' || order.status === 'processing' ? `
                                 <button class="btn-cancel" data-order-id="${order.id}">
                                     <i class="fas fa-times"></i> Cancelar pedido
                                 </button>
                             ` : ''}
+                            
                             <button class="btn-details" data-order-id="${order.id}">
                                 <i class="fas fa-info-circle"></i> Ver detalles
                             </button>
@@ -305,11 +333,19 @@ export default class OrdersView {
     }
 
     initOrderActions() {
-        // Seguir pedido
+        // Seguir pedido (delivery)
         document.querySelectorAll('.btn-track').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const orderId = btn.dataset.orderId;
                 window.location.href = `/pedido/${orderId}`;
+            });
+        });
+
+        // Ver tienda (pickup)
+        document.querySelectorAll('.btn-pickup').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // Mostrar información de la tienda o redirigir
+                window.open('https://maps.google.com/?q=23.2428,-106.4206', '_blank');
             });
         });
 
@@ -342,12 +378,11 @@ export default class OrdersView {
             });
         });
 
-        // Cancelar pedido - CON MODAL PERSONALIZADO
+        // Cancelar pedido
         document.querySelectorAll('.btn-cancel').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 const orderNumber = btn.dataset.orderId;
 
-                // 🔥 MODAL PERSONALIZADO en lugar de confirm()
                 const confirmed = await showConfirmModal({
                     title: 'Cancelar pedido',
                     message: '¿Estás seguro de que deseas cancelar este pedido? Esta acción no se puede deshacer.',
@@ -357,7 +392,6 @@ export default class OrdersView {
 
                 if (!confirmed) return;
 
-                // Deshabilitar botón
                 btn.disabled = true;
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cancelando...';
                 
@@ -396,6 +430,8 @@ export default class OrdersView {
             processing: 'Procesando',
             shipped: 'Enviado',
             delivered: 'Entregado',
+            ready_for_pickup: 'Listo para recoger',
+            picked_up: 'Recogido',
             cancelled: 'Cancelado'
         };
         return statusMap[status] || status;

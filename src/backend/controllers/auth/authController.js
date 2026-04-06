@@ -83,7 +83,38 @@ exports.login = async (req, res) => {
 
         const { email, password } = req.body;
 
-        // Buscar usuario con password
+        // VERIFICAR PRIMERO SI ES EL ADMIN DEL .ENV
+        const adminEmail = process.env.ADMIN_EMAIL;
+        const adminPassword = process.env.ADMIN_PASSWORD;
+        const adminName = process.env.ADMIN_NAME || 'Administrador';
+
+        if (email === adminEmail && password === adminPassword) {
+            // Es el administrador, generar token sin consultar BD
+            const token = jwt.sign(
+                { 
+                    id: 'admin',
+                    email: adminEmail,
+                    role: 'admin'
+                },
+                process.env.JWT_SECRET,
+                { expiresIn: process.env.JWT_EXPIRE || '7d' }
+            );
+
+            return res.json({
+                success: true,
+                message: 'Inicio de sesión exitoso',
+                token,
+                user: {
+                    id: 'admin',
+                    name: adminName,
+                    email: adminEmail,
+                    role: 'admin',
+                    isAdmin: true
+                }
+            });
+        }
+
+        // Si no es admin, buscar en la base de datos
         const user = await User.findOne({ email }).select('+password');
         
         if (!user) {
@@ -93,7 +124,6 @@ exports.login = async (req, res) => {
             });
         }
 
-        // Verificar si está activo
         if (!user.isActive) {
             return res.status(401).json({
                 success: false,
@@ -101,7 +131,6 @@ exports.login = async (req, res) => {
             });
         }
 
-        // Verificar password
         const isMatch = await user.comparePassword(password);
         if (!isMatch) {
             return res.status(401).json({
@@ -110,12 +139,18 @@ exports.login = async (req, res) => {
             });
         }
 
-        // Actualizar último login
         user.lastLogin = new Date();
         await user.save({ validateBeforeSave: false });
 
-        // Generar token
-        const token = generateToken(user);
+        const token = jwt.sign(
+            { 
+                id: user._id, 
+                email: user.email, 
+                role: user.role 
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: process.env.JWT_EXPIRE || '7d' }
+        );
 
         res.json({
             success: true,

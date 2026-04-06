@@ -776,8 +776,28 @@
 
 /* BADGES */
 [data-theme="dark"] .badge-gold {
-    background: linear-gradient(135deg, rgba(232, 168, 56, 0.2), rgba(232, 168, 56, 0.1));
+    background: var(--chamomile);
     color: #E8A838;
+}
+
+[data-theme="dark"] .btn-quick-view {
+    color: var(--black);
+}
+
+[data-theme="dark"] .pcard-concentration {
+    color: var(--bark);
+}
+
+[data-theme="dark"] .btn-quick-view:hover {
+    color: var(--bark);
+}
+
+[data-theme="dark"] .modal-benefit-tag {
+    color: var(--bark);
+}
+
+[data-theme="dark"] .ritual-label {
+    color: var(--bark);
 }
 
 [data-theme="dark"] .badge-crimson {
@@ -3485,4 +3505,284 @@
 
 [data-theme="dark"] .password-requirements li {
     color: #C8A882;
+}
+
+[data-theme="dark"] .admin-container {
+    background: var(--cream);
+}
+
+/* ============================================
+   MODO OSCURO - Modal de detalles
+============================================ */
+
+[data-theme="dark"] .details-card {
+    background: rgba(232, 168, 56, 0.04);
+    border-color: rgba(232, 168, 56, 0.1);
+}
+
+[data-theme="dark"] .card-header {
+    background: rgba(232, 168, 56, 0.08);
+    border-bottom-color: rgba(232, 168, 56, 0.1);
+}
+
+[data-theme="dark"] .card-header h4 {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .info-row {
+    border-bottom-color: rgba(232, 168, 56, 0.08);
+}
+
+[data-theme="dark"] .info-label {
+    color: #C8A882;
+}
+
+[data-theme="dark"] .info-value {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .address-block {
+    background: rgba(232, 168, 56, 0.06);
+}
+
+[data-theme="dark"] .address-block p {
+    color: #C8A882;
+}
+
+[data-theme="dark"] .product-name {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .product-meta {
+    color: #C8A882;
+}
+
+[data-theme="dark"] .product-item {
+    border-bottom-color: rgba(232, 168, 56, 0.08);
+}
+
+[data-theme="dark"] .order-total {
+    background: rgba(232, 168, 56, 0.08);
+    border-top-color: rgba(232, 168, 56, 0.12);
+}
+
+[data-theme="dark"] .order-total span {
+    color: #C8A882;
+}
+
+[data-theme="dark"] .status-select {
+    background: var(--chamomile);
+    border-color: rgba(232, 168, 56, 0.2);
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .admin-modal.small .order-ref {
+    color: #E8A838;
+    border-bottom-color: rgba(232, 168, 56, 0.15);
+}
+
+/* ============================================
+   MODO OSCURO - SELECTORES
+============================================ */
+
+[data-theme="dark"] .order-status-select option,
+[data-theme="dark"] .role-select option,
+[data-theme="dark"] .filter-select option {
+    background: var(--chamomile);
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .order-status-select:hover,
+[data-theme="dark"] .role-select:hover,
+[data-theme="dark"] .filter-select:hover {
+    border-color: #E8A838;
+    background-color: rgba(232, 168, 56, 0.08);
+}
+
+[data-theme="dark"] .filters-bar {
+    background: rgba(232, 168, 56, 0.05);
+    border-color: rgba(232, 168, 56, 0.1);
+}
+
+[data-theme="dark"] .filter-label {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .search-input {
+    background: var(--chamomile);
+    border-color: rgba(232, 168, 56, 0.2);
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .search-input::placeholder {
+    color: #B89A7A;
+}
+
+/* ============================================
+   MODO OSCURO - ADMIN
+============================================ */
+
+[data-theme="dark"] .admin-page {
+    background: linear-gradient(135deg, var(--gray-800), var(--gray-900));
+}
+
+[data-theme="dark"] .admin-header h1 {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .admin-header p {
+    color: #C8A882;
+}
+
+[data-theme="dark"] .admin-date {
+    background: rgba(232, 168, 56, 0.12);
+    color: #E8A838;
+}
+
+[data-theme="dark"] .admin-sidebar,
+[data-theme="dark"] .admin-main {
+    background: var(--chamomile);
+    border-color: rgba(232, 168, 56, 0.1);
+}
+
+[data-theme="dark"] .admin-nav-item {
+    color: #C8A882;
+}
+
+[data-theme="dark"] .admin-nav-item:hover {
+    background: rgba(232, 168, 56, 0.1);
+    color: #E8A838;
+}
+
+[data-theme="dark"] .admin-nav-item.active {
+    background: linear-gradient(135deg, rgba(232, 168, 56, 0.15), rgba(232, 168, 56, 0.08));
+    color: #E8A838;
+}
+
+[data-theme="dark"] .stat-card {
+    background: linear-gradient(135deg, var(--chamomile), var(--cream));
+    border-color: rgba(232, 168, 56, 0.1);
+}
+
+[data-theme="dark"] .stat-card i {
+    color: #E8A838;
+}
+
+[data-theme="dark"] .stat-value {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .stat-label {
+    color: #C8A882;
+}
+
+[data-theme="dark"] .data-table th {
+    background: rgba(232, 168, 56, 0.08);
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .data-table td {
+    color: #C8A882;
+    border-bottom-color: rgba(232, 168, 56, 0.08);
+}
+
+[data-theme="dark"] .data-table tr:hover td {
+    background: rgba(232, 168, 56, 0.05);
+}
+
+[data-theme="dark"] .admin-modal .modal-content {
+    background: var(--chamomile);
+}
+
+[data-theme="dark"] .admin-modal .modal-header {
+    background: rgba(232, 168, 56, 0.05);
+    border-bottom-color: rgba(232, 168, 56, 0.1);
+}
+
+[data-theme="dark"] .admin-modal .modal-header h3 {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .admin-modal .form-group label {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .admin-modal .form-group input,
+[data-theme="dark"] .admin-modal .form-group select,
+[data-theme="dark"] .admin-modal .form-group textarea {
+    background: var(--cream);
+    border-color: rgba(232, 168, 56, 0.15);
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .admin-modal .form-group input:focus {
+    border-color: #E8A838;
+    box-shadow: 0 0 0 3px rgba(232, 168, 56, 0.1);
+}
+
+[data-theme="dark"] .admin-modal .btn-cancel {
+    border-color: rgba(232, 168, 56, 0.3);
+    color: #E8A838;
+}
+
+[data-theme="dark"] .filter-select {
+    background: var(--chamomile);
+    border-color: rgba(232, 168, 56, 0.15);
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .empty-state i {
+    color: #B89A7A;
+}
+
+[data-theme="dark"] .empty-state h3 {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .empty-state p {
+    color: #C8A882;
+}
+
+[data-theme="dark"] .recent-orders-title {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .image-preview-text {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .order-status-select {
+    background: linear-gradient(135deg, #1A1008, #2A1A0A);
+    border-left-color: #D97706;
+}
+
+[data-theme="dark"] .role-select {
+    background: linear-gradient(135deg, #1A1008, #2A1A0A);
+    border-left-color: #D97706;
+}
+
+/* ============================================
+   MODO OSCURO - PRODUCT MODAL
+============================================ */
+
+[data-theme="dark"] .image-upload-area {
+    border-color: rgba(232, 168, 56, 0.2);
+    background: rgba(232, 168, 56, 0.03);
+}
+
+[data-theme="dark"] .image-upload-area:hover {
+    border-color: #E8A838;
+    background: rgba(232, 168, 56, 0.08);
+}
+
+[data-theme="dark"] .upload-text {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .stock-badge {
+    background: rgba(16, 185, 129, 0.15);
+}
+
+[data-theme="dark"] .stock-badge.low-stock {
+    background: rgba(239, 68, 68, 0.15);
 }

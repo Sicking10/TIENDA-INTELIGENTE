@@ -21,6 +21,8 @@ GINGER/
 |   |   |   └── variables.css
 │   │   │
 │   │   ├── components/
+|   |   |   ├── preloader.css
+|   |   |   ├── modals.css
 |   |   |   ├── buttons.css
 |   |   |   ├── cards.css
 |   |   |   ├── navbar.css
@@ -30,15 +32,19 @@ GINGER/
 |   |   |   └── main/layout.css
 │   │   │
 │   │   ├── pages/
+|   |   |   ├── admin/
+|   |   |   │   ├── admin.css
 |   |   |   ├── auth.css
 |   |   |   ├── benefits.css
 |   |   |   ├── blog.css
 |   |   |   ├── cart.css
 |   |   |   ├── home.css
+|   |   |   ├── checkout.css
 |   |   |   ├── orders.css
 |   |   |   ├── profile.css
 |   |   |   ├── shop.css
-|   |   |   └── suscripcion.css
+|   |   |   ├── orders.css
+|   |   |   └── orderTracking.css
 │   │   │
 │   │   ├── themes/
 │   │   │
@@ -66,14 +72,18 @@ GINGER/
 │   │   ├── modules/
 │   │   │   │
 │   │   │   ├── admin/
-│   │   │   │   ├── categories/
+│   │   │   │   ├── blog/
+│   │   │   │   │   ├── adminBlog.js
 │   │   │   │   ├── dashboard/
 │   │   │   │   │   ├── adminDashboard.js
 │   │   │   │   ├── orders/
+│   │   │   │   │   ├── adminOrders.js
 │   │   │   │   ├── products/
+│   │   │   │   │   ├── adminProducts.js
 │   │   │   │   ├── banners/
 │   │   │   │   ├── reports/
 │   │   │   │   └── users/
+│   │   │   │       ├── adminUsers.js
 │   │   │   │
 │   │   │   ├── auth/
 │   │   │   │   ├── login.js
@@ -168,10 +178,15 @@ GINGER/
 │       ├── config/
 │       │
 │       ├── controllers/
+│       │   ├── uploadController.js
 │       │   ├── auth/
 │       │   │   ├── authController.js
 │       │   ├── products/
+│       │   │   ├── productController.js
+│       │   ├── blog/
+│       │   │   ├── postController.js
 │       │   ├── orders/
+│       │   │   ├── ordersController.js
 │       │   ├── cart/
 │       │   ├── inventory/
 │       │   ├── users/
@@ -184,17 +199,28 @@ GINGER/
 │       │   ├── auth.js
 │       │
 │       ├── models/
+│       │   ├── Product.js
+│       │   ├── Post.js
 │       │   ├── User.js
+│       │   ├── Order.js
 │       │
 │       ├── services/
 │       │   ├── payment/
 │       │   ├── email/
+│       │   ├──   ├── emailService.js
+│       │   ├──   ├── emailServiceBrevo.js
 │       │   ├── inventory/
 │       │   └── recommendation/
 │       │
 │       └── routes/
 │           ├── authRoutes.js
 │           ├── api/
+│           │   ├── adminRoutes.js
+│           │   ├── blogRoutes.js
+│           │   ├── productRoutes.js
+│           │   ├── geocodeRoutes.js
+│           │   ├── orderRoutes.js
+│           │   ├── userRoutes.js
 │           └── webhooks/
 │
 ├── server.js

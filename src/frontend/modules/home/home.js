@@ -385,16 +385,6 @@ function getHomeHTML() {
                                 <div class="bubble-icon-wrap">🌼</div>
                                 <span class="bubble-label" style="color:#5C7A3E">Manzanilla</span>
                             </div>
-
-                            <!-- Stat cards -->
-                            <div class="stat-card stat-card-1">
-                                <div class="stat-value">15k+</div>
-                                <div class="stat-label">Clientes felices</div>
-                            </div>
-                            <div class="stat-card stat-card-2">
-                                <div class="stat-value">4.9⭐</div>
-                                <div class="stat-label">Calificación media</div>
-                            </div>
                         </div>
                     </div>
                 </div>
