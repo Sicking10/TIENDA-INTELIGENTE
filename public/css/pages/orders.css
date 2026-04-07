@@ -463,11 +463,6 @@
     animation: pulse 2s infinite;
 }
 
-@keyframes pulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(217, 122, 43, 0.4); }
-    50% { box-shadow: 0 0 0 10px rgba(217, 122, 43, 0); }
-}
-
 .step-line {
     position: absolute;
     top: 40px;
@@ -719,77 +714,4 @@
     color: var(--gray-600);
     padding: 8px 0;
     border-bottom: 1px solid rgba(217, 122, 43, 0.05);
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .orders-stats {
-        gap: 30px;
-        flex-wrap: wrap;
-    }
-    
-    .order-card-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .order-card-footer {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .order-actions {
-        width: 100%;
-    }
-    
-    .order-actions button {
-        flex: 1;
-        justify-content: center;
-    }
-    
-    .tracking-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .step {
-        flex-direction: column;
-        gap: 12px;
-    }
-    
-    .step-marker {
-        flex-direction: row;
-        justify-content: flex-start;
-    }
-    
-    .step-line {
-        display: none;
-    }
-    
-    .help-support-card {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .details-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 480px) {
-    .orders-filters {
-        gap: 8px;
-    }
-    
-    .filter-btn {
-        padding: 6px 14px;
-        font-size: 12px;
-    }
-    
-    .order-item {
-        flex-wrap: wrap;
-    }
-    
-    .item-price {
-        margin-left: 76px;
-    }
 }

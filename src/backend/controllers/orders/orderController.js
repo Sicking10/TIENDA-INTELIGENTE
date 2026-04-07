@@ -100,7 +100,8 @@ exports.createOrder = async (req, res) => {
                 price: item.price,
                 quantity: item.quantity,
                 concentration: item.concentration || '',
-                image: item.image || ''
+                image: item.image || '',
+                imageUrl: item.imageUrl || ''
             })),
             subtotal: Number(subtotal),
             discount: Number(discount) || 0,

@@ -94,19 +94,6 @@
     color: var(--gray-600);
 }
 
-/* Responsive */
-@media (max-width: 480px) {
-    .notification-container {
-        left: 20px;
-        right: 20px;
-        max-width: none;
-    }
-    
-    .notification {
-        width: 100%;
-    }
-}
-
 /* Contador de notificaciones agrupadas */
 .notification-count {
     display: inline-block;

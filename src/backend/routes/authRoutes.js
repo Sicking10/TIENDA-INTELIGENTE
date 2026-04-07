@@ -33,12 +33,15 @@ const loginValidation = [
         .notEmpty().withMessage('La contraseña es requerida')
 ];
 
-// Rutas
+// Rutas de autenticación
 router.post('/register', registerValidation, authController.register);
 router.post('/login', loginValidation, authController.login);
 router.get('/me', protect, authController.getMe);
-
-// Cambiar contraseña
 router.put('/password', protect, authController.changePassword);
+
+// RUTAS DE RECUPERAR CONTRASEÑA
+router.post('/forgot-password', authController.forgotPassword);
+router.post('/verify-reset-code', authController.verifyResetCode);
+router.post('/reset-password', authController.resetPassword);
 
 module.exports = router;

@@ -28,6 +28,14 @@ const userSchema = new mongoose.Schema({
         enum: ['user', 'admin', 'superadmin'],
         default: 'user'
     },
+    resetPasswordCode: {
+        type: String,
+        default: null
+    },
+    resetPasswordExpires: {
+        type: Date,
+        default: null
+    },
     phone: {
         type: String,
         trim: true
@@ -67,9 +75,9 @@ const userSchema = new mongoose.Schema({
 });
 
 // Encriptar password antes de guardar
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) return next();
-    
+
     try {
         const salt = await bcrypt.genSalt(10);
         this.password = await bcrypt.hash(this.password, salt);
@@ -80,12 +88,12 @@ userSchema.pre('save', async function(next) {
 });
 
 // Método para comparar password
-userSchema.methods.comparePassword = async function(candidatePassword) {
+userSchema.methods.comparePassword = async function (candidatePassword) {
     return await bcrypt.compare(candidatePassword, this.password);
 };
 
 // Método para obtener datos públicos
-userSchema.methods.toPublicJSON = function() {
+userSchema.methods.toPublicJSON = function () {
     return {
         id: this._id,
         name: this.name,

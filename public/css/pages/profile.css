@@ -197,11 +197,6 @@
     animation: fadeIn 0.3s ease;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
 /* Profile Card */
 .profile-card {
     background: var(--bg-card);
@@ -882,26 +877,6 @@
     color: #F44336;
 }
 
-/* Responsive */
-@media (max-width: 600px) {
-    .modal-content {
-        max-width: 95%;
-        border-radius: 20px;
-    }
-    
-    .modal-header {
-        padding: 16px 20px;
-    }
-    
-    .modal-body {
-        padding: 20px;
-    }
-    
-    .modal-header h3 {
-        font-size: 18px;
-    }
-}
-
 /* ============================================
    Avatar con imagen
 ============================================ */
@@ -967,97 +942,6 @@
     font-weight: 600;
     color: white;
     font-family: 'Playfair Display', serif;
-}
-
-/* Responsive */
-@media (max-width: 1024px) {
-    .profile-layout {
-        grid-template-columns: 1fr;
-    }
-    
-    .profile-sidebar {
-        position: static;
-    }
-    
-    .sidebar-menu {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        padding: 16px;
-    }
-    
-    .sidebar-btn {
-        width: auto;
-        padding: 10px 16px;
-        border-left: none;
-        border-radius: 40px;
-    }
-    
-    .sidebar-btn.active {
-        border-left-color: transparent;
-        background: #D97A2B;
-        color: white;
-    }
-    
-    .plan-cards {
-        grid-template-columns: 1fr;
-    }
-    
-    .plan-card.featured {
-        transform: scale(1);
-    }
-}
-
-@media (max-width: 768px) {
-    .profile-hero-content {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .profile-info {
-        text-align: center;
-    }
-    
-    .order-header, .order-body {
-        flex-direction: column;
-        gap: 12px;
-        align-items: flex-start;
-    }
-    
-    .order-footer {
-        flex-direction: column;
-    }
-    
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-    
-    .addresses-list {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 480px) {
-    .profile-avatar-large {
-        width: 100px;
-        height: 100px;
-    }
-    
-    .avatar-initials {
-        font-size: 36px;
-    }
-    
-    .profile-info h1 {
-        font-size: 24px;
-    }
-    
-    .card-header {
-        padding: 20px;
-    }
-    
-    .profile-form, .orders-list, .addresses-list {
-        padding: 20px;
-    }
 }
 
 /* Aviso informativo */

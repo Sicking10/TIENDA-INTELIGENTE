@@ -207,11 +207,6 @@
     border-color: rgba(200,101,27,0.25);
 }
 
-@keyframes spinSlow {
-    from { transform: translate(-50%, -50%) rotate(0); }
-    to { transform: translate(-50%, -50%) rotate(360deg); }
-}
-
 .hero-center-img {
     position: absolute;
     top: 50%;
@@ -251,79 +246,6 @@
 .orbit-dot-3 {
     background: var(--ginger);
     animation: orbit3 10s linear infinite;
-}
-
-@keyframes orbit1 {
-    from { transform: translate(-50%,-50%) rotate(0) translateX(180px) rotate(0); }
-    to { transform: translate(-50%,-50%) rotate(360deg) translateX(180px) rotate(-360deg); }
-}
-
-@keyframes orbit2 {
-    from { transform: translate(-50%,-50%) rotate(120deg) translateX(230px) rotate(-120deg); }
-    to { transform: translate(-50%,-50%) rotate(480deg) translateX(230px) rotate(-480deg); }
-}
-
-@keyframes orbit3 {
-    from { transform: translate(-50%,-50%) rotate(240deg) translateX(130px) rotate(-240deg); }
-    to { transform: translate(-50%,-50%) rotate(600deg) translateX(130px) rotate(-600deg); }
-}
-
-/* ============================================
-   RESPONSIVE HERO
-============================================ */
-@media (max-width: 1024px) {
-    .hero-container {
-        grid-template-columns: 1fr;
-        gap: 40px;
-        text-align: center;
-    }
-    
-    .hero-left {
-        max-width: 100%;
-        text-align: center;
-    }
-    
-    .hero-eyebrow {
-        justify-content: center;
-    }
-    
-    .hero-desc {
-        margin-left: auto;
-        margin-right: auto;
-    }
-    
-    .hero-actions {
-        justify-content: center;
-    }
-    
-    .hero-stats {
-        justify-content: center;
-    }
-    
-    .hero-right {
-        display: none;
-    }
-    
-    .benefits-hero {
-        min-height: auto;
-        padding: 100px 0 60px;
-    }
-}
-
-@media (max-width: 768px) {
-    .hero-container {
-        padding: 0 24px;
-    }
-    
-    .hero-actions {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .hero-stats {
-        flex-wrap: wrap;
-        gap: 30px;
-    }
 }
 
 /* ============================================
@@ -1083,51 +1005,3 @@
 .stagger-1 { transition-delay: 0.1s; }
 .stagger-2 { transition-delay: 0.2s; }
 .stagger-3 { transition-delay: 0.3s; }
-
-/* RESPONSIVE GENERAL */
-@media (max-width: 1024px) {
-    .container {
-        padding: 0 24px;
-    }
-    
-    .tab-panel.active {
-        grid-template-columns: 1fr;
-        gap: 40px;
-    }
-    
-    .synergy-grid {
-        grid-template-columns: 1fr;
-        max-width: 480px;
-        margin: 0 auto;
-    }
-    
-    .numbers-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 768px) {
-    .numbers-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .tl-item {
-        grid-template-columns: 1fr;
-    }
-    
-    .tl-center {
-        display: none;
-    }
-    
-    .tl-line {
-        display: none;
-    }
-    
-    .tl-card {
-        margin-bottom: 20px;
-    }
-    
-    .benefit-mini {
-        grid-template-columns: 1fr;
-    }
-}

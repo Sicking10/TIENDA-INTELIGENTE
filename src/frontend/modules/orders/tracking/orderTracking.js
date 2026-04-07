@@ -24,7 +24,6 @@ export default class OrderTrackingView {
             return;
         }
         
-        // Mostrar loading
         this.container.innerHTML = `
             <div class="tracking-page">
                 <div class="container" style="text-align: center; padding: 100px 0;">
@@ -34,7 +33,6 @@ export default class OrderTrackingView {
             </div>
         `;
         
-        // Cargar datos reales
         await this.loadOrderData();
         
         if (!this.order) {
@@ -83,18 +81,15 @@ export default class OrderTrackingView {
         }
     }
     
-    // Determinar si es recoger en tienda o envío a domicilio
     isPickup() {
         return this.order?.shipping?.method === 'pickup';
     }
     
-    // Obtener los pasos según el tipo de envío
     getOrderSteps(status) {
         const isPickup = this.isPickup();
         const createdAt = new Date(this.order.createdAt);
         
         if (isPickup) {
-            // 🏪 Flujo para recoger en tienda
             const pickupSteps = [
                 { name: 'Pedido confirmado', description: 'Hemos recibido tu pedido correctamente' },
                 { name: 'Preparando pedido', description: 'Estamos preparando tus cápsulas con mucho cuidado' },
@@ -102,33 +97,27 @@ export default class OrderTrackingView {
                 { name: 'Recogido', description: 'Gracias por recoger tu pedido. ¡Disfruta tus cápsulas!' }
             ];
             
-            // Marcar fechas según el estado
             if (status === 'pending') {
                 pickupSteps[0].date = createdAt.toLocaleDateString('es-MX');
                 return pickupSteps;
             }
-            
             if (status === 'processing') {
                 pickupSteps[0].date = createdAt.toLocaleDateString('es-MX');
                 return pickupSteps;
             }
-            
             if (status === 'ready_for_pickup') {
                 pickupSteps[0].date = createdAt.toLocaleDateString('es-MX');
                 pickupSteps[1].date = new Date(createdAt.getTime() + 86400000).toLocaleDateString('es-MX');
                 return pickupSteps;
             }
-            
             if (status === 'picked_up') {
                 pickupSteps[0].date = createdAt.toLocaleDateString('es-MX');
                 pickupSteps[1].date = new Date(createdAt.getTime() + 86400000).toLocaleDateString('es-MX');
                 pickupSteps[2].date = new Date(createdAt.getTime() + 172800000).toLocaleDateString('es-MX');
                 return pickupSteps;
             }
-            
             return pickupSteps;
         } else {
-            // 📦 Flujo para envío a domicilio
             const deliverySteps = [
                 { name: 'Pedido confirmado', description: 'Hemos recibido tu pedido correctamente' },
                 { name: 'Preparando pedido', description: 'Estamos preparando tus cápsulas con mucho cuidado' },
@@ -136,23 +125,19 @@ export default class OrderTrackingView {
                 { name: 'Entregado', description: 'Tu pedido ha sido entregado exitosamente' }
             ];
             
-            // Marcar fechas según el estado
             if (status === 'pending') {
                 deliverySteps[0].date = createdAt.toLocaleDateString('es-MX');
                 return deliverySteps;
             }
-            
             if (status === 'processing') {
                 deliverySteps[0].date = createdAt.toLocaleDateString('es-MX');
                 return deliverySteps;
             }
-            
             if (status === 'shipped') {
                 deliverySteps[0].date = createdAt.toLocaleDateString('es-MX');
                 deliverySteps[1].date = new Date(createdAt.getTime() + 86400000).toLocaleDateString('es-MX');
                 return deliverySteps;
             }
-            
             if (status === 'delivered') {
                 deliverySteps[0].date = createdAt.toLocaleDateString('es-MX');
                 deliverySteps[1].date = new Date(createdAt.getTime() + 86400000).toLocaleDateString('es-MX');
@@ -160,7 +145,6 @@ export default class OrderTrackingView {
                 deliverySteps[3].date = new Date(createdAt.getTime() + 259200000).toLocaleDateString('es-MX');
                 return deliverySteps;
             }
-            
             return deliverySteps;
         }
     }
@@ -220,6 +204,25 @@ export default class OrderTrackingView {
         const steps = this.getOrderSteps(this.order.status);
         const currentStepIndex = this.getCurrentStepIndex(this.order.status);
         
+        // 🔥 CORREGIDO: Mapear los items correctamente
+        const itemsHtml = this.order.items.map(item => `
+            <div class="order-item">
+                <div class="item-image">
+                    <img src="${item.imageUrl || `/assets/images/products/${item.image || 'placeholder'}`}" 
+                         alt="${item.name}"
+                         onerror="this.src='/assets/images/products/placeholder.jpg'">
+                </div>
+                <div class="item-details">
+                    <h4>${item.name}</h4>
+                    <div class="item-meta">
+                        <span class="concentration">${item.concentration || ''}</span>
+                        <span class="quantity">Cantidad: ${item.quantity}</span>
+                    </div>
+                </div>
+                <div class="item-price">${formatPrice(item.price * item.quantity)}</div>
+            </div>
+        `).join('');
+        
         this.container.innerHTML = `
             <div class="tracking-page">
                 <div class="tracking-hero">
@@ -275,21 +278,9 @@ export default class OrderTrackingView {
                     <div class="tracking-grid">
                         <div class="order-details-card">
                             <h3><i class="fas fa-box"></i> Detalles del pedido</h3>
-                            <div class="order-item">
-    <div class="item-image">
-        <img src="${item.imageUrl || `/assets/images/products/${item.image || 'placeholder'}`}" 
-             alt="${item.name}"
-             onerror="this.src='/assets/images/products/placeholder.jpg'">
-    </div>
-    <div class="item-details">
-        <h4>${item.name}</h4>
-        <div class="item-meta">
-            <span class="concentration">${item.concentration || ''}</span>
-            <span class="quantity">Cantidad: ${item.quantity}</span>
-        </div>
-    </div>
-    <div class="item-price">${formatPrice(item.price * item.quantity)}</div>
-</div>
+                            <div class="order-items">
+                                ${itemsHtml}
+                            </div>
                             <div class="order-total">
                                 <span>Total</span>
                                 <strong>${formatPrice(this.order.total)}</strong>
@@ -340,44 +331,44 @@ export default class OrderTrackingView {
                     </div>
                     
                     <div class="help-support-card">
-    <div class="help-support-icon">
-        <i class="fas fa-headset"></i>
-    </div>
-    <div class="help-support-content">
-        <h4>¿Necesitas ayuda con tu pedido?</h4>
-        <p>Nuestro equipo de soporte está disponible para ayudarte</p>
-        <div class="support-contact-grid">
-            <div class="support-item">
-                <i class="fas fa-phone-alt"></i>
-                <div class="support-item-info">
-                    <span class="support-label">Teléfono</span>
-                    <span class="support-value">+52 1 669 102 4050</span>
-                </div>
-            </div>
-            <div class="support-item">
-                <i class="fab fa-whatsapp"></i>
-                <div class="support-item-info">
-                    <span class="support-label">WhatsApp</span>
-                    <span class="support-value">+52 1 669 102 4050</span>
-                </div>
-            </div>
-            <div class="support-item">
-                <i class="fas fa-envelope"></i>
-                <div class="support-item-info">
-                    <span class="support-label">Email</span>
-                    <span class="support-value">soporte@gingercaps.com</span>
-                </div>
-            </div>
-            <div class="support-item">
-                <i class="fas fa-clock"></i>
-                <div class="support-item-info">
-                    <span class="support-label">Horario</span>
-                    <span class="support-value">Lun - Vie: 10AM - 6PM</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+                        <div class="help-support-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <div class="help-support-content">
+                            <h4>¿Necesitas ayuda con tu pedido?</h4>
+                            <p>Nuestro equipo de soporte está disponible para ayudarte</p>
+                            <div class="support-contact-grid">
+                                <div class="support-item">
+                                    <i class="fas fa-phone-alt"></i>
+                                    <div class="support-item-info">
+                                        <span class="support-label">Teléfono</span>
+                                        <span class="support-value">+52 1 669 102 4050</span>
+                                    </div>
+                                </div>
+                                <div class="support-item">
+                                    <i class="fab fa-whatsapp"></i>
+                                    <div class="support-item-info">
+                                        <span class="support-label">WhatsApp</span>
+                                        <span class="support-value">+52 1 669 102 4050</span>
+                                    </div>
+                                </div>
+                                <div class="support-item">
+                                    <i class="fas fa-envelope"></i>
+                                    <div class="support-item-info">
+                                        <span class="support-label">Email</span>
+                                        <span class="support-value">soporte@gingercaps.com</span>
+                                    </div>
+                                </div>
+                                <div class="support-item">
+                                    <i class="fas fa-clock"></i>
+                                    <div class="support-item-info">
+                                        <span class="support-label">Horario</span>
+                                        <span class="support-value">Lun - Vie: 10AM - 6PM</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;

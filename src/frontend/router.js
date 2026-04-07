@@ -87,7 +87,7 @@ const routes = {
         public: true,
         guestOnly: true
     },
-     '/faq': {
+    '/faq': {
         title: 'Preguntas Frecuentes',
         view: () => import('./modules/faq/faq.js'),
         public: true
@@ -111,6 +111,12 @@ const routes = {
         title: 'Garantía',
         view: () => import('./modules/legal/legal.js'),
         public: true
+    },
+    '/forgot-password': {
+        title: 'Recuperar Contraseña',
+        view: () => import('./modules/auth/forgotPassword.js'),
+        public: true,
+        guestOnly: true
     },
     // Rutas de administrador
     '/admin': {

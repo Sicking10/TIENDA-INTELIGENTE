@@ -281,3 +281,131 @@
 .password-toggle-btn:hover {
     color: var(--ginger);
 }
+
+/* ============================================
+   RECUPERAR CONTRASEÑA
+============================================ */
+
+/* Botón reenviar código */
+.btn-resend {
+    width: 100%;
+    margin-top: 16px;
+    padding: 12px;
+    background: transparent;
+    border: 1px solid rgba(200, 101, 27, 0.3);
+    border-radius: 40px;
+    color: var(--ginger);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-resend:hover {
+    background: rgba(200, 101, 27, 0.1);
+    border-color: var(--ginger);
+}
+
+.btn-resend:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Fortaleza de contraseña */
+.password-strength {
+    margin-top: 12px;
+}
+
+.strength-bars {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.strength-bar {
+    height: 4px;
+    flex: 1;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.strength-bar.active {
+    background: #4CAF50;
+}
+
+.strength-text {
+    font-size: 12px;
+    font-weight: 500;
+    transform: translateX(-40%);
+}
+
+.strength-text.strength-weak {
+    color: #F44336;
+}
+
+.strength-text.strength-medium {
+    color: #FF9800;
+}
+
+.strength-text.strength-strong {
+    color: #2196F3;
+}
+
+.strength-text.strength-very-strong {
+    color: #4CAF50;
+}
+
+/* Requisitos de contraseña */
+.password-requirements {
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.req-item {
+    font-size: 11px;
+    color: var(--bark-light);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 20px;
+}
+
+.req-item i {
+    font-size: 10px;
+}
+
+.req-item.valid i {
+    color: #4CAF50;
+}
+
+/* Wrapper para contraseña con toggle */
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-wrapper input {
+    flex: 1;
+    padding-right: 45px;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--bark-light);
+    font-size: 16px;
+    padding: 0;
+}
+
+.password-toggle:hover {
+    color: var(--ginger);
+}

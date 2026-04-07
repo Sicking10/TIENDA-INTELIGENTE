@@ -3880,3 +3880,99 @@
 [data-theme="dark"] .faq-page {
     background: var(--chamomile);
 }
+
+/* Modo oscuro */
+[data-theme="dark"] .strength-bar {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .req-item {
+    background: rgba(255, 255, 255, 0.05);
+    color: #C8A882;
+}
+
+[data-theme="dark"] .btn-resend {
+    border-color: rgba(232, 168, 56, 0.3);
+    color: #E8A838;
+}
+
+[data-theme="dark"] .btn-resend:hover {
+    background: rgba(232, 168, 56, 0.1);
+}
+
+/* ============================================
+   MODO OSCURO - RESPONSIVE
+=========================================== */
+[data-theme="dark"] .table-wrapper::-webkit-scrollbar-track,
+[data-theme="dark"] .orders-list::-webkit-scrollbar-track,
+[data-theme="dark"] .products-list::-webkit-scrollbar-track,
+[data-theme="dark"] .users-list::-webkit-scrollbar-track,
+[data-theme="dark"] .posts-list::-webkit-scrollbar-track {
+    background: rgba(232, 168, 56, 0.1);
+}
+
+[data-theme="dark"] .admin-nav-item.active {
+    background: linear-gradient(135deg, #E8A838, #D97706);
+    color: #1A1008;
+}
+
+[data-theme="dark"] .admin-nav-item.active i {
+    color: #1A1008;
+}
+
+[data-theme="dark"] .filter-select,
+[data-theme="dark"] .search-input {
+    background: var(--chamomile);
+    border-color: rgba(232, 168, 56, 0.2);
+    color: #F0D9B0;
+}
+
+/* ============================================
+   MODO OSCURO
+=========================================== */
+[data-theme="dark"] .faq-item {
+    border-color: rgba(232, 168, 56, 0.15);
+}
+
+[data-theme="dark"] .faq-question {
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .faq-answer p {
+    color: #C8A882;
+}
+
+[data-theme="dark"] .contact-card,
+[data-theme="dark"] .contact-form,
+[data-theme="dark"] .faq-contact-card,
+[data-theme="dark"] .legal-content {
+    background: var(--chamomile);
+    border-color: rgba(232, 168, 56, 0.15);
+}
+
+[data-theme="dark"] .contact-form input,
+[data-theme="dark"] .contact-form select,
+[data-theme="dark"] .contact-form textarea {
+    background: var(--chamomile);
+    border-color: rgba(232, 168, 56, 0.2);
+    color: #F0D9B0;
+}
+
+[data-theme="dark"] .contact-form input::placeholder,
+[data-theme="dark"] .contact-form textarea::placeholder {
+    color: #8B7355;
+}
+
+/* Modo oscuro */
+[data-theme="dark"] .help-support-card {
+    background: linear-gradient(135deg, rgba(232, 168, 56, 0.08), rgba(232, 168, 56, 0.03));
+    border-color: rgba(232, 168, 56, 0.15);
+}
+
+[data-theme="dark"] .support-item i {
+    background: rgba(232, 168, 56, 0.12);
+}
+
+[data-theme="dark"] .support-value {
+    color: #F0D9B0;
+}

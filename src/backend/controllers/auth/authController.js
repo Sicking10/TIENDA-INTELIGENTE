@@ -1,6 +1,7 @@
 const User = require('../../models/User');
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
+const crypto = require('crypto');
 
 // Generar JWT
 const generateToken = (user) => {
@@ -13,6 +14,11 @@ const generateToken = (user) => {
         process.env.JWT_SECRET,
         { expiresIn: process.env.JWT_EXPIRE || '7d' }
     );
+};
+
+// Generar código de 6 dígitos
+const generateResetCode = () => {
+    return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
 // @desc    Registrar usuario
@@ -251,6 +257,211 @@ exports.changePassword = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error al cambiar la contraseña'
+        });
+    }
+};
+
+// ==================== RECUPERAR CONTRASEÑA ====================
+
+// @desc    Solicitar recuperación de contraseña (envía código de 6 dígitos)
+// @route   POST /api/auth/forgot-password
+// @access  Public
+exports.forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+        
+        if (!email) {
+            return res.status(400).json({
+                success: false,
+                message: 'El email es requerido'
+            });
+        }
+        
+        // VERIFICAR SI EL EMAIL EXISTE
+        const user = await User.findOne({ email });
+        
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'Este email no está registrado en nuestra tienda'
+            });
+        }
+        
+        // Generar código de 6 dígitos
+        const resetCode = generateResetCode();
+        const resetCodeExpires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutos
+        
+        // Guardar código en el usuario
+        user.resetPasswordCode = resetCode;
+        user.resetPasswordExpires = resetCodeExpires;
+        await user.save();
+        
+        // Enviar correo con el código
+        const { sendResetCodeEmail } = require('../../services/email/emailServiceBrevo');
+        
+        const emailSent = await sendResetCodeEmail(user.email, user.name, resetCode);
+        
+        if (!emailSent) {
+            console.error('Error al enviar correo de recuperación');
+            return res.status(500).json({
+                success: false,
+                message: 'Error al enviar el código. Intenta más tarde.'
+            });
+        }
+        
+        res.json({
+            success: true,
+            message: 'Código de verificación enviado a tu correo electrónico'
+        });
+        
+    } catch (error) {
+        console.error('Error en forgotPassword:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error al procesar la solicitud'
+        });
+    }
+};
+
+// @desc    Verificar código de recuperación
+// @route   POST /api/auth/verify-reset-code
+// @access  Public
+exports.verifyResetCode = async (req, res) => {
+    try {
+        const { email, code } = req.body;
+        
+        if (!email || !code) {
+            return res.status(400).json({
+                success: false,
+                message: 'Email y código son requeridos'
+            });
+        }
+        
+        const user = await User.findOne({ email });
+        
+        if (!user) {
+            return res.status(400).json({
+                success: false,
+                message: 'Código inválido o expirado'
+            });
+        }
+        
+        // Verificar código
+        if (user.resetPasswordCode !== code) {
+            return res.status(400).json({
+                success: false,
+                message: 'Código inválido'
+            });
+        }
+        
+        // Verificar expiración
+        if (user.resetPasswordExpires < Date.now()) {
+            return res.status(400).json({
+                success: false,
+                message: 'El código ha expirado. Solicita uno nuevo'
+            });
+        }
+        
+        // Generar token temporal para restablecer contraseña
+        const resetToken = jwt.sign(
+            { 
+                id: user._id, 
+                email: user.email,
+                purpose: 'password-reset'
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '15m' }
+        );
+        
+        res.json({
+            success: true,
+            message: 'Código verificado correctamente',
+            token: resetToken
+        });
+        
+    } catch (error) {
+        console.error('Error en verifyResetCode:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error al verificar el código'
+        });
+    }
+};
+
+// @desc    Restablecer contraseña
+// @route   POST /api/auth/reset-password
+// @access  Public
+exports.resetPassword = async (req, res) => {
+    try {
+        const { email, token, newPassword } = req.body;
+        
+        if (!email || !token || !newPassword) {
+            return res.status(400).json({
+                success: false,
+                message: 'Email, token y nueva contraseña son requeridos'
+            });
+        }
+        
+        // Validar token
+        let decoded;
+        try {
+            decoded = jwt.verify(token, process.env.JWT_SECRET);
+        } catch (error) {
+            return res.status(400).json({
+                success: false,
+                message: 'Token inválido o expirado. Solicita un nuevo código'
+            });
+        }
+        
+        // Verificar que el token es para restablecer contraseña
+        if (decoded.purpose !== 'password-reset') {
+            return res.status(400).json({
+                success: false,
+                message: 'Token inválido'
+            });
+        }
+        
+        // Verificar que el email coincide
+        if (decoded.email !== email) {
+            return res.status(400).json({
+                success: false,
+                message: 'Email no coincide con el token'
+            });
+        }
+        
+        const user = await User.findOne({ email });
+        
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'Usuario no encontrado'
+            });
+        }
+        
+        // Validar fortaleza de contraseña
+        if (newPassword.length < 6) {
+            return res.status(400).json({
+                success: false,
+                message: 'La contraseña debe tener al menos 6 caracteres'
+            });
+        }
+        
+        // Actualizar contraseña
+        user.password = newPassword;
+        user.resetPasswordCode = undefined;
+        user.resetPasswordExpires = undefined;
+        await user.save();
+        
+        res.json({
+            success: true,
+            message: 'Contraseña actualizada correctamente'
+        });
+        
+    } catch (error) {
+        console.error('Error en resetPassword:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error al restablecer la contraseña'
         });
     }
 };

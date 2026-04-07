@@ -224,11 +224,6 @@
     display: none;
 }
 
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
 /* Footer */
 .auth-footer {
     text-align: center;
@@ -247,68 +242,4 @@
 
 .auth-footer a:hover {
     text-decoration: underline;
-}
-
-/* ============================================
-   RESPONSIVE
-============================================ */
-
-@media (max-width: 850px) {
-    .auth-container.register {
-        max-width: 600px;
-    }
-    
-    .form-grid {
-        grid-template-columns: 1fr;
-        gap: 16px;
-    }
-    
-    .form-group.full-width {
-        grid-column: span 1;
-    }
-}
-
-@media (max-width: 600px) {
-    .auth-page {
-        padding: var(--spacing-xl) var(--spacing-lg);
-        align-items: flex-start;
-        padding-top: 60px;
-    }
-    
-    .auth-container.login,
-    .auth-container.register {
-        max-width: 100%;
-    }
-    
-    .auth-card {
-        padding: 28px 24px;
-    }
-    
-    .auth-header h2 {
-        font-size: 28px;
-    }
-    
-    .form-options {
-        flex-direction: column;
-        gap: 12px;
-        align-items: flex-start;
-    }
-    
-    .form-group input {
-        padding: 10px 14px;
-    }
-    
-    .btn {
-        padding: 12px 20px;
-    }
-}
-
-@media (max-width: 380px) {
-    .auth-card {
-        padding: 20px 16px;
-    }
-    
-    .auth-header h2 {
-        font-size: 24px;
-    }
 }

@@ -187,11 +187,6 @@
     animation: pulse 2s infinite;
 }
 
-@keyframes pulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(217, 122, 43, 0.4); }
-    50% { box-shadow: 0 0 0 10px rgba(217, 122, 43, 0); }
-}
-
 .step-line {
     position: absolute;
     top: 48px;
@@ -478,10 +473,6 @@
     margin: 0 auto 20px;
 }
 
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
 .empty-icon {
     width: 100px;
     height: 100px;
@@ -500,100 +491,6 @@
 
 .help-support-content p {
     margin-bottom: 14px;
-}
-
-/* ============================================
-   Responsive
-============================================ */
-@media (max-width: 968px) {
-    .tracking-grid {
-        grid-template-columns: 1fr;
-        gap: 24px;
-    }
-    
-    .tracking-steps-container {
-        padding: 24px;
-    }
-    
-    .step {
-        gap: 16px;
-    }
-    
-    .step-icon {
-        width: 40px;
-        height: 40px;
-        font-size: 14px;
-    }
-    
-    .step-line {
-        top: 40px;
-    }
-}
-
-@media (max-width: 768px) {
-    .tracking-page {
-        padding: 100px 0 60px;
-    }
-    
-    .tracking-hero h1 {
-        font-size: 28px;
-    }
-    
-    .tracking-steps-container {
-        padding: 20px;
-    }
-    
-    .step {
-        flex-direction: column;
-        gap: 12px;
-        margin-bottom: 30px;
-    }
-    
-    .step-marker {
-        flex-direction: row;
-        justify-content: flex-start;
-    }
-    
-    .step-line {
-        display: none;
-    }
-    
-    .order-item {
-        flex-wrap: wrap;
-    }
-    
-    .item-price {
-        margin-left: 76px;
-    }
-    
-    .help-support-card {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .btn-contact {
-        width: 100%;
-    }
-}
-
-@media (max-width: 480px) {
-    .order-details-card,
-    .shipping-info-card {
-        padding: 20px;
-    }
-    
-    .order-item {
-        padding: 10px;
-    }
-    
-    .item-image {
-        width: 50px;
-        height: 50px;
-    }
-    
-    .item-details h4 {
-        font-size: 13px;
-    }
 }
 
 /* ============================================
@@ -689,78 +586,4 @@
     font-size: 13px;
     font-weight: 500;
     color: var(--bark);
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .help-support-card {
-        flex-direction: column;
-        text-align: center;
-        padding: 20px;
-    }
-    
-    .help-support-icon {
-        margin: 0 auto;
-    }
-    
-    .support-contact-grid {
-        grid-template-columns: 1fr;
-        gap: 12px;
-    }
-    
-    .support-item {
-        justify-content: center;
-    }
-    
-    .support-item-info {
-        align-items: flex-start;
-        text-align: left;
-    }
-}
-
-@media (max-width: 480px) {
-    .help-support-card {
-        padding: 16px;
-    }
-    
-    .help-support-icon {
-        width: 48px;
-        height: 48px;
-    }
-    
-    .help-support-icon i {
-        font-size: 22px;
-    }
-    
-    .help-support-content h4 {
-        font-size: 16px;
-    }
-    
-    .support-item {
-        gap: 10px;
-    }
-    
-    .support-item i {
-        width: 28px;
-        height: 28px;
-        font-size: 12px;
-    }
-    
-    .support-value {
-        font-size: 12px;
-    }
-}
-
-/* Modo oscuro */
-[data-theme="dark"] .help-support-card {
-    background: linear-gradient(135deg, rgba(232, 168, 56, 0.08), rgba(232, 168, 56, 0.03));
-    border-color: rgba(232, 168, 56, 0.15);
-}
-
-[data-theme="dark"] .support-item i {
-    background: rgba(232, 168, 56, 0.12);
-}
-
-[data-theme="dark"] .support-value {
-    color: #F0D9B0;
 }

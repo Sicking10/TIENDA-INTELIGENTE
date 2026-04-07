@@ -72,11 +72,6 @@
     pointer-events: none;
 }
 
-@keyframes blob-drift {
-    0%   { transform: translate(0, 0) scale(1); }
-    100% { transform: translate(30px, 20px) scale(1.08); }
-}
-
 .hero-content {
     position: relative;
     z-index: 2;
@@ -225,11 +220,6 @@
     max-width: 1080px;
     margin: 0 auto;
 }
-@media (min-width: 1024px) {
-    .products-grid.grid-quartet {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
 
 /* 5–6 productos – 3 columnas */
 .products-grid.grid-six {
@@ -243,11 +233,6 @@
     grid-template-columns: repeat(3, 1fr);
     max-width: 1200px;
     margin: 0 auto;
-}
-@media (min-width: 1400px) {
-    .products-grid.grid-many {
-        grid-template-columns: repeat(4, 1fr);
-    }
 }
 
 /* ═══════════════════════════════════════════
@@ -545,11 +530,6 @@
 .btn-add-cart.btn-bounce {
     animation: cart-bounce 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-@keyframes cart-bounce {
-    0%   { transform: scale(1); }
-    40%  { transform: scale(0.92); }
-    100% { transform: scale(1); }
-}
 
 /* ═══════════════════════════════════════════
    LOADING / EMPTY STATES
@@ -569,7 +549,6 @@
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
 
 .shop-empty {
     text-align: center;
@@ -1016,74 +995,3 @@
 .animate-delay-1 { transition-delay: 0.1s; }
 .animate-delay-2 { transition-delay: 0.2s; }
 .animate-delay-3 { transition-delay: 0.3s; }
-
-/* ═══════════════════════════════════════════
-   RESPONSIVE
-   ═══════════════════════════════════════════ */
-@media (max-width: 1100px) {
-    .products-grid.grid-six,
-    .products-grid.grid-many {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 900px) {
-    /* Solo: vuelve a layout vertical */
-    .products-grid.grid-solo .product-card {
-        grid-template-columns: 1fr;
-    }
-    .products-grid.grid-solo .pcard-image-wrap {
-        border-radius: 28px 28px 0 0;
-        min-height: unset;
-        aspect-ratio: 16 / 9;
-    }
-    .products-grid.grid-solo .pcard-body {
-        padding: var(--spacing-xl);
-    }
-
-    /* Duo: columna única en tablets pequeñas */
-    .products-grid.grid-duo,
-    .products-grid.grid-quartet {
-        grid-template-columns: 1fr;
-        max-width: 540px;
-    }
-
-    .modal-layout {
-        grid-template-columns: 1fr;
-    }
-    .modal-image-side {
-        min-height: 280px;
-        border-radius: 36px 36px 0 0;
-    }
-
-    .hero-title { font-size: var(--font-size-3xl); }
-    .pillars-grid { grid-template-columns: 1fr; }
-    .container-shop { padding: 0 var(--spacing-lg); }
-}
-
-@media (max-width: 640px) {
-    .hero-title { font-size: var(--font-size-2xl); }
-    .section-title { font-size: var(--font-size-2xl); }
-    .pcard-price { font-size: 24px; }
-    .pcard-footer { flex-direction: column; align-items: stretch; }
-    .btn-add-cart { justify-content: center; }
-    .modal-container { width: 96%; border-radius: 28px; }
-    .modal-info-side { padding: var(--spacing-xl) var(--spacing-lg); }
-    .modal-title { font-size: var(--font-size-2xl); }
-    .modal-price-current { font-size: 30px; }
-
-    .products-grid.grid-six,
-    .products-grid.grid-many {
-        grid-template-columns: 1fr;
-    }
-    /* En móvil mostrar benefits aunque sea en grids densos */
-    .grid-six .pcard-benefits,
-    .grid-many .pcard-benefits {
-        display: flex;
-    }
-    .grid-six .pcard-desc,
-    .grid-many .pcard-desc {
-        display: block;
-        line-clamp: unset;
-    }
-}

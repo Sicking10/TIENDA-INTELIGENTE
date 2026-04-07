@@ -113,10 +113,6 @@
     animation: orbit-spin 6s linear infinite;
 }
 
-@keyframes orbit-spin {
-    to { transform: rotate(360deg); }
-}
-
 .logo-wordmark {
     display: flex;
     flex-direction: column;
@@ -300,10 +296,6 @@
     z-index: 2;
 }
 .cart-badge.bump { animation: badgeBump 0.4s var(--spring); }
-@keyframes badgeBump {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.4); }
-}
 
 /* User Menu */
 .user-menu { position: relative; }
@@ -665,36 +657,3 @@
 .mobile-theme-toggle span { font-size: 14px; font-weight: 500; color: var(--bark-light); }
 
 .mobile-divider { height: 1px; background: var(--nav-border); margin: 12px 0; }
-
-/* ============================================
-   RESPONSIVE
-============================================ */
-@media (max-width: 1100px) {
-    .ingredient-drops { display: none; }
-    .navbar-container { gap: 16px; }
-}
-
-@media (max-width: 900px) {
-    .navbar-container { padding: 0 20px; }
-    .navbar-center { display: none; }
-    .auth-buttons { display: none; }
-    .ingredient-drops { display: none; }
-    .theme-toggle { display: none; }
-    .user-menu { display: none; }
-    .mobile-menu-btn { display: flex; }
-    .desktop-logo { display: none !important; }
-}
-
-@media (min-width: 901px) {
-    .mobile-drawer {
-        display: none !important;
-    }
-}
-
-[data-theme="dark"] .mobile-drawer::-webkit-scrollbar-track {
-    background: rgba(232, 168, 56, 0.1);
-}
-
-[data-theme="dark"] .mobile-drawer::-webkit-scrollbar-thumb {
-    background: #E8A838;
-}

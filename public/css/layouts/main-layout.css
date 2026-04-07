@@ -59,12 +59,6 @@
     color: var(--gray-600);
 }
 
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
 /* Route loader */
 .route-loader {
     position: fixed;

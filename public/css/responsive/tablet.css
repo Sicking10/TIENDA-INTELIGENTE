@@ -1,0 +1,447 @@
+/* ============================================
+   RESPONSIVE
+============================================ */
+@media (max-width: 1100px) {
+    .ingredient-drops { display: none; }
+    .navbar-container { gap: 16px; }
+}
+
+@media (max-width: 900px) {
+    .navbar-container { padding: 0 20px; }
+    .navbar-center { display: none; }
+    .auth-buttons { display: none; }
+    .ingredient-drops { display: none; }
+    .theme-toggle { display: none; }
+    .user-menu { display: none; }
+    .mobile-menu-btn { display: flex; }
+    .desktop-logo { display: none !important; }
+}
+
+@media (min-width: 901px) {
+    .mobile-drawer {
+        display: none !important;
+    }
+}
+
+/* ------------------------------------------
+   1024px — Tablets landscape / laptops pequeños
+   Sidebar colapsa a barra horizontal
+------------------------------------------ */
+@media (max-width: 1024px) {
+    .admin-layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .admin-sidebar {
+        position: static;
+        border-radius: 20px;
+    }
+
+    .admin-nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 14px 16px;
+        justify-content: flex-start;
+    }
+
+    .admin-nav-item {
+        padding: 10px 18px;
+        border-radius: 40px;
+        margin: 0;
+        border-right: none !important;
+    }
+
+    .admin-nav-item:hover {
+        transform: none;
+        background: rgba(200, 101, 27, 0.08);
+    }
+
+    .admin-nav-item.active {
+        background: linear-gradient(135deg, var(--ginger), var(--ginger-deep));
+        color: white;
+        border-right: none;
+    }
+
+    .admin-nav-item.active i {
+        color: white;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Scroll horizontal para tablas */
+    .data-table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        white-space: nowrap;
+    }
+
+    .data-table thead,
+    .data-table tbody,
+    .data-table tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+    }
+
+    .data-table thead {
+        width: 100%;
+    }
+
+    /* Resetear display para que funcione el overflow */
+    .data-table {
+        display: table;
+        min-width: 600px;
+    }
+
+    /* Wrapper para scroll de tabla */
+    .orders-list,
+    .products-list,
+    .users-list,
+    .posts-list,
+    .recent-orders {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 12px;
+    }
+
+    .orders-list::-webkit-scrollbar,
+    .products-list::-webkit-scrollbar,
+    .users-list::-webkit-scrollbar,
+    .posts-list::-webkit-scrollbar,
+    .recent-orders::-webkit-scrollbar {
+        height: 5px;
+    }
+
+    .orders-list::-webkit-scrollbar-thumb,
+    .products-list::-webkit-scrollbar-thumb,
+    .users-list::-webkit-scrollbar-thumb,
+    .posts-list::-webkit-scrollbar-thumb,
+    .recent-orders::-webkit-scrollbar-thumb {
+        background: var(--ginger);
+        border-radius: 10px;
+    }
+}
+
+/* ------------------------------------------
+   900px — Tablets portrait
+------------------------------------------ */
+@media (max-width: 900px) {
+    .admin-page {
+        padding-top: 60px;
+    }
+
+    .admin-header {
+        margin-bottom: 24px;
+        padding: 20px 0;
+    }
+
+    .admin-header h1 {
+        font-size: 26px;
+    }
+
+    .admin-header h1 i {
+        font-size: 22px;
+    }
+
+    .admin-header p {
+        font-size: 13px;
+    }
+
+    .admin-date {
+        font-size: 12px;
+        padding: 8px 16px;
+    }
+
+    .admin-main {
+        padding: 20px;
+        min-height: 400px;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .stat-card {
+        padding: 20px 16px;
+    }
+
+    .stat-value {
+        font-size: 28px;
+    }
+
+    .stat-card i {
+        font-size: 28px;
+        margin-bottom: 12px;
+    }
+
+    .stat-label {
+        font-size: 11px;
+    }
+
+    /* Modal responsivo */
+    .admin-modal .modal-content {
+        border-radius: 24px;
+    }
+
+    .admin-modal .modal-header {
+        padding: 20px 22px;
+    }
+
+    .admin-modal .modal-header h3 {
+        font-size: 18px;
+    }
+
+    .admin-modal .modal-body {
+        padding: 20px 22px;
+    }
+
+    .admin-modal .form-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    /* Filters bar */
+    .filters-bar {
+        padding: 14px 16px;
+        gap: 10px;
+    }
+
+    .filters-group {
+        gap: 8px;
+        width: 100%;
+    }
+
+    .filter-select {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .filter-label {
+        display: none; /* Ocultamos el label en tablet pequeña */
+    }
+}
+
+/* ------------------------------------------
+   1024px — Tablets landscape
+   Sidebar horizontal + scroll en tablas
+------------------------------------------ */
+@media (max-width: 1024px) {
+    /* Layout columnar */
+    .admin-layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    /* Sidebar horizontal con scroll */
+    .admin-sidebar {
+        position: static;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .admin-nav {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        gap: 8px;
+        padding: 12px 16px;
+        min-width: min-content;
+    }
+
+    .admin-nav-item {
+        flex-shrink: 0;
+        padding: 10px 18px;
+        margin: 0;
+        border-right: none !important;
+        white-space: nowrap;
+    }
+
+    .admin-nav-item.active {
+        background: linear-gradient(135deg, var(--ginger), var(--ginger-deep));
+        color: white;
+    }
+
+    .admin-nav-item.active i {
+        color: white;
+    }
+
+    .admin-nav-item:hover {
+        transform: none;
+    }
+
+    /* Scroll horizontal para tablas */
+    .table-wrapper,
+    .orders-list,
+    .products-list,
+    .users-list,
+    .posts-list {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .data-table {
+        min-width: 700px;
+    }
+
+    /* Stats */
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+}
+
+/* ------------------------------------------
+   900px — Tablets portrait
+------------------------------------------ */
+@media (max-width: 900px) {
+    .admin-page {
+        padding-top: 60px;
+    }
+
+    .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+
+    .admin-header::after {
+        left: 0;
+        transform: none;
+    }
+
+    .admin-header h1 {
+        font-size: 26px;
+    }
+
+    .admin-date {
+        align-self: flex-start;
+    }
+
+    .admin-main {
+        padding: 20px;
+    }
+
+    .stats-grid {
+        gap: 16px;
+        margin-bottom: 32px;
+    }
+
+    .stat-card {
+        padding: 20px 16px;
+    }
+
+    .stat-value {
+        font-size: 28px;
+    }
+
+    /* Filtros en columna */
+    .filters-bar {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 16px;
+    }
+
+    .filters-group {
+        flex-wrap: wrap;
+        width: 100%;
+    }
+
+    .filter-select {
+        flex: 1;
+    }
+}
+
+@media (max-width: 850px) {
+    .auth-container.register {
+        max-width: 600px;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .form-group.full-width {
+        grid-column: span 1;
+    }
+}
+
+@media (max-width: 968px) {
+    .tracking-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+    
+    .tracking-steps-container {
+        padding: 24px;
+    }
+    
+    .step {
+        gap: 16px;
+    }
+    
+    .step-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 14px;
+    }
+    
+    .step-line {
+        top: 40px;
+    }
+}
+
+@media (max-width: 900px) {
+    /* Solo: vuelve a layout vertical */
+    .products-grid.grid-solo .product-card {
+        grid-template-columns: 1fr;
+    }
+    .products-grid.grid-solo .pcard-image-wrap {
+        border-radius: 28px 28px 0 0;
+        min-height: unset;
+        aspect-ratio: 16 / 9;
+    }
+    .products-grid.grid-solo .pcard-body {
+        padding: var(--spacing-xl);
+    }
+
+    /* Duo: columna única en tablets pequeñas */
+    .products-grid.grid-duo,
+    .products-grid.grid-quartet {
+        grid-template-columns: 1fr;
+        max-width: 540px;
+    }
+
+    .modal-layout {
+        grid-template-columns: 1fr;
+    }
+    .modal-image-side {
+        min-height: 280px;
+        border-radius: 36px 36px 0 0;
+    }
+
+    .hero-title { font-size: var(--font-size-3xl); }
+    .pillars-grid { grid-template-columns: 1fr; }
+    .container-shop { padding: 0 var(--spacing-lg); }
+}
+
+@media (min-width: 1024px) {
+    .products-grid.grid-quartet {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+[data-theme="dark"] .mobile-drawer::-webkit-scrollbar-track {
+    background: rgba(232, 168, 56, 0.1);
+}
+
+[data-theme="dark"] .mobile-drawer::-webkit-scrollbar-thumb {
+    background: #E8A838;
+}

@@ -19,7 +19,11 @@ const orderItemSchema = new mongoose.Schema({
         min: 1
     },
     concentration: String,
-    image: String
+    image: String,
+        imageUrl: {           
+        type: String,
+        default: ''
+    }
 });
 
 const shippingSchema = new mongoose.Schema({

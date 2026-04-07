@@ -19,13 +19,6 @@
     animation: preloader-spin 0.8s linear infinite;
 }
 
-/* Animación del spinner */
-@keyframes preloader-spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
 /* Preloader de página completa */
 .page-preloader {
     position: fixed;

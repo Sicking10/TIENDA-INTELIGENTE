@@ -706,7 +706,8 @@ export default class CheckoutView {
             price: Number(item.price),
             quantity: Number(item.quantity),
             concentration: item.concentration || '',
-            image: item.image || 'placeholder'
+            image: item.image || 'placeholder',
+            imageUrl: item.imageUrl || ''
         }));
 
         const subtotal = calculateCartTotal();

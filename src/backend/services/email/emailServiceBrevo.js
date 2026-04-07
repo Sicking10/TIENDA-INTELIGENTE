@@ -416,6 +416,54 @@ body{font-family:Arial,sans-serif;background:#FDF8F0}
     return results;
 }
 
+/**
+ * Envía código de recuperación de contraseña
+ */
+async function sendResetCodeEmail(email, name, code) {
+    console.log('📧 Enviando código de recuperación a:', email);
+    
+    if (!apiInstance && !initBrevo()) {
+        console.error('❌ Brevo no inicializado');
+        return false;
+    }
+    
+    try {
+        const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+        sendSmtpEmail.subject = '🔐 Recuperación de contraseña - GINGERcaps';
+        sendSmtpEmail.to = [{ email: email, name: name || 'Cliente' }];
+        sendSmtpEmail.htmlContent = `
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Recuperar contraseña</title></head>
+<body style="font-family: Arial, sans-serif; background: #FDF8F0; padding: 40px;">
+<div style="max-width: 500px; margin: 0 auto; background: white; border-radius: 20px; padding: 30px; text-align: center;">
+    <div style="background: linear-gradient(135deg, #D97A2B, #B85E1A); padding: 20px; border-radius: 16px; margin-bottom: 25px;">
+        <h1 style="color: white; margin: 0;">🔐 GINGERcaps</h1>
+    </div>
+    <h2 style="color: #D97A2B;">Recupera tu contraseña</h2>
+    <p style="color: #4A2F1A; line-height: 1.6;">Hola <strong>${name || 'usuario'}</strong>,</p>
+    <p style="color: #4A2F1A; line-height: 1.6;">Recibimos una solicitud para restablecer tu contraseña. Usa el siguiente código de verificación:</p>
+    <div style="background: #F5E6D3; padding: 20px; border-radius: 12px; margin: 25px 0;">
+        <span style="font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #D97A2B;">${code}</span>
+    </div>
+    <p style="color: #888; font-size: 12px;">Este código expirará en 15 minutos.</p>
+    <p style="color: #4A2F1A; font-size: 13px;">Si no solicitaste este cambio, ignora este mensaje.</p>
+    <hr style="border: none; border-top: 1px solid #eee; margin: 25px 0 15px;">
+    <p style="color: #888; font-size: 11px;">GINGERcaps - Bienestar Natural</p>
+</div>
+</body>
+</html>`;
+        sendSmtpEmail.sender = { name: 'GINGERcaps', email: SENDER_EMAIL };
+        
+        await apiInstance.sendTransacEmail(sendSmtpEmail);
+        console.log('✅ Código de recuperación enviado a:', email);
+        return true;
+    } catch (error) {
+        console.error('❌ Error al enviar código de recuperación:', error.message);
+        return false;
+    }
+}
+
 // Inicializar
 initBrevo();
 
@@ -423,5 +471,6 @@ module.exports = {
     sendOrderEmails,
     sendOrderStatusEmail,
     sendCancellationEmails,
-    sendContactEmail 
+    sendContactEmail,
+    sendResetCodeEmail 
 };

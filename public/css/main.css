@@ -7,6 +7,9 @@
 @import url('./base/variables.css');
 @import url('./base/utilities.css');
 
+/* Animations */
+@import url(./animations/animations.css);
+
 /* Layouts */
 @import url('./layouts/main-layout.css');
 
@@ -36,3 +39,8 @@
 
 /* Themes */
 @import url('./themes/dark.css');
+
+/* Responsive */
+@import url('./responsive/desktop.css');
+@import url('./responsive/tablet.css');
+@import url('./responsive/mobile.css');
